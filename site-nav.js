@@ -39,6 +39,7 @@
           <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights &amp; Research</strong><a href="insights.html">Overview</a><a href="insights.html#research-library">Research Library</a><a href="insights.html#research-standard">Research Standard</a></div></div>
         </div>
       </div>
+      <a class="mobile-nav-contact" href="https://adamskarre.com/contact.html">Contact <span aria-hidden="true">↗</span></a>
     </nav>
     <a class="header-cta" href="https://adamskarre.com/contact.html">Contact</a>
   `;
@@ -67,9 +68,19 @@
 
   toggle.addEventListener('click', () => {
     const opening = !header.classList.contains('nav-open');
+    if (opening) closeGroups();
     header.classList.toggle('nav-open', opening);
+    document.documentElement.classList.toggle('menu-open', opening);
     toggle.setAttribute('aria-expanded', String(opening));
     nav.setAttribute('data-open', String(opening));
+  });
+
+  nav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      header.classList.remove('nav-open');
+      document.documentElement.classList.remove('menu-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
   });
 
   document.addEventListener('click', (event) => {
@@ -80,6 +91,7 @@
     if (event.key !== 'Escape') return;
     closeGroups();
     header.classList.remove('nav-open');
+    document.documentElement.classList.remove('menu-open');
     toggle.setAttribute('aria-expanded', 'false');
   });
 })();
