@@ -601,6 +601,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .research-viz .p1{left:7%;top:36%}
 .research-viz .p2{left:33%;top:27%;animation-delay:.8s}
 .research-viz .p3{left:25%;top:69%;animation-delay:1.6s}
+.page-hero-insights>p{max-width:600px;color:#d7e0ea}
 @keyframes scanFieldSynthesis{
   0%,8%{opacity:0;clip-path:inset(0 100% 0 0)}
   15%{opacity:.72}
