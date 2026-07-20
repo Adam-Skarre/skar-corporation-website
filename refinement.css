@@ -334,3 +334,29 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(prefers-reduced-motion:reduce){
   .page-hero-about:before{animation:none;transform:scale(1.025)}
 }
+
+/* Home: layered Norwegian-inspired ridge artwork */
+.mountain-sketch{
+  right:4%;
+  top:7%;
+  width:58%;
+  height:62%;
+  opacity:.26;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420"%3E%3Cdefs%3E%3ClinearGradient id="ridgeWash" x1="0" y1="0" x2="0" y2="1"%3E%3Cstop offset="0" stop-color="%23b22530" stop-opacity=".10"/%3E%3Cstop offset="1" stop-color="%23b22530" stop-opacity="0"/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d="M18 357C84 320 126 282 174 235C220 190 247 145 282 108C319 148 343 190 382 224C423 184 467 130 505 77C548 125 579 178 625 214C672 179 716 148 758 116C808 178 848 247 883 319L883 405L18 405Z" fill="url(%23ridgeWash)"/%3E%3Cpath d="M18 357C84 320 126 282 174 235C220 190 247 145 282 108C319 148 343 190 382 224C423 184 467 130 505 77C548 125 579 178 625 214C672 179 716 148 758 116C808 178 848 247 883 319" fill="none" stroke="%23b22530" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M0 373C94 337 164 331 229 292C289 257 333 278 389 306C449 336 511 288 565 266C626 241 684 284 741 302C801 321 850 305 900 281" fill="none" stroke="%23b22530" stroke-opacity=".38" stroke-width="3.2" stroke-linecap="round"/%3E%3Cpath d="M173 235L282 108L326 169L301 157L282 174L264 151L238 181M382 224L505 77L555 137L526 125L505 145L484 121L451 156M625 214L758 116L807 177L778 161L757 180L735 157L704 178" fill="none" stroke="%23b22530" stroke-opacity=".48" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M103 347C179 316 236 318 302 296M445 318C510 291 576 286 648 303M667 288C728 268 793 271 852 296" fill="none" stroke="%23b22530" stroke-opacity=".28" stroke-width="2.4" stroke-linecap="round"/%3E%3C/svg%3E');
+  filter:drop-shadow(0 12px 28px rgba(178,37,48,.08));
+}
+.mountain-sketch:before{
+  content:"";
+  position:absolute;
+  inset:12% 5% 0;
+  z-index:-1;
+  background:radial-gradient(ellipse at 58% 65%,rgba(178,37,48,.10),transparent 64%);
+  filter:blur(18px);
+}
+.mountain-sketch b,.mountain-sketch i{display:none!important}
+@media(max-width:760px){
+  .mountain-sketch{right:-12%;top:10%;width:100%;height:43%;opacity:.16}
+}
