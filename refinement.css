@@ -632,3 +632,66 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .research-viz:before,.research-viz:after,.research-viz .viz-grid,.research-viz .viz-grid:after,.research-viz .viz-line,.research-viz .viz-point{animation:none}
   .research-viz:before{opacity:.5;clip-path:inset(0)}
 }
+
+/* About refinement: a true celestial field rotating around a fixed pole */
+.about-sky-motion{
+  inset:0;
+  opacity:1;
+  overflow:hidden;
+  mix-blend-mode:screen;
+  transform:none;
+  animation:none;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 67%,transparent 92%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 67%,transparent 92%);
+}
+.about-sky-motion:before{
+  content:"";
+  position:absolute;
+  left:auto;
+  right:-9%;
+  top:-78%;
+  width:min(92vw,1180px);
+  aspect-ratio:1;
+  height:auto;
+  border:1px solid rgba(191,218,247,.14);
+  border-radius:50%;
+  background-image:
+    radial-gradient(circle at 13px 17px,rgba(241,248,255,.96) 0 1.15px,transparent 1.8px),
+    radial-gradient(circle at 61px 83px,rgba(186,217,249,.84) 0 1px,transparent 1.65px),
+    radial-gradient(circle at 118px 41px,rgba(221,237,255,.78) 0 .85px,transparent 1.5px),
+    radial-gradient(circle at 174px 146px,rgba(151,197,240,.68) 0 .75px,transparent 1.4px);
+  background-size:92px 92px,143px 143px,207px 207px,269px 269px;
+  box-shadow:inset 0 0 130px rgba(80,135,191,.06),0 0 70px rgba(113,167,220,.05);
+  transform-origin:50% 50%;
+  animation:celestialStarSphere 34s linear infinite;
+}
+.about-sky-motion:after{
+  content:"";
+  position:absolute;
+  left:auto;
+  right:-9%;
+  top:-78%;
+  width:min(92vw,1180px);
+  aspect-ratio:1;
+  height:auto;
+  border:1px solid rgba(199,224,250,.15);
+  border-radius:50%;
+  background:
+    repeating-conic-gradient(from 3deg,transparent 0deg 14deg,rgba(178,209,240,.10) 14.2deg 14.5deg),
+    repeating-radial-gradient(ellipse at center,transparent 0 105px,rgba(176,208,240,.09) 106px 107px,transparent 108px 158px);
+  opacity:.72;
+  transform-origin:50% 50%;
+  animation:celestialGridSphere 46s linear infinite reverse;
+}
+@keyframes celestialStarSphere{to{transform:rotate(360deg)}}
+@keyframes celestialGridSphere{to{transform:rotate(360deg)}}
+@media(max-width:760px){
+  .about-sky-motion:before,.about-sky-motion:after{
+    right:-58%;
+    top:-42%;
+    width:210vw;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .about-sky-motion:before,.about-sky-motion:after{animation:none}
+}
