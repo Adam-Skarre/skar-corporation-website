@@ -871,3 +871,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .nav-link-column strong{margin-bottom:7px;padding:15px 0 13px;font-size:13px;color:#69737c}
   .nav-panel-links .nav-link-column a{padding:13px 0!important;font-size:15px}
 }
+
+/* Complete the home landscape at the section baseline */
+.home-intro .section-top{margin-bottom:0}
+.home-intro .section-top .mountain-sketch{top:auto;bottom:-3%;right:0;width:63%;height:104%;background-position:center bottom;background-size:100% 100%}
+@media(max-width:760px){.home-intro .section-top{margin-bottom:0}.home-intro .section-top .mountain-sketch{top:auto;bottom:-2%;right:-18%;width:118%;height:86%;background-size:100% 100%}}
