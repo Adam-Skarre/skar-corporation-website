@@ -312,64 +312,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .page-hero-about:before,.page-hero-careers:before,.page-hero-industries:before,.page-hero-careers:after{animation:none;transform:scale(1.02)}
 }
 
-/* About hero: slow photographic drift with a restrained, natural meteor */
+/* About hero: restrained photographic zoom */
 .page-hero-about:before{
-  transform:scale(1.035);
-  animation:aboutMountainDrift 24s cubic-bezier(.4,0,.2,1) infinite alternate;
+  transform:scale(1.025);
+  animation:aboutMountainZoom 30s ease-in-out infinite alternate;
 }
-.about-meteor{
-  position:absolute;
-  z-index:1;
-  top:13%;
-  right:8%;
-  width:clamp(110px,13vw,210px);
-  height:2px;
-  pointer-events:none;
-  opacity:0;
-  transform:translate3d(90px,-50px,0) rotate(-24deg);
-  animation:aboutMeteorPass 15s cubic-bezier(.22,.61,.36,1) infinite;
-}
-.about-meteor span{
-  position:absolute;
-  inset:0;
-  border-radius:999px;
-  background:linear-gradient(90deg,transparent 0%,rgba(193,220,249,.08) 36%,rgba(220,237,255,.55) 82%,#fff 100%);
-  filter:drop-shadow(0 0 3px rgba(194,225,255,.7));
-}
-.about-meteor span:after{
-  content:"";
-  position:absolute;
-  right:-1px;
-  top:50%;
-  width:4px;
-  height:4px;
-  border-radius:50%;
-  background:#fff;
-  box-shadow:0 0 8px 2px rgba(207,231,255,.7);
-  transform:translateY(-50%);
-}
-@keyframes aboutMountainDrift{
-  from{transform:scale(1.035) translate3d(-.4%,0,0)}
-  to{transform:scale(1.09) translate3d(.7%,-.6%,0)}
-}
-@keyframes aboutMeteorPass{
-  0%,58%{opacity:0;transform:translate3d(90px,-50px,0) rotate(-24deg)}
-  60%{opacity:.15}
-  63%{opacity:.9}
-  69%{opacity:0;transform:translate3d(-54vw,28vw,0) rotate(-24deg)}
-  100%{opacity:0;transform:translate3d(-54vw,28vw,0) rotate(-24deg)}
-}
-@media(max-width:760px){
-  .about-meteor{top:14%;right:2%;width:105px}
-  @keyframes aboutMeteorPass{
-    0%,58%{opacity:0;transform:translate3d(70px,-35px,0) rotate(-24deg)}
-    60%{opacity:.12}
-    63%{opacity:.75}
-    69%{opacity:0;transform:translate3d(-76vw,43vw,0) rotate(-24deg)}
-    100%{opacity:0;transform:translate3d(-76vw,43vw,0) rotate(-24deg)}
-  }
+@keyframes aboutMountainZoom{
+  from{transform:scale(1.025)}
+  to{transform:scale(1.055)}
 }
 @media(prefers-reduced-motion:reduce){
-  .page-hero-about:before{animation:none;transform:scale(1.035)}
-  .about-meteor{display:none}
+  .page-hero-about:before{animation:none;transform:scale(1.025)}
 }
