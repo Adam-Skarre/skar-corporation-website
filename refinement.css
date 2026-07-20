@@ -397,3 +397,137 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .about-sky-motion{display:none}
   .page-hero-careers:before{animation:none;transform:scale(1.02)}
 }
+
+/* Motion refinement: visible celestial arcs and continuous forward travel */
+.about-sky-motion{
+  opacity:.34;
+  animation-duration:28s;
+}
+.about-sky-motion:before,.about-sky-motion:after{
+  content:"";
+  position:absolute;
+  left:23%;
+  top:24%;
+  width:58%;
+  height:42%;
+  border:1px solid rgba(188,216,249,.18);
+  border-radius:50%;
+  transform:rotate(18deg);
+  box-shadow:0 0 34px rgba(129,177,230,.05);
+}
+.about-sky-motion:after{
+  left:32%;
+  top:29%;
+  width:42%;
+  height:31%;
+  border-color:rgba(210,231,255,.11);
+  transform:rotate(-24deg);
+}
+.page-hero-careers:before{
+  animation:careerPathForward 9s cubic-bezier(.25,.1,.25,1) infinite;
+}
+@keyframes careerPathForward{
+  0%{opacity:0;transform:scale(1.02) translate3d(0,0,0)}
+  8%{opacity:1}
+  80%{opacity:1;transform:scale(1.14) translate3d(0,-1.7%,0)}
+  94%{opacity:0;transform:scale(1.17) translate3d(0,-2.1%,0)}
+  94.01%{opacity:0;transform:scale(1.02) translate3d(0,0,0)}
+  100%{opacity:1;transform:scale(1.02) translate3d(0,0,0)}
+}
+
+/* Insights: a knowledge sphere resolving into research signals */
+.research-viz{
+  right:4%;
+  width:47%;
+  height:430px;
+  border:0;
+  overflow:visible;
+}
+.research-viz .viz-grid{
+  position:absolute;
+  z-index:3;
+  left:5%;
+  top:50%;
+  width:245px;
+  height:245px;
+  border-radius:50%;
+  transform:translateY(-50%);
+  background:
+    radial-gradient(circle at 32% 28%,rgba(189,220,255,.78),transparent 8%),
+    radial-gradient(circle at 38% 36%,#78a9e8 0%,#3e75bd 38%,#163f6d 72%,#08243e 100%);
+  box-shadow:inset -30px -22px 55px rgba(3,20,36,.52),0 0 52px rgba(72,132,204,.34);
+  animation:knowledgeSphere 7s ease-in-out infinite;
+}
+.research-viz .viz-grid:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  opacity:.34;
+  background-image:
+    radial-gradient(circle at 20px 24px,rgba(235,246,255,.9) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 58px 72px,rgba(192,221,252,.7) 0 1px,transparent 1.4px);
+  background-size:72px 72px,103px 103px;
+  animation:sphereTexture 14s linear infinite;
+}
+.research-viz .viz-grid:after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:1px;
+  background:linear-gradient(transparent,rgba(208,232,255,.72),transparent);
+  box-shadow:0 0 18px rgba(134,187,242,.7);
+}
+.research-viz:before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:41%;
+  top:7%;
+  width:57%;
+  height:86%;
+  background:repeating-conic-gradient(from -68deg at 0 50%,transparent 0deg 2.5deg,rgba(120,177,235,.34) 2.7deg 3deg);
+  clip-path:polygon(0 42%,100% 0,100% 100%,0 58%);
+  filter:drop-shadow(0 0 5px rgba(94,155,219,.2));
+  transform-origin:left center;
+  animation:researchRays 4.6s ease-in-out infinite;
+}
+.research-viz:after{
+  content:"";
+  position:absolute;
+  z-index:4;
+  left:51%;
+  top:50%;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:#d8ebff;
+  box-shadow:42px -92px #8bb9ec,78px -57px #b1d4f7,112px -111px #6f9fd5,145px -28px #9fc8f2,180px -72px #6d9fd8,53px 68px #8ab9eb,92px 104px #b1d5f8,127px 47px #78a9dd,165px 91px #98c4ef,205px 29px #6f9fd5;
+  animation:researchParticles 4.6s ease-in-out infinite;
+}
+.research-viz .viz-line,.research-viz .viz-scan,.research-viz>span{display:none}
+.research-viz .viz-point{
+  z-index:5;
+  left:49%;
+  width:5px;
+  height:5px;
+  background:#d9ecff;
+  box-shadow:0 0 12px rgba(175,214,252,.9);
+  animation:dataFlight 3.4s ease-out infinite;
+}
+.research-viz .p1{top:36%}.research-viz .p2{top:50%;animation-delay:1.1s}.research-viz .p3{top:64%;animation-delay:2.2s}
+@keyframes knowledgeSphere{50%{box-shadow:inset -30px -22px 55px rgba(3,20,36,.52),0 0 75px rgba(82,148,224,.5)}}
+@keyframes sphereTexture{to{background-position:72px 0,-103px 0}}
+@keyframes researchRays{0%,100%{opacity:.52;transform:scaleX(.94)}50%{opacity:1;transform:scaleX(1.04)}}
+@keyframes researchParticles{0%,100%{opacity:.42;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes dataFlight{0%{opacity:0;transform:translateX(0)}18%{opacity:1}100%{opacity:0;transform:translateX(270px)}}
+@media(max-width:760px){
+  .research-viz{right:50%;width:88%;height:210px;bottom:8px;transform:translateX(50%) scale(.72)}
+  .research-viz .viz-grid{width:170px;height:170px}
+}
+@media(prefers-reduced-motion:reduce){
+  .about-sky-motion,.research-viz .viz-grid,.research-viz .viz-grid:before,.research-viz:before,.research-viz:after,.research-viz .viz-point{animation:none}
+  .page-hero-careers:before{animation:none;opacity:1;transform:scale(1.04)}
+}
