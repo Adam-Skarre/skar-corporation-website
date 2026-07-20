@@ -360,3 +360,40 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(max-width:760px){
   .mountain-sketch{right:-12%;top:10%;width:100%;height:43%;opacity:.16}
 }
+
+/* About: continuous celestial drift above the mountain photograph */
+.page-hero-about:after{z-index:0}
+.page-hero-about>p,.page-hero-about>h1{position:relative;z-index:2}
+.about-sky-motion{
+  position:absolute;
+  z-index:-1;
+  inset:-42%;
+  pointer-events:none;
+  opacity:.2;
+  mix-blend-mode:screen;
+  transform-origin:62% 48%;
+  background-image:
+    radial-gradient(circle at 18px 24px,rgba(225,238,255,.9) 0 1px,transparent 1.6px),
+    radial-gradient(circle at 72px 95px,rgba(181,213,249,.72) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 145px 52px,rgba(238,246,255,.64) 0 .8px,transparent 1.4px);
+  background-size:190px 190px,270px 270px,350px 350px;
+  animation:aboutSkyOrbit 52s linear infinite;
+}
+@keyframes aboutSkyOrbit{
+  from{transform:rotate(0deg) translate3d(0,0,0)}
+  to{transform:rotate(360deg) translate3d(1.5%,-1%,0)}
+}
+
+/* Careers: a short camera move following the mountain road */
+.page-hero-careers:before{
+  transform-origin:50% 82%;
+  animation:careerPathTravel 3s ease-in-out infinite alternate;
+}
+@keyframes careerPathTravel{
+  from{transform:scale(1.02) translate3d(0,0,0)}
+  to{transform:scale(1.095) translate3d(0,-1.2%,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .about-sky-motion{display:none}
+  .page-hero-careers:before{animation:none;transform:scale(1.02)}
+}
