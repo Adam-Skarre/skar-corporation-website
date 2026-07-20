@@ -5,7 +5,7 @@
   const file = (location.pathname.split('/').pop() || 'skar.html').toLowerCase();
   const firmActive = ['about.html', 'careers.html'].includes(file);
   const workActive = ['solutions.html', 'industries.html', 'services.html', 'technology.html'].includes(file);
-  const insightsActive = file === 'insights.html';
+  const insightsActive = file === 'insights.html' || file.startsWith('report-');
 
   const researchAgenda = document.querySelector('.research-agenda');
   const researchStandard = document.querySelector('.research-method');
@@ -39,7 +39,7 @@
         <button class="nav-group-trigger" type="button" aria-expanded="false">Insights &amp; Research <span aria-hidden="true">⌄</span></button>
         <div class="nav-panel">
           <div class="nav-panel-intro"><small>INSIGHTS &amp; RESEARCH</small><strong>Evidence before assumption.</strong><p>Independent research that turns public data and technical evidence into useful direction.</p></div>
-          <div class="nav-panel-links"><a href="insights.html"><b>Research Overview</b><span>Our agenda and current areas of investigation.</span></a><a href="insights.html#research-agenda"><b>Research Agenda</b><span>Studies in development across engineering and operations.</span></a><a href="insights.html#research-standard"><b>Research Standard</b><span>How we frame, model, challenge, and communicate.</span></a></div>
+          <div class="nav-panel-links"><a href="insights.html"><b>Research Overview</b><span>Published briefs and current areas of investigation.</span></a><a href="insights.html#research-library"><b>Research Library</b><span>Independent technical reports grounded in public evidence.</span></a><a href="insights.html#research-standard"><b>Research Standard</b><span>How we frame, model, challenge, and communicate.</span></a></div>
         </div>
       </div>
     </nav>
