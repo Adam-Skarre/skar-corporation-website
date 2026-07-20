@@ -794,6 +794,12 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(max-width:900px){.silicon-system{right:-5%;width:57%;opacity:.68}}
 @media(max-width:760px){.silicon-system{right:-28%;top:auto;bottom:23px;width:105%;height:270px;transform:none;opacity:.34}}
 @media(prefers-reduced-motion:reduce){.signal-glow,.signal-core,.silicon-package,.silicon-die{animation:none}}
+
+/* Careers: one synchronized, seamless journey toward the road */
+.page-hero-careers:before{transform-origin:50% 82%;animation:careersJourney 32s ease-in-out infinite!important;will-change:transform}
+.page-hero-careers:after{animation:none!important;background:linear-gradient(90deg,rgba(4,17,31,.92),rgba(4,17,31,.65) 54%,rgba(4,17,31,.28)),linear-gradient(180deg,transparent 58%,rgba(157,199,239,.055) 78%,transparent 100%)!important}
+@keyframes careersJourney{0%,100%{transform:translate3d(0,0,0) scale(1.035)}50%{transform:translate3d(0,1.15%,0) scale(1.095)}}
+@media(prefers-reduced-motion:reduce){.page-hero-careers:before{animation:none!important;transform:scale(1.045)}}
 @media(max-width:760px){.site-header{top:0}}
 @media(max-width:420px){.site-header{padding-left:14px;padding-right:12px}.nav-brand{width:112px}.nav-wordmark{width:108px}.header-cta{min-width:78px;font-size:10px}.nav-toggle{margin-right:2px}}
 
