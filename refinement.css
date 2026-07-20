@@ -766,6 +766,12 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(max-width:900px){.nav-brand{width:128px}.nav-wordmark{position:static;width:124px;opacity:1;clip-path:none;transform:none;transition:none}.nav-brand:after{display:none}.nav-brand:hover,.nav-brand:focus-visible{width:128px}.nav-brand:hover .nav-wordmark,.nav-brand:focus-visible .nav-wordmark{transform:none}}
 @media(max-width:420px){.nav-brand,.nav-brand:hover,.nav-brand:focus-visible{width:112px}.nav-wordmark{width:108px}}
 @media(prefers-reduced-motion:reduce){.nav-brand,.nav-emblem,.nav-wordmark{transition:none}.nav-brand:after{display:none}}
+
+/* Keep the mountain artwork inside the Knowledge / Vision / Engineering panel */
+.home-intro .section-top{position:relative;isolation:isolate;overflow:hidden;padding:0 0 32px;margin-bottom:23px}
+.home-intro .section-top>h2,.home-intro .section-top>p{position:relative;z-index:2}
+.home-intro .section-top .mountain-sketch{z-index:1;right:1%;top:-12%;width:61%;height:108%;opacity:.24}
+@media(max-width:760px){.home-intro .section-top{padding-bottom:34px;margin-bottom:21px}.home-intro .section-top .mountain-sketch{right:-20%;top:-8%;width:116%;height:83%;opacity:.13}}
 @media(max-width:760px){.site-header{top:0}}
 @media(max-width:420px){.site-header{padding-left:14px;padding-right:12px}.nav-brand{width:112px}.nav-wordmark{width:108px}.header-cta{min-width:78px;font-size:10px}.nav-toggle{margin-right:2px}}
 
