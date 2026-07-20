@@ -736,6 +736,33 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .header-cta{grid-column:auto;min-width:88px;padding:10px 13px;text-align:center}
 }
 
+/* iPhone navigation: full viewport, single accordion, safe-area aware */
+.mobile-nav-contact{display:none}
+@media(max-width:760px){
+  html.menu-open,html.menu-open body{overflow:hidden;overscroll-behavior:none}
+  .site-header{position:sticky!important;top:0!important;z-index:100!important;width:100%;height:74px!important;min-height:74px;padding:0 max(20px,env(safe-area-inset-right)) 0 max(20px,env(safe-area-inset-left))!important;grid-template-columns:1fr 48px!important;align-items:center;background:#fff;border-bottom:1px solid #dfe4e8}
+  .site-header .nav-brand{width:132px!important;height:52px;padding:0!important}.site-header .nav-wordmark{width:132px!important}.site-header .nav-emblem{display:none!important}
+  .nav-toggle{position:relative;z-index:103;display:flex!important;width:48px;height:48px;margin:0!important;padding:0;border:0;background:transparent}
+  .nav-toggle span{position:absolute;left:13px;width:22px;height:1.5px;margin:0;background:#172632;transition:top .24s ease,transform .24s ease,opacity .18s ease}.nav-toggle span:nth-child(1){top:16px}.nav-toggle span:nth-child(2){top:23px}.nav-toggle span:nth-child(3){top:30px}
+  .site-header.nav-open .nav-toggle span:nth-child(1){top:23px;transform:rotate(45deg)}.site-header.nav-open .nav-toggle span:nth-child(2){opacity:0}.site-header.nav-open .nav-toggle span:nth-child(3){top:23px;transform:rotate(-45deg)}
+  .site-header .nav-groups{display:none;position:fixed!important;z-index:101;inset:74px 0 0!important;width:100vw!important;height:calc(100dvh - 74px)!important;max-height:none!important;margin:0!important;padding:8px max(24px,env(safe-area-inset-right)) max(30px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left))!important;overflow-y:auto!important;overscroll-behavior:contain;background:#fff;box-shadow:none;border:0!important;-webkit-overflow-scrolling:touch}
+  .site-header.nav-open .nav-groups{display:block!important}
+  .nav-group{display:block!important;height:auto!important;margin:0;border:0!important;border-bottom:1px solid #dfe4e8!important}
+  .nav-group-trigger{display:flex;width:100%;height:68px!important;min-height:68px;padding:0!important;justify-content:space-between;color:#17212a;font-size:18px!important;font-weight:520;letter-spacing:-.02em;text-align:left}
+  .nav-group-trigger span{top:0!important;font-size:14px;color:#69757f;transition:transform .2s ease}
+  .nav-group.open .nav-group-trigger span{transform:rotate(180deg)}
+  .nav-panel,.nav-group.open .nav-panel{position:static!important;visibility:visible;opacity:1;transform:none;min-height:0!important;margin:0;padding:0 0 16px!important;border:0!important;background:#fff;box-shadow:none!important}
+  .nav-panel{display:none!important}.nav-group.open .nav-panel{display:block!important}
+  .nav-panel-links,.nav-link-column{display:block!important;width:100%!important}
+  .nav-link-column strong{display:none!important}
+  .nav-panel-links .nav-link-column a{display:flex!important;align-items:center!important;width:100%!important;min-height:50px!important;margin:0!important;padding:12px 2px 12px 18px!important;border:0!important;background:transparent!important;color:#48545f;font-size:16px!important;font-weight:430;line-height:1.35}
+  .nav-panel-links .nav-link-column a:active{color:#2867cb;background:#f5f7f9!important}
+  .mobile-nav-contact{display:flex!important;align-items:center;justify-content:space-between;height:58px;margin-top:26px;padding:0 18px;background:#101820;color:#fff!important;font-size:15px;font-weight:650;letter-spacing:-.01em}.mobile-nav-contact span{font-size:17px}
+  .header-cta{display:none!important}
+  main{width:100%;overflow:hidden}
+}
+@supports not (height:100dvh){@media(max-width:760px){.site-header .nav-groups{height:calc(100vh - 74px)!important}}}
+
 /* Industries: engineered rotating system */
 .page-hero-industries:before{inset:0!important;background-image:none!important;background:repeating-linear-gradient(0deg,transparent 0 59px,rgba(138,181,229,.045) 60px),repeating-linear-gradient(90deg,transparent 0 79px,rgba(138,181,229,.045) 80px),radial-gradient(circle at 78% 50%,rgba(58,122,196,.2),transparent 31%)!important;transform:none!important;animation:none!important}
 .page-hero-industries:after{background:linear-gradient(90deg,rgba(4,17,31,.98) 0%,rgba(4,17,31,.88) 48%,rgba(4,17,31,.34) 100%)!important}
