@@ -24,22 +24,19 @@
       <div class="nav-group${firmActive ? ' active' : ''}">
         <button class="nav-group-trigger" type="button" aria-expanded="false">The Firm <span aria-hidden="true">⌄</span></button>
         <div class="nav-panel">
-          <div class="nav-panel-intro"><small>THE FIRM</small><strong>Judgment for complex terrain.</strong><p>Meet the practice, understand our principles, and learn how to work with SKAR.</p></div>
-          <div class="nav-panel-links"><a href="about.html"><b>About SKAR</b><span>Our purpose, approach, and operating principles.</span></a><a href="careers.html"><b>Careers</b><span>Build relationships before roles.</span></a></div>
+          <div class="nav-panel-links"><div class="nav-link-column"><strong>The Firm</strong><a href="about.html">About</a><a href="careers.html">Careers</a></div></div>
         </div>
       </div>
       <div class="nav-group${workActive ? ' active' : ''}">
         <button class="nav-group-trigger" type="button" aria-expanded="false">What We Do <span aria-hidden="true">⌄</span></button>
         <div class="nav-panel">
-          <div class="nav-panel-intro"><small>WHAT WE DO</small><strong>Focused support. Useful outcomes.</strong><p>Engineering analysis and business technology shaped around the decision at hand.</p></div>
-          <div class="nav-panel-links"><a href="solutions.html"><b>Solutions</b><span>Decision support, modeling, workflows, and practical technology.</span></a><a href="industries.html"><b>Industries</b><span>Design, manufacturing, energy, infrastructure, and growing businesses.</span></a></div>
+          <div class="nav-panel-links"><div class="nav-link-column"><strong>What We Do</strong><a href="solutions.html">Solutions</a><a href="industries.html">Industries</a></div></div>
         </div>
       </div>
       <div class="nav-group${insightsActive ? ' active' : ''}">
         <button class="nav-group-trigger" type="button" aria-expanded="false">Insights &amp; Research <span aria-hidden="true">⌄</span></button>
         <div class="nav-panel">
-          <div class="nav-panel-intro"><small>INSIGHTS &amp; RESEARCH</small><strong>Evidence before assumption.</strong><p>Independent research that turns public data and technical evidence into useful direction.</p></div>
-          <div class="nav-panel-links"><a href="insights.html"><b>Research Overview</b><span>Published briefs and current areas of investigation.</span></a><a href="insights.html#research-library"><b>Research Library</b><span>Independent technical reports grounded in public evidence.</span></a><a href="insights.html#research-standard"><b>Research Standard</b><span>How we frame, model, challenge, and communicate.</span></a></div>
+          <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights &amp; Research</strong><a href="insights.html">Overview</a><a href="insights.html#research-library">Research Library</a><a href="insights.html#research-standard">Research Standard</a></div></div>
         </div>
       </div>
     </nav>
