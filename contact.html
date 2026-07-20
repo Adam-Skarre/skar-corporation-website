@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Contact Skar Corporation about engineering, decision intelligence, business technology, research, or careers.">
+  <title>Contact | Skar Corporation</title>
+  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="refinement.css">
+  <link rel="icon" type="image/svg+xml" href="assets/skar-favicon.svg">
+  <link rel="shortcut icon" href="assets/skar-favicon.svg">
+  <script src="site-nav.js" defer></script>
+  <script src="contact.js" defer></script>
+</head>
+<body>
+  <div class="utility">Knowledge · Vision · Engineering</div>
+  <header class="site-header"></header>
+  <main class="contact-page">
+    <section class="contact-hero">
+      <div class="contact-intro">
+        <p class="eyebrow">Contact</p>
+        <h1>Start a<br><span class="blue-type">conversation.</span></h1>
+        <p class="contact-lead">Tell us what you are working through. We will use the information below to understand the problem, the decision, and the right next step.</p>
+        <div class="contact-availability">
+          <strong>Inquiry delivery is being prepared.</strong>
+          <p>You can complete and save your inquiry now. Direct online delivery will be enabled when SKAR’s business email is active.</p>
+        </div>
+      </div>
+
+      <form class="contact-form" id="skar-contact-form" novalidate>
+        <div class="form-grid">
+          <label>First name <span>*</span><input type="text" name="firstName" autocomplete="given-name" required></label>
+          <label>Last name <span>*</span><input type="text" name="lastName" autocomplete="family-name" required></label>
+          <label>Email address <span>*</span><input type="email" name="email" autocomplete="email" required></label>
+          <label>Company<input type="text" name="company" autocomplete="organization"></label>
+          <label>Job title<input type="text" name="jobTitle" autocomplete="organization-title"></label>
+          <label>Inquiry type <span>*</span>
+            <select name="inquiryType" required>
+              <option value="">Select an area</option>
+              <option>Engineering decision support</option>
+              <option>Data and modeling</option>
+              <option>Business technology</option>
+              <option>Research and collaboration</option>
+              <option>Careers</option>
+              <option>General inquiry</option>
+            </select>
+          </label>
+          <label class="form-full">How can we help? <span>*</span><textarea name="message" rows="6" required></textarea></label>
+        </div>
+        <label class="consent-row"><input type="checkbox" name="consent" required><span>I consent to SKAR using this information to respond to my inquiry.</span></label>
+        <button class="contact-submit" type="submit">Save inquiry <span aria-hidden="true">→</span></button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="contact-paths" aria-label="Inquiry guidance">
+      <article><small>01</small><h2>Project inquiries</h2><p>Share the decision, system, or operating problem you need help resolving.</p></article>
+      <article><small>02</small><h2>Research</h2><p>Propose a technical topic, research collaboration, or evidence review.</p></article>
+      <article><small>03</small><h2>Careers</h2><p>Introduce your background and the kind of problems you want to help solve.</p></article>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="footer-grid">
+      <div><a class="brand" href="skar.html"><img class="brand-wordmark" src="assets/skar-wordmark.png" alt="Skar Corporation"></a></div>
+      <div><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a></div>
+      <div><h4>Work</h4><a href="solutions.html">Solutions</a><a href="insights.html">Insights &amp; Research</a></div>
+      <div><h4>Connect</h4><a href="contact.html">Contact</a></div>
+    </div>
+    <div class="copyright">© 2026 Skar Corporation.</div>
+  </footer>
+</body>
+</html>
