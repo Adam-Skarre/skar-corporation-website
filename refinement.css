@@ -735,6 +735,23 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .nav-panel-intro{display:none}.nav-panel-links{grid-template-columns:1fr;gap:8px}.nav-panel-links a{min-height:0;padding:16px!important;background:#f5f7f9}
   .header-cta{grid-column:auto;min-width:88px;padding:10px 13px;text-align:center}
 }
+
+/* Industries: engineered rotating system */
+.page-hero-industries:before{inset:0!important;background-image:none!important;background:repeating-linear-gradient(0deg,transparent 0 59px,rgba(138,181,229,.045) 60px),repeating-linear-gradient(90deg,transparent 0 79px,rgba(138,181,229,.045) 80px),radial-gradient(circle at 78% 50%,rgba(58,122,196,.2),transparent 31%)!important;transform:none!important;animation:none!important}
+.page-hero-industries:after{background:linear-gradient(90deg,rgba(4,17,31,.98) 0%,rgba(4,17,31,.88) 48%,rgba(4,17,31,.34) 100%)!important}
+.industry-engine{position:absolute!important;z-index:1!important;right:3.5%;top:50%;width:min(45vw,680px);height:420px;transform:translateY(-50%);overflow:hidden;opacity:.95}
+.turbine-casing{position:absolute;left:50%;top:48%;width:310px;height:310px;transform:translate(-50%,-50%);border:1px solid rgba(139,185,236,.38);border-radius:50%;box-shadow:inset 0 0 70px rgba(62,123,193,.12),0 0 55px rgba(51,112,181,.12)}
+.turbine-casing:before,.turbine-casing:after{content:"";position:absolute;border-radius:50%;inset:22px;border:1px solid rgba(139,185,236,.22)}.turbine-casing:after{inset:50px;border-color:rgba(155,198,243,.32)}
+.turbine-scale{position:absolute;inset:-13px;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(159,198,241,.44) 0deg 1deg,transparent 1.2deg 10deg);mask:radial-gradient(circle,transparent 0 48%,#000 48.5% 50%,transparent 50.5%);opacity:.6}
+.turbine-rotor{position:absolute;z-index:3;left:50%;top:50%;width:0;height:0;animation:turbineRotation 18s linear infinite}
+.turbine-rotor span{position:absolute;left:0;top:-11px;width:112px;height:22px;transform-origin:0 50%;border:1px solid rgba(154,199,246,.52);border-left:0;border-radius:3px 90% 32% 3px;background:linear-gradient(180deg,rgba(109,167,228,.4),rgba(44,98,158,.12));clip-path:polygon(0 25%,100% 0,85% 100%,0 72%)}
+.turbine-rotor span:nth-child(1){transform:rotate(0deg)}.turbine-rotor span:nth-child(2){transform:rotate(45deg)}.turbine-rotor span:nth-child(3){transform:rotate(90deg)}.turbine-rotor span:nth-child(4){transform:rotate(135deg)}.turbine-rotor span:nth-child(5){transform:rotate(180deg)}.turbine-rotor span:nth-child(6){transform:rotate(225deg)}.turbine-rotor span:nth-child(7){transform:rotate(270deg)}.turbine-rotor span:nth-child(8){transform:rotate(315deg)}
+.turbine-rotor i,.turbine-core{position:absolute;z-index:5;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%)}.turbine-rotor i{width:62px;height:62px;border:1px solid #9dc8f5;background:radial-gradient(circle at 42% 38%,#7eb1e9,#285f9a 58%,#0b2d4b 60%);box-shadow:0 0 26px rgba(90,153,222,.48)}.turbine-core{width:14px;height:14px;background:#d4e7fb;box-shadow:0 0 16px rgba(177,216,255,.9)}
+.engine-stream{position:absolute;left:2%;right:1%;height:1px;background:linear-gradient(90deg,transparent,rgba(128,182,238,.12) 8%,rgba(128,182,238,.72) 50%,rgba(128,182,238,.12) 92%,transparent);overflow:hidden}.engine-stream:after{content:"";position:absolute;width:90px;height:1px;background:#c4e0fb;box-shadow:0 0 8px rgba(153,202,248,.8);animation:engineFlow 4.8s linear infinite}.stream-one{top:33%}.stream-two{top:48%}.stream-three{top:63%}.stream-two:after{animation-delay:1.6s}.stream-three:after{animation-delay:3.2s}
+.engine-baseline{position:absolute;left:4%;right:4%;bottom:8px;display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid rgba(137,181,230,.25);color:#6f96be;font-size:8px;font-weight:800;letter-spacing:.16em}.engine-baseline span:last-child{color:#9fc5ed}
+@keyframes turbineRotation{to{transform:rotate(360deg)}}@keyframes engineFlow{from{left:-18%}to{left:108%}}
+@media(max-width:760px){.page-hero-industries:after{background:rgba(4,17,31,.76)!important}.industry-engine{right:50%;top:auto;bottom:5px;width:560px;height:260px;transform:translateX(50%) scale(.68);transform-origin:center bottom;opacity:.5}.turbine-casing{width:270px;height:270px}.turbine-rotor span{width:96px}.engine-baseline{bottom:0}}
+@media(prefers-reduced-motion:reduce){.turbine-rotor,.engine-stream:after{animation:none}}
 @media(max-width:760px){.site-header{top:0}}
 @media(max-width:420px){.site-header{padding-left:14px;padding-right:12px}.nav-brand{width:112px}.nav-wordmark{width:108px}.header-cta{min-width:78px;font-size:10px}.nav-toggle{margin-right:2px}}
 
