@@ -39,9 +39,9 @@
           <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights &amp; Research</strong><a href="insights.html">Overview</a><a href="insights.html#research-library">Research Library</a><a href="insights.html#research-standard">Research Standard</a></div></div>
         </div>
       </div>
-      <a class="mobile-nav-contact" href="https://adamskarre.com/contact.html">Contact <span aria-hidden="true">↗</span></a>
+      <a class="mobile-nav-contact" href="contact.html">Contact <span aria-hidden="true">↗</span></a>
     </nav>
-    <a class="header-cta" href="https://adamskarre.com/contact.html">Contact</a>
+    <a class="header-cta" href="contact.html"${file === 'contact.html' ? ' aria-current="page"' : ''}>Contact</a>
   `;
 
   const nav = header.querySelector('#skar-navigation');
