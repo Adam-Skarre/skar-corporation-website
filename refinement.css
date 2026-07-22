@@ -890,3 +890,26 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .home-intro .section-top{margin-bottom:0}
 .home-intro .section-top .mountain-sketch{top:auto;bottom:-3%;right:0;width:63%;height:104%;background-position:center bottom;background-size:100% 100%}
 @media(max-width:760px){.home-intro .section-top{margin-bottom:0}.home-intro .section-top .mountain-sketch{top:auto;bottom:-2%;right:-18%;width:118%;height:86%;background-size:100% 100%}}
+
+
+
+/* Brand order: full SKAR wordmark by default; mountain emblem on desktop hover */
+.nav-brand{width:154px}
+.nav-emblem{z-index:2;opacity:0;transform:translateY(-50%) scale(.82)}
+.nav-wordmark{opacity:1;clip-path:inset(0 0 0 0);transform:translateY(-50%) translateX(0) scale(1)}
+.nav-brand:after{left:148px}
+@media (min-width:901px) and (hover:hover){
+  .nav-brand:hover{width:48px}
+  .nav-brand:hover .nav-emblem{opacity:1;transform:translateY(-50%) scale(1);transition-delay:.18s}
+  .nav-brand:hover .nav-wordmark{opacity:0;clip-path:inset(0 100% 0 0);transform:translateY(-50%) translateX(-7px) scale(.975)}
+  .nav-brand:hover:after{animation:brandCollapseLine .52s cubic-bezier(.22,.72,.18,1)}
+}
+@keyframes brandCollapseLine{0%{left:148px;opacity:0}16%{opacity:.45}84%{opacity:.7}100%{left:0;opacity:0}}
+@media(max-width:900px){
+  .nav-brand{width:128px}
+  .nav-emblem{opacity:0}
+  .nav-wordmark{opacity:1;clip-path:none;transform:none}
+  .nav-brand:hover,.nav-brand:focus-visible{width:128px}
+  .nav-brand:hover .nav-wordmark,.nav-brand:focus-visible .nav-wordmark{opacity:1;clip-path:none;transform:none}
+}
+@media(max-width:420px){.nav-brand,.nav-brand:hover,.nav-brand:focus-visible{width:112px}}
