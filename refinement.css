@@ -913,3 +913,22 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .nav-brand:hover .nav-wordmark,.nav-brand:focus-visible .nav-wordmark{opacity:1;clip-path:none;transform:none}
 }
 @media(max-width:420px){.nav-brand,.nav-brand:hover,.nav-brand:focus-visible{width:112px}}
+
+
+
+/* Polished brand morph: fixed footprint, crossfade only, no layout shift */
+.nav-brand{width:154px!important;overflow:visible;transition:none!important}
+.nav-brand:after{display:none!important}
+.nav-wordmark{opacity:1;clip-path:none!important;transform:translateY(-50%) scale(1);transition:opacity .24s ease,transform .42s cubic-bezier(.2,.75,.25,1)!important;will-change:opacity,transform}
+.nav-emblem{opacity:0;transform:translateY(-50%) scale(.86);transition:opacity .24s ease,transform .42s cubic-bezier(.2,.75,.25,1)!important;will-change:opacity,transform}
+@media (min-width:901px) and (hover:hover){
+  .nav-brand:hover{width:154px!important}
+  .nav-brand:hover .nav-wordmark{opacity:0;clip-path:none!important;transform:translateY(-50%) scale(.965)}
+  .nav-brand:hover .nav-emblem{opacity:1;transform:translateY(-50%) scale(1);transition-delay:.05s}
+}
+@media(max-width:900px){
+  .nav-brand,.nav-brand:hover,.nav-brand:focus-visible{width:128px!important}
+  .nav-wordmark,.nav-brand:hover .nav-wordmark,.nav-brand:focus-visible .nav-wordmark{opacity:1;clip-path:none!important;transform:none}
+  .nav-emblem,.nav-brand:hover .nav-emblem,.nav-brand:focus-visible .nav-emblem{opacity:0}
+}
+@media(max-width:420px){.nav-brand,.nav-brand:hover,.nav-brand:focus-visible{width:112px!important}}
