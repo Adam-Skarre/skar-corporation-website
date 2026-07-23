@@ -1074,3 +1074,35 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .press-front-columns{margin-top:12px}.press-front-columns b{height:31px}
   .nyc-headline{margin:10px 0 6px;font-size:16px}.nyc-skyline{height:125px}
 }
+
+/* Forward-only press turn: clear the finished leaf without a mirrored rollback */
+.press-book{overflow:visible}
+.press-page{
+  transform-origin:2% 50%;
+  -webkit-backface-visibility:hidden!important;
+  backface-visibility:hidden!important;
+  animation-timing-function:cubic-bezier(.58,.02,.22,1)!important;
+}
+.press-page:before{display:none}
+@keyframes pressLeaf{
+  0%,10%{
+    opacity:1;
+    transform:translate3d(0,0,0) rotateY(-3deg) rotateZ(-.7deg);
+    filter:brightness(1);
+  }
+  17%{
+    opacity:1;
+    transform:translate3d(-5px,-3px,10px) rotateY(-72deg) rotateZ(.2deg);
+    filter:brightness(.98);
+  }
+  21%,99%{
+    opacity:0;
+    transform:translate3d(-7px,-4px,8px) rotateY(-88deg) rotateZ(.4deg);
+    filter:brightness(.96);
+  }
+  100%{
+    opacity:0;
+    transform:translate3d(0,0,0) rotateY(-3deg) rotateZ(-.7deg);
+    filter:brightness(1);
+  }
+}
