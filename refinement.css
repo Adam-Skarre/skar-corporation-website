@@ -987,7 +987,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .way-copy{position:relative;z-index:3;display:flex;flex-direction:column;justify-content:center;padding:92px 4vw 100px 8vw}
 .way-copy .eyebrow,.insight-subhero .eyebrow{color:#8db8ef}
 .way-copy h1,.insight-subhero h1{margin:24px 0 28px;color:#fff;font-size:clamp(72px,8.4vw,132px);font-weight:650;line-height:.78;letter-spacing:-.07em}
-.way-copy h1 span,.insight-subhero h1 span{color:#6d9eed}
+.way-copy h1 .blue-type,.insight-subhero h1 .blue-type{color:transparent}
 .way-copy>p:not(.eyebrow),.insight-subhero>div>p:not(.eyebrow){max-width:590px;color:#c4d1dc;font-size:18px;line-height:1.65}
 .way-copy .button{width:max-content;margin-top:28px}
 .way-terrain{position:relative;min-height:690px;overflow:hidden;background:radial-gradient(circle at 62% 38%,rgba(77,133,202,.22),transparent 25%),linear-gradient(145deg,#0c3153,#041321)}
