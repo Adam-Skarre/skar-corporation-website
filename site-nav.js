@@ -5,7 +5,7 @@
   const file = (location.pathname.split('/').pop() || 'skar.html').toLowerCase();
   const firmActive = ['about.html', 'careers.html'].includes(file);
   const workActive = ['solutions.html', 'industries.html', 'services.html', 'technology.html'].includes(file);
-  const insightsActive = file === 'insights.html' || file.startsWith('report-');
+  const insightsActive = ['insights.html', 'research.html', 'market-views.html', 'way-through.html', 'news.html'].includes(file) || file.startsWith('report-');
 
   const researchAgenda = document.querySelector('.research-agenda');
   const researchStandard = document.querySelector('.research-method');
@@ -34,9 +34,9 @@
         </div>
       </div>
       <div class="nav-group${insightsActive ? ' active' : ''}">
-        <button class="nav-group-trigger" type="button" aria-expanded="false">Resources <span aria-hidden="true">⌄</span></button>
+        <button class="nav-group-trigger" type="button" aria-expanded="false">Insights <span aria-hidden="true">⌄</span></button>
         <div class="nav-panel">
-          <div class="nav-panel-links"><div class="nav-link-column"><strong>Resources</strong><a href="insights.html">Insights &amp; Research</a><a href="insights.html#research-library">Research Library</a><a href="insights.html#research-standard">Research Standard</a></div></div>
+          <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights</strong><a href="way-through.html">The Way Through</a><a href="research.html">Research</a><a href="market-views.html">Market Views</a><a href="news.html">News</a></div></div>
         </div>
       </div>
       <a class="mobile-nav-contact" href="contact.html">Contact <span aria-hidden="true">↗</span></a>
