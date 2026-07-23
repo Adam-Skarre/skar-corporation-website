@@ -39,7 +39,7 @@
           <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights</strong><a href="way-through.html">The Way Through</a><a href="research.html">Research</a><a href="market-views.html">Market Views</a><a href="news.html">News</a></div></div>
         </div>
       </div>
-      <a class="mobile-nav-contact" href="contact.html">Contact <span aria-hidden="true">↗</span></a>
+      <a class="mobile-nav-contact" href="contact.html"${file === 'contact.html' ? ' aria-current="page"' : ''}>Contact <span aria-hidden="true">↗</span></a>
     </nav>
     <a class="header-cta" href="contact.html"${file === 'contact.html' ? ' aria-current="page"' : ''}>Contact</a>
   `;
