@@ -1078,33 +1078,33 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 /* Forward-only press turn: clear the finished leaf without a mirrored rollback */
 .press-book{overflow:visible}
 .press-page{
-  transform-origin:2% 50%;
+  transform-origin:50% 2%;
   -webkit-backface-visibility:hidden!important;
   backface-visibility:hidden!important;
   animation-duration:15s!important;
-  animation-timing-function:cubic-bezier(.58,.02,.22,1)!important;
+  animation-timing-function:cubic-bezier(.55,.03,.18,1)!important;
 }
 .press-page-1{animation-delay:0s}.press-page-2{animation-delay:3s}.press-page-3{animation-delay:6s}.press-page-4{animation-delay:9s}.press-page-5{animation-delay:12s}
 .press-page:before{display:none}
 @keyframes pressLeaf{
   0%,11.5%{
     opacity:1;
-    transform:translate3d(0,0,0) rotateY(-3deg) rotateZ(-.7deg);
+    transform:translate3d(0,0,0) rotateX(0deg) rotateZ(-.7deg);
     filter:brightness(1);
   }
   18.5%{
     opacity:1;
-    transform:translate3d(-4px,-3px,10px) rotateY(-76deg) rotateZ(.1deg);
+    transform:translate3d(0,-4px,12px) rotateX(74deg) rotateZ(-.15deg);
     filter:brightness(.98);
   }
   20%,99.8%{
     opacity:0;
-    transform:translate3d(-5px,-3px,8px) rotateY(-89deg) rotateZ(.2deg);
+    transform:translate3d(0,-6px,8px) rotateX(89deg) rotateZ(0deg);
     filter:brightness(.96);
   }
   100%{
     opacity:0;
-    transform:translate3d(0,0,0) rotateY(-3deg) rotateZ(-.7deg);
+    transform:translate3d(0,0,0) rotateX(0deg) rotateZ(-.7deg);
     filter:brightness(1);
   }
 }
