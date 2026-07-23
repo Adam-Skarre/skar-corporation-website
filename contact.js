@@ -4,6 +4,7 @@
 
   const status = form.querySelector('.form-status');
   const storageKey = 'skar-contact-inquiry';
+  const contactAddress = 'contact@skarcorporation.com';
 
   function getValues() {
     return Object.fromEntries(new FormData(form).entries());
@@ -36,8 +37,26 @@
       status.textContent = 'Please complete the required fields.';
       return;
     }
-    localStorage.setItem(storageKey, JSON.stringify(getValues()));
-    status.textContent = 'Inquiry saved on this device. Online delivery will be enabled when SKAR’s business email is active.';
+    const values = getValues();
+    localStorage.setItem(storageKey, JSON.stringify(values));
+
+    const name = `${values.firstName || ''} ${values.lastName || ''}`.trim();
+    const subject = `${values.inquiryType || 'General inquiry'} — ${values.company || name}`;
+    const body = [
+      'SKAR Corporation inquiry',
+      '',
+      `Name: ${name}`,
+      `Email: ${values.email || ''}`,
+      `Company: ${values.company || 'Not provided'}`,
+      `Job title: ${values.jobTitle || 'Not provided'}`,
+      `Inquiry type: ${values.inquiryType || ''}`,
+      '',
+      'How can SKAR help?',
+      values.message || ''
+    ].join('\n');
+
+    status.textContent = `Opening a new email to ${contactAddress}. Review it, then select Send.`;
     form.querySelector('.contact-submit').classList.add('saved');
+    window.location.href = `mailto:${contactAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 })();
