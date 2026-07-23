@@ -1046,10 +1046,12 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .story-tab{width:100%;min-width:0!important;min-height:78px;margin:0!important;padding:16px 8px 14px!important;border-right:1px solid #e0e5e9!important;font-size:0!important;text-align:left}
   .story-tab:last-child{border-right:0!important}
   .story-tab b{display:block;margin:0;font-size:clamp(7px,2.25vw,9px)!important;line-height:1.28;letter-spacing:.07em;overflow-wrap:anywhere}
-  .story-tab:before,.story-tab:after{top:0;height:4px}
-  .story-tab.active:after{width:0!important;animation:storyProgress 7s linear forwards!important}
+  .story-tab:before,.story-tab:after{top:0;height:5px}
+  .story-tab:after{width:100%!important;transform:scaleX(0);transform-origin:left center;will-change:transform}
+  .story-tab.active:after{width:100%!important;animation:storyProgressMobile 7s linear forwards!important}
 }
-@media(prefers-reduced-motion:reduce){.mobile-nav-contact:before,.story-tab.active:after{animation:none!important}.story-tab.active:after{width:100%!important}}
+@keyframes storyProgressMobile{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.mobile-nav-contact:before,.story-tab.active:after{animation:none!important}.story-tab.active:after{width:100%!important;transform:scaleX(1)}}
 
 /* Printed-sheet realism: prepared next page, visible reverse, and permanent edition below */
 .press-book:before{content:"";position:absolute;z-index:0;inset:24px 2px 8px 32px;border:1px solid rgba(167,204,234,.5);background:repeating-linear-gradient(0deg,transparent 0 10px,rgba(16,58,91,.12) 11px),linear-gradient(145deg,#d9ebf7,#9fc4df);box-shadow:0 28px 65px rgba(0,8,18,.34);transform:rotateZ(1.8deg)}
