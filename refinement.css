@@ -969,3 +969,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 }
 @media(max-width:420px){.nav-brand,.nav-brand:hover,.nav-brand:focus-visible{width:112px!important}.nav-wordmark{width:108px}}
 @media(prefers-reduced-motion:reduce){.nav-brand,.nav-emblem,.nav-wordmark{transition:none!important}}
+
+/* Resources pathways: guide readers from evidence to a business conversation */
+.resource-pathways{background:#f5f7f9;border-bottom:1px solid #e1e6ea}
+.resource-cards{grid-template-columns:repeat(3,1fr)}
+.resource-cards .card{display:flex;flex-direction:column;min-height:310px}
+.resource-cards .card h3{margin-top:38px}
+.resource-cards .card a{margin-top:auto;color:#205cad}
+.resource-card-contact{background:#0b3156;color:#fff;border-color:#0b3156}
+.resource-card-contact small,.resource-card-contact h3,.resource-card-contact p,.resource-card-contact a{color:#fff}
+.resource-card-contact:hover{border-top-color:#6fa2f2}
+@media(max-width:900px){.resource-cards{grid-template-columns:1fr}.resource-cards .card{min-height:250px}}

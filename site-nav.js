@@ -34,9 +34,9 @@
         </div>
       </div>
       <div class="nav-group${insightsActive ? ' active' : ''}">
-        <button class="nav-group-trigger" type="button" aria-expanded="false">Insights &amp; Research <span aria-hidden="true">⌄</span></button>
+        <button class="nav-group-trigger" type="button" aria-expanded="false">Resources <span aria-hidden="true">⌄</span></button>
         <div class="nav-panel">
-          <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights &amp; Research</strong><a href="insights.html">Overview</a><a href="insights.html#research-library">Research Library</a><a href="insights.html#research-standard">Research Standard</a></div></div>
+          <div class="nav-panel-links"><div class="nav-link-column"><strong>Resources</strong><a href="insights.html">Insights &amp; Research</a><a href="insights.html#research-library">Research Library</a><a href="insights.html#research-standard">Research Standard</a></div></div>
         </div>
       </div>
       <a class="mobile-nav-contact" href="contact.html">Contact <span aria-hidden="true">↗</span></a>
