@@ -1050,3 +1050,25 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .story-tab.active:after{width:0!important;animation:storyProgress 7s linear forwards!important}
 }
 @media(prefers-reduced-motion:reduce){.mobile-nav-contact:before,.story-tab.active:after{animation:none!important}.story-tab.active:after{width:100%!important}}
+
+/* Printed-sheet realism: prepared next page, visible reverse, and permanent edition below */
+.press-book:before{content:"";position:absolute;z-index:0;inset:24px 2px 8px 32px;border:1px solid rgba(167,204,234,.5);background:repeating-linear-gradient(0deg,transparent 0 10px,rgba(16,58,91,.12) 11px),linear-gradient(145deg,#d9ebf7,#9fc4df);box-shadow:0 28px 65px rgba(0,8,18,.34);transform:rotateZ(1.8deg)}
+.press-page{overflow:visible!important;border:0!important;background:transparent!important;box-shadow:none!important;transform-style:preserve-3d;-webkit-backface-visibility:visible!important;backface-visibility:visible!important}
+.press-page>*{position:relative;z-index:2;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.press-page:before{content:"";position:absolute;z-index:4;inset:0;border:1px solid rgba(112,151,181,.5);background:linear-gradient(#ecf4f8 0 17%,transparent 17%),repeating-linear-gradient(0deg,#d7e6ef 0 7px,#b7cfdf 8px 9px),linear-gradient(145deg,#e5f0f6,#b7d1e2);box-shadow:inset 0 0 0 12px rgba(255,255,255,.16),-12px 18px 34px rgba(4,24,42,.24);transform:rotateY(180deg) translateZ(1px);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.press-page:after{z-index:3;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+@keyframes pressLeaf{0%,10%{transform:translate(0,0) rotateY(-3deg) rotateZ(-.7deg);filter:brightness(1)}21%,100%{transform:translate(-12px,-5px) rotateY(-158deg) rotateZ(1.2deg);filter:brightness(.94)}}
+.press-page-1{background:linear-gradient(145deg,#f3f7f9,#c8dce8)!important}.press-page-2{background:linear-gradient(145deg,#eaf4fa,#b7d5e9)!important}.press-page-3{background:linear-gradient(145deg,#edf5fa,#c7dceb)!important}.press-page-4{background:linear-gradient(145deg,#f5f2e8,#cedce5)!important}.press-page-5{background:linear-gradient(145deg,#e4f0f8,#a9cce7)!important}
+.press-date-line{display:flex;justify-content:space-between;margin-top:8px;color:#284b66;font-size:6px;font-weight:850;letter-spacing:.1em}
+.press-lead-headline{margin:24px 0 8px;color:#0b3155;font-family:Georgia,"Times New Roman",serif;font-size:25px;font-weight:800;line-height:.93;letter-spacing:-.035em}
+.press-byline{color:#315b7a;font-size:5.5px;font-weight:900;line-height:1.35;letter-spacing:.13em}
+.press-front-columns{margin-top:18px}.press-front-columns b{height:44px}.press-front-columns span{height:3px;margin:6px 0}
+.nyc-headline{margin:15px 0 8px;color:#0a3153;font-family:Georgia,"Times New Roman",serif;font-size:22px;font-weight:800;letter-spacing:-.035em;text-align:center}
+.nyc-skyline{display:block;width:100%;height:177px;border:1px solid rgba(21,66,99,.32);background:#b8d9ee}
+.nyc-skyline .liberty{filter:drop-shadow(2px 2px 0 rgba(255,255,255,.25))}
+@media(max-width:600px){
+  .press-book:before{inset:17px -1px 6px 20px}
+  .press-date-line{font-size:5px}.press-lead-headline{margin-top:17px;font-size:18px}.press-byline{font-size:4.5px}
+  .press-front-columns{margin-top:12px}.press-front-columns b{height:31px}
+  .nyc-headline{margin:10px 0 6px;font-size:16px}.nyc-skyline{height:125px}
+}
