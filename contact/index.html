@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Contact Skar Corporation about consulting, engineering, strategy, technology, research, or careers.">
+  <title>Contact | Skar Corporation</title>
+  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/refinement.css?v=20260723-4">
+  <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
+  <link rel="shortcut icon" href="/assets/skar-favicon.svg">
+  <script src="/site-nav.js?v=20260723-1" defer></script>
+  <script src="/contact.js?v=20260723-2" defer></script>
+</head>
+<body>
+  <div class="utility">Knowledge · Vision · Engineering</div>
+  <header class="site-header"></header>
+  <main class="contact-page">
+    <section class="contact-hero">
+      <div class="contact-intro">
+        <p class="eyebrow">Contact</p>
+        <h1>Start a<br><span class="blue-type">conversation.</span></h1>
+        <p class="contact-lead">Bring us the decision, system, or operating challenge that matters. We will help determine the clearest path forward.</p>
+        <div class="contact-availability">
+          <span class="contact-availability-label">Direct inquiries</span>
+          <a href="mailto:contact@skarcorporation.com">contact@skarcorporation.com</a>
+          <p>For new engagements, partnerships, research, and general correspondence.</p>
+        </div>
+      </div>
+
+      <form class="contact-form" id="skar-contact-form" novalidate>
+        <div class="contact-form-heading">
+          <div>
+            <p class="contact-form-kicker">Engagement brief</p>
+            <h2>Tell us what needs to move forward.</h2>
+          </div>
+          <span>Required fields *</span>
+        </div>
+        <div class="form-grid">
+          <label>First name <span>*</span><input type="text" name="firstName" autocomplete="given-name" required></label>
+          <label>Last name <span>*</span><input type="text" name="lastName" autocomplete="family-name" required></label>
+          <label>Email address <span>*</span><input type="email" name="email" autocomplete="email" required></label>
+          <label>Company<input type="text" name="company" autocomplete="organization"></label>
+          <label>Job title<input type="text" name="jobTitle" autocomplete="organization-title"></label>
+          <label>Inquiry type <span>*</span>
+            <select name="inquiryType" required>
+              <option value="">Select an area</option>
+              <option>Consulting and strategy</option>
+              <option>Engineering and systems</option>
+              <option>Technology and operations</option>
+              <option>Data and decision support</option>
+              <option>Research and collaboration</option>
+              <option>Careers</option>
+              <option>General inquiry</option>
+            </select>
+          </label>
+          <label class="form-full">How can we help? <span>*</span><textarea name="message" rows="6" required></textarea></label>
+        </div>
+        <label class="consent-row"><input type="checkbox" name="consent" required><span>I consent to SKAR using this information to respond to my inquiry.</span></label>
+        <button class="contact-submit" type="submit">Prepare email <span aria-hidden="true">→</span></button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+        <p class="contact-form-note">Selecting “Prepare email” opens your email application with this brief addressed to SKAR. You will review and send it from there.</p>
+      </form>
+    </section>
+
+    <section class="contact-paths" aria-label="Inquiry guidance">
+      <article><small>01 · ENGAGEMENTS</small><h2>Complex work, clearly framed.</h2><p>Share the decision, system, or operating constraint you need help resolving.</p></article>
+      <article><small>02 · COLLABORATION</small><h2>Evidence with a purpose.</h2><p>Propose a research topic, strategic partnership, or technical evidence review.</p></article>
+      <article><small>03 · TALENT</small><h2>Build what comes next.</h2><p>Introduce your background and the consequential problems you want to help solve.</p></article>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="footer-grid">
+      <div><a class="brand" href="/"><img class="brand-wordmark" src="/assets/skar-wordmark.png" alt="Skar Corporation"></a></div>
+      <div><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
+      <div><h4>Work</h4><a href="/solutions/">Solutions</a><a href="/insights/">Insights</a></div>
+      <div><h4>Connect</h4><a href="/contact/">Contact</a><a href="mailto:contact@skarcorporation.com">Email SKAR</a></div>
+    </div>
+    <div class="copyright">© 2026 Skar Corporation. All rights reserved.</div>
+  </footer>
+</body>
+</html>
