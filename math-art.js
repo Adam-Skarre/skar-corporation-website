@@ -45,6 +45,7 @@
         this.ctx.clearRect(0, 0, this.width, this.height);
         if (this.kind === 'torus') this.drawTorus(t);
         else if (this.kind === 'sphere') this.drawSphere(t);
+        else if (this.kind === 'research') this.drawResearch(t);
         else if (this.kind === 'market') this.drawMarket(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else this.drawFlow(t);
@@ -210,6 +211,97 @@
     }
 
     drawResearch(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .52, cy = h * .5;
+      const scale = Math.min(w, h) * .38;
+      this.glow(cx, cy, Math.min(w, h) * .58);
+      ctx.globalCompositeOperation = 'lighter';
+
+      const crownCount = w < 520 ? 12800 : 22000;
+      const golden = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < crownCount; i++) {
+        const radial = Math.sqrt((i + .5) / crownCount);
+        const theta = i * golden;
+        const scallop =
+          .06 * Math.sin(theta * 5 - t * 7) +
+          .032 * Math.sin(theta * 11 + radial * 19 + t * 5) +
+          .016 * Math.cos(theta * 23 - radial * 31 - t * 4);
+        const shell = 1 + scallop * (.42 + radial);
+        const x = Math.cos(theta) * radial * 1.48 * shell;
+        const z = Math.sin(theta) * radial * 1.12 * shell;
+        const dome = Math.pow(Math.max(0, 1 - radial * radial), .52);
+        const y = .58 * dome - .27 * radial * radial +
+          .045 * Math.sin(theta * 7 + radial * 24 - t * 8) +
+          .022 * Math.cos(theta * 19 - t * 5);
+        const point = this.rotateProject(
+          x, y, z,
+          -.24 + .055 * Math.sin(t * 2),
+          -.28 + t * .22,
+          scale, cx, cy
+        );
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.3) / 2.6));
+        const ring = .5 + .5 * Math.sin(radial * 86 + theta * 3 - t * 11);
+        const fineRing = .5 + .5 * Math.sin(radial * 147 - theta * 5 + t * 7);
+        const vein = Math.pow(.5 + .5 * Math.sin(theta * 13 + radial * 18 + t * 4), 9);
+        const alpha = .05 + depth * .34 + ring * .1 + fineRing * .045 + vein * .17;
+        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - radial * 14 + t * 3), 8);
+        const red = Math.round(108 + warm * 116);
+        const green = Math.round(181 + warm * 49);
+        const blue = Math.round(232 - warm * 61);
+        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
+        const size = (.36 + depth * .82 + vein * .4 + fineRing * .12) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // A denser folded underside preserves the floating crown silhouette.
+      const folds = w < 520 ? 6800 : 11800;
+      for (let i = 0; i < folds; i++) {
+        const radial = Math.sqrt((i + .5) / folds);
+        const theta = i * golden * 1.07;
+        const lobe = .73 + .18 * Math.sin(theta * 5 + t * 4) +
+          .075 * Math.sin(theta * 10 - radial * 17) +
+          .035 * Math.cos(theta * 20 + radial * 29 - t * 6);
+        const x = Math.cos(theta) * radial * 1.32 * lobe;
+        const z = Math.sin(theta) * radial * 1.02 * lobe;
+        const hollow = Math.pow(1 - radial, 1.28);
+        const y = -.2 - hollow * (.4 + .14 * Math.sin(theta * 5 - t * 6)) +
+          .045 * Math.sin(radial * 31 + theta * 4 + t * 7);
+        const point = this.rotateProject(
+          x, y, z,
+          -.24 + .055 * Math.sin(t * 2),
+          -.28 + t * .22,
+          scale, cx, cy
+        );
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.25) / 2.5));
+        const filament = Math.pow(.5 + .5 * Math.sin(theta * 10 + radial * 39 - t * 8), 7);
+        ctx.fillStyle = `rgba(${136 + filament * 74},${188 + filament * 46},${220 + filament * 27},${.04 + depth * .28 + filament * .21})`;
+        const size = (.36 + depth * .73 + filament * .34) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // Fine trajectories add analytical depth without changing the form.
+      ctx.lineWidth = Math.max(.5, this.dpr * .52);
+      for (let path = 0; path < 7; path++) {
+        ctx.beginPath();
+        const phase = path / 7 * TAU + t * (.3 + path * .025);
+        for (let step = 0; step <= 150; step++) {
+          const u = step / 150 * TAU;
+          const radius = 1.04 + .1 * Math.sin(u * 3 + phase);
+          const x = Math.cos(u) * radius * 1.36;
+          const y = .01 + .36 * Math.sin(u * (1 + path % 2) + phase);
+          const z = Math.sin(u) * radius * .91;
+          const point = this.rotateProject(x, y, z, -.24, -.28 + t * .22, scale, cx, cy);
+          if (step === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        }
+        ctx.strokeStyle = `rgba(177,219,239,${.032 + path * .01})`;
+        ctx.stroke();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawResearchLegacy(t) {
       const ctx = this.ctx;
       const w = this.width, h = this.height;
       const cx = w * .53, cy = h * .49;
