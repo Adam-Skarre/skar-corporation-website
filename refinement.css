@@ -780,6 +780,23 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(max-width:760px){.page-hero-industries:after{background:rgba(4,17,31,.76)!important}.industry-engine{right:50%;top:auto;bottom:5px;width:560px;height:260px;transform:translateX(50%) scale(.68);transform-origin:center bottom;opacity:.5}.turbine-casing{width:270px;height:270px}.turbine-rotor span{width:96px}.engine-baseline{bottom:0}}
 @media(prefers-reduced-motion:reduce){.turbine-rotor,.engine-stream:after{animation:none}}
 
+/* Mathematical point-field heroes */
+.math-art-shell{isolation:isolate}
+.math-art-canvas{display:block;position:absolute;z-index:3;width:100%;height:100%;pointer-events:none}
+.decision-motion.math-art-shell:before{opacity:.35}
+.decision-motion.math-art-shell:after{background:linear-gradient(90deg,rgba(4,17,31,.96) 0%,rgba(4,17,31,.69) 43%,rgba(4,17,31,.08) 70%)}
+.math-art-torus{right:0;top:4%;width:58%;height:92%;filter:drop-shadow(0 0 18px rgba(91,193,218,.12))}
+.math-art-wings{right:0;top:3%;width:59%;height:94%;filter:drop-shadow(0 0 16px rgba(112,190,225,.13))}
+.math-art-flow{right:1%;top:2%;width:55%;height:96%;filter:drop-shadow(0 0 18px rgba(91,193,218,.13))}
+.industry-engine.math-art-shell{right:3.5%;top:50%;width:min(45vw,680px);height:420px;transform:translateY(-50%);opacity:1}
+.math-art-sphere{inset:0;filter:drop-shadow(0 0 20px rgba(90,166,220,.14))}
+@media(max-width:900px){.math-art-torus,.math-art-wings,.math-art-flow{right:-8%;width:68%;opacity:.7}}
+@media(max-width:760px){
+  .math-art-torus,.math-art-wings,.math-art-flow{right:-34%;top:14%;width:105%;height:74%;opacity:.42}
+  .industry-engine.math-art-shell{right:50%;top:auto;bottom:-7px;width:560px;height:270px;transform:translateX(50%) scale(.68);transform-origin:center bottom;opacity:.5}
+}
+@media(prefers-reduced-motion:reduce){.math-art-canvas{opacity:.72}}
+
 /* Brand reveal: measured expansion with no navigation shift */
 .nav-brand{width:48px;transition:width .52s cubic-bezier(.22,.72,.18,1);will-change:width}
 .nav-emblem{left:1px;transition:opacity .24s ease .12s,transform .42s cubic-bezier(.22,.72,.18,1);will-change:opacity,transform}
