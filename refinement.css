@@ -790,10 +790,13 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .math-art-flow{right:1%;top:2%;width:55%;height:96%;filter:drop-shadow(0 0 18px rgba(91,193,218,.13))}
 .industry-engine.math-art-shell{right:3.5%;top:50%;width:min(45vw,680px);height:420px;transform:translateY(-50%);opacity:1}
 .math-art-sphere{inset:0;filter:drop-shadow(0 0 20px rgba(90,166,220,.14))}
+.research-art-shell{position:absolute!important;z-index:1!important;right:3.5%;top:50%;width:min(47vw,720px);height:430px;transform:translateY(-50%);overflow:hidden;opacity:.96}
+.math-art-research{inset:0;filter:drop-shadow(0 0 22px rgba(100,181,222,.16))}
 @media(max-width:900px){.math-art-torus,.math-art-wings,.math-art-flow{right:-8%;width:68%;opacity:.7}}
 @media(max-width:760px){
   .math-art-torus,.math-art-wings,.math-art-flow{right:-34%;top:14%;width:105%;height:74%;opacity:.42}
   .industry-engine.math-art-shell{right:50%;top:auto;bottom:-7px;width:560px;height:270px;transform:translateX(50%) scale(.68);transform-origin:center bottom;opacity:.5}
+  .research-art-shell{right:50%;top:auto;bottom:0;width:560px;height:270px;transform:translateX(50%) scale(.68);transform-origin:center bottom;opacity:.54}
 }
 @media(prefers-reduced-motion:reduce){.math-art-canvas{opacity:.72}}
 
