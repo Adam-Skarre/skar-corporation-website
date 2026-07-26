@@ -124,7 +124,7 @@
       const ctx = this.ctx;
       const w = this.width, h = this.height;
       const cx = w * .53, cy = h * .49;
-      const scale = Math.min(w, h) * .32;
+      const scale = Math.min(w, h) * .38;
       this.glow(cx, cy, Math.min(w, h) * .5);
       ctx.globalCompositeOperation = 'lighter';
 
