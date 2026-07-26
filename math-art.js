@@ -45,6 +45,7 @@
         this.ctx.clearRect(0, 0, this.width, this.height);
         if (this.kind === 'torus') this.drawTorus(t);
         else if (this.kind === 'sphere') this.drawSphere(t);
+        else if (this.kind === 'research') this.drawResearch(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else this.drawFlow(t);
       }
@@ -203,6 +204,94 @@
         ctx.strokeStyle = `rgba(119,196,224,${(1 - phase) * .075})`;
         ctx.beginPath();
         ctx.ellipse(cx, cy, radius, radius * (.94 - phase * .04), 0, 0, TAU);
+        ctx.stroke();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawResearch(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .53, cy = h * .49;
+      const scale = Math.min(w, h) * .31;
+      this.glow(cx, cy, Math.min(w, h) * .54);
+      ctx.globalCompositeOperation = 'lighter';
+
+      const crownCount = w < 520 ? 9200 : 15800;
+      const golden = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < crownCount; i++) {
+        const radial = Math.sqrt((i + .5) / crownCount);
+        const theta = i * golden;
+        const scallop = .045 * Math.sin(theta * 5 - t * 7) +
+          .026 * Math.sin(theta * 11 + radial * 18 + t * 5);
+        const shell = 1 + scallop * (.35 + radial);
+        const x = Math.cos(theta) * radial * 1.38 * shell;
+        const z = Math.sin(theta) * radial * 1.08 * shell;
+        const dome = Math.pow(Math.max(0, 1 - radial * radial), .55);
+        const y = .5 * dome - .22 * radial * radial +
+          .035 * Math.sin(theta * 7 + radial * 23 - t * 8) +
+          .018 * Math.cos(theta * 19 - t * 5);
+
+        const point = this.rotateProject(
+          x, y, z,
+          -.24 + .055 * Math.sin(t * 2),
+          -.28 + t * .22,
+          scale, cx, cy
+        );
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.25) / 2.5));
+        const ring = .5 + .5 * Math.sin(radial * 72 + theta * 3 - t * 10);
+        const vein = Math.pow(.5 + .5 * Math.sin(theta * 13 + radial * 17 + t * 4), 8);
+        const alpha = .07 + depth * .36 + ring * .1 + vein * .16;
+        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - radial * 13 + t * 3), 7);
+        const red = Math.round(116 + warm * 108);
+        const green = Math.round(185 + warm * 43);
+        const blue = Math.round(231 - warm * 56);
+        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
+        const size = (.4 + depth * .86 + vein * .34) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // A folded underside gives the cloud the suspended, organic No.055 silhouette.
+      const folds = w < 520 ? 4200 : 7600;
+      for (let i = 0; i < folds; i++) {
+        const radial = Math.sqrt((i + .5) / folds);
+        const theta = i * golden * 1.07;
+        const lobe = .72 + .16 * Math.sin(theta * 5 + t * 4) +
+          .07 * Math.sin(theta * 10 - radial * 15);
+        const x = Math.cos(theta) * radial * 1.22 * lobe;
+        const z = Math.sin(theta) * radial * .96 * lobe;
+        const hollow = Math.pow(1 - radial, 1.35);
+        const y = -.2 - hollow * (.34 + .12 * Math.sin(theta * 5 - t * 6)) +
+          .035 * Math.sin(radial * 28 + theta * 4 + t * 7);
+        const point = this.rotateProject(
+          x, y, z,
+          -.24 + .055 * Math.sin(t * 2),
+          -.28 + t * .22,
+          scale, cx, cy
+        );
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.2) / 2.4));
+        const filament = Math.pow(.5 + .5 * Math.sin(theta * 10 + radial * 34 - t * 8), 6);
+        ctx.fillStyle = `rgba(${142 + filament * 66},${191 + filament * 43},${220 + filament * 25},${.045 + depth * .29 + filament * .18})`;
+        const size = (.38 + depth * .74 + filament * .3) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // Sparse analytical trajectories cut through the softer particle body.
+      ctx.lineWidth = Math.max(.55, this.dpr * .55);
+      for (let path = 0; path < 4; path++) {
+        ctx.beginPath();
+        const phase = path / 4 * TAU + t * (.35 + path * .035);
+        for (let step = 0; step <= 120; step++) {
+          const u = step / 120 * TAU;
+          const radius = 1.02 + .08 * Math.sin(u * 3 + phase);
+          const x = Math.cos(u) * radius * 1.25;
+          const y = .02 + .32 * Math.sin(u * (1 + path % 2) + phase);
+          const z = Math.sin(u) * radius * .84;
+          const point = this.rotateProject(x, y, z, -.24, -.28 + t * .22, scale, cx, cy);
+          if (step === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        }
+        ctx.strokeStyle = `rgba(177,219,239,${.045 + path * .012})`;
         ctx.stroke();
       }
       ctx.globalCompositeOperation = 'source-over';
