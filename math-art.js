@@ -45,7 +45,6 @@
         this.ctx.clearRect(0, 0, this.width, this.height);
         if (this.kind === 'torus') this.drawTorus(t);
         else if (this.kind === 'sphere') this.drawSphere(t);
-        else if (this.kind === 'research') this.drawResearch(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else this.drawFlow(t);
       }
@@ -204,120 +203,6 @@
         ctx.strokeStyle = `rgba(119,196,224,${(1 - phase) * .075})`;
         ctx.beginPath();
         ctx.ellipse(cx, cy, radius, radius * (.94 - phase * .04), 0, 0, TAU);
-        ctx.stroke();
-      }
-      ctx.globalCompositeOperation = 'source-over';
-    }
-
-    drawResearch(t) {
-      const ctx = this.ctx;
-      const w = this.width, h = this.height;
-      const cx = w * .53, cy = h * .49;
-      const scale = Math.min(w, h) * .29;
-      this.glow(cx, cy, Math.min(w, h) * .54);
-      ctx.globalCompositeOperation = 'lighter';
-
-      const golden = Math.PI * (3 - Math.sqrt(5));
-      // No.055's upper chamber is a compact ovoid, not a mirrored lower lobe.
-      const upperCount = w < 520 ? 7200 : 11800;
-      for (let i = 0; i < upperCount; i++) {
-        const s = (i + .5) / upperCount;
-        const vertical = -1 + s * 2;
-        const theta = i * golden;
-        const envelope = Math.pow(Math.sin(Math.PI * s), .48);
-        const scallop =
-          .055 * Math.sin(theta * 5 + s * 15 - t * 6) +
-          .025 * Math.sin(theta * 12 - s * 27 + t * 8);
-        const radius = (.055 + envelope * .76) * (1 + scallop);
-        const x = Math.cos(theta) * radius * 1.12;
-        const z = Math.sin(theta) * radius * .86;
-        const y = -.68 + vertical * .52 +
-          .035 * Math.sin(theta * 5 + s * 21 - t * 7) * envelope;
-        const point = this.rotateProject(
-          x, y, z,
-          -.07 + .035 * Math.sin(t * 2),
-          -.22 + t * .2,
-          scale, cx, cy
-        );
-        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
-        const latitudeBand = .5 + .5 * Math.sin(s * 78 + theta * 3 - t * 10);
-        const vein = Math.pow(.5 + .5 * Math.sin(theta * 13 + s * 25 + t * 4), 9);
-        const alpha = .055 + depth * .35 + latitudeBand * .09 + vein * .18;
-        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - s * 19 + t * 3), 8);
-        const red = Math.round(108 + warm * 116);
-        const green = Math.round(181 + warm * 47);
-        const blue = Math.round(232 - warm * 59);
-        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
-        const size = (.38 + depth * .82 + vein * .4) * this.dpr;
-        ctx.fillRect(point[0], point[1], size, size);
-      }
-
-      // The lower chamber opens downward into a broad, two-lobed canopy.
-      const lowerCount = w < 520 ? 9800 : 16600;
-      for (let i = 0; i < lowerCount; i++) {
-        const s = (i + .5) / lowerCount;
-        const theta = i * golden * 1.07;
-        const flare = Math.pow(Math.sin(s * Math.PI * .72), .58);
-        const twinLobe = 1 + .17 * Math.cos(theta * 2) +
-          .055 * Math.sin(theta * 5 - s * 18 - t * 5);
-        const radius = (.06 + flare * 1.04) * twinLobe;
-        const x = Math.cos(theta) * radius * 1.18;
-        const z = Math.sin(theta) * radius * .76;
-        const y = -.1 + s * 1.28 +
-          .12 * Math.cos(theta * 2) * flare +
-          .035 * Math.sin(theta * 7 + s * 25 - t * 7);
-        const point = this.rotateProject(
-          x, y, z,
-          -.07 + .035 * Math.sin(t * 2),
-          -.22 + t * .2,
-          scale, cx, cy
-        );
-        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
-        const filament = Math.pow(.5 + .5 * Math.sin(theta * 10 + s * 42 - t * 9), 7);
-        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - s * 16 + t * 3), 9);
-        ctx.fillStyle = `rgba(${126 + filament * 58 + warm * 42},${185 + filament * 43 + warm * 22},${226 + filament * 24 - warm * 38},${.045 + depth * .28 + filament * .2})`;
-        const size = (.36 + depth * .7 + filament * .34) * this.dpr;
-        ctx.fillRect(point[0], point[1], size, size);
-      }
-
-      // A narrow, turbulent stem makes the transition feel continuous.
-      const neckCount = w < 520 ? 2600 : 4800;
-      for (let i = 0; i < neckCount; i++) {
-        const s = (i + .5) / neckCount;
-        const theta = i * golden * 1.23 + t * 2;
-        const radius = .045 + .06 * Math.sin(s * Math.PI) +
-          .018 * Math.sin(theta * 5 + s * 23 - t * 8);
-        const x = Math.cos(theta) * radius;
-        const z = Math.sin(theta) * radius * .8;
-        const y = -.17 + s * .28;
-        const point = this.rotateProject(x, y, z, -.07, -.22 + t * .2, scale, cx, cy);
-        const pulse = .5 + .5 * Math.sin(s * 48 - t * 12);
-        ctx.fillStyle = `rgba(${168 + pulse * 62},${206 + pulse * 30},${232 - pulse * 21},${.17 + pulse * .34})`;
-        const size = (.48 + pulse * .72) * this.dpr;
-        ctx.fillRect(point[0], point[1], size, size);
-      }
-
-      // Long trajectories sweep from the upper ovoid through the stem and canopy.
-      ctx.lineWidth = Math.max(.55, this.dpr * .55);
-      for (let path = 0; path < 5; path++) {
-        ctx.beginPath();
-        const phase = path / 5 * TAU + t * (.28 + path * .025);
-        for (let step = 0; step <= 150; step++) {
-          const s = step / 150;
-          const y = -1.18 + s * 2.36;
-          const upper = s < .46;
-          const local = upper ? s / .46 : (s - .46) / .54;
-          const envelope = upper
-            ? .055 + Math.pow(Math.sin(local * Math.PI), .52) * .72
-            : .055 + Math.pow(Math.sin(local * Math.PI * .72), .58) * 1.02;
-          const angle = phase + s * (8.2 + path * .35);
-          const x = Math.cos(angle) * envelope * 1.16;
-          const z = Math.sin(angle) * envelope * .78;
-          const point = this.rotateProject(x, y, z, -.07, -.22 + t * .2, scale, cx, cy);
-          if (step === 0) ctx.moveTo(point[0], point[1]);
-          else ctx.lineTo(point[0], point[1]);
-        }
-        ctx.strokeStyle = `rgba(177,219,239,${.04 + path * .012})`;
         ctx.stroke();
       }
       ctx.globalCompositeOperation = 'source-over';
