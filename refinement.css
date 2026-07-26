@@ -795,9 +795,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(max-width:900px){.math-art-torus,.math-art-wings,.math-art-flow{right:-8%;width:68%;opacity:.7}}
 @media(max-width:760px){
   .math-art-torus,.math-art-wings,.math-art-flow{right:-28%;top:14%;width:100%;height:74%;opacity:.5}
-  .industry-engine.math-art-shell{right:50%;top:auto;bottom:-7px;width:540px;height:270px;transform:translateX(50%) scale(.68);transform-origin:center bottom;opacity:.58}
+  .page-hero-industries{min-height:650px;padding-bottom:250px;background-color:#061b2e!important;background-image:radial-gradient(circle at 50% 79%,rgba(69,137,207,.28),transparent 29%),linear-gradient(135deg,#092642,#05192b)!important}
+  .page-hero-industries:after{background:linear-gradient(180deg,rgba(4,17,31,.22),rgba(4,17,31,.05) 56%,rgba(4,17,31,.18))!important}
+  .industry-engine.math-art-shell{right:50%;top:auto;bottom:-22px;width:600px;height:390px;transform:translateX(50%) scale(.72);transform-origin:center bottom;opacity:.88}
   .research-art-shell{right:50%;top:auto;bottom:-2px;width:560px;height:290px;transform:translateX(50%) scale(.68);transform-origin:center bottom;opacity:.62}
   .page-hero-industries>p:last-of-type{color:#d6e0eb}
+}
+@media(max-width:390px){
+  .industry-engine.math-art-shell{width:570px;height:370px}
 }
 @media(prefers-reduced-motion:reduce){.math-art-canvas{opacity:.72}}
 

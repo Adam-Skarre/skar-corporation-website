@@ -128,12 +128,12 @@
     drawSphere(t) {
       const ctx = this.ctx;
       const w = this.width, h = this.height;
-      const cx = w * .53, cy = h * .49;
-      const scale = Math.min(w, h) * .38;
+      const cx = w * (this.mobile ? .5 : .53), cy = h * .49;
+      const scale = Math.min(w, h) * (this.mobile ? .42 : .38);
       this.glow(cx, cy, Math.min(w, h) * .5);
       ctx.globalCompositeOperation = 'lighter';
 
-      const count = this.mobile ? 6400 : 17800;
+      const count = this.mobile ? 10400 : 17800;
       const golden = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < count; i++) {
         const y0 = 1 - (i / (count - 1)) * 2;
@@ -176,8 +176,8 @@
       }
 
       // Resonant contour lines make the surface read like a living acoustic field.
-      const contours = this.mobile ? 27 : 48;
-      const contourPoints = this.mobile ? 90 : 156;
+      const contours = this.mobile ? 36 : 48;
+      const contourPoints = this.mobile ? 124 : 156;
       for (let ring = 1; ring < contours; ring++) {
         const latitude = -Math.PI / 2 + ring / contours * Math.PI;
         const pulse = .012 + .026 * (.5 + .5 * Math.sin(ring * .72 - t * 10));
