@@ -5,7 +5,7 @@
   const route = location.pathname.replace(/^\/|\/$/g, '').toLowerCase();
   const firmActive = ['about', 'careers'].includes(route);
   const workActive = ['solutions', 'industries', 'services', 'technology'].includes(route);
-  const insightsActive = ['insights', 'research', 'market-views', 'way-through', 'news'].includes(route) || route.startsWith('report-');
+  const insightsActive = ['insights', 'research', 'market-views', 'way-through', 'notes-in-form', 'news'].includes(route) || route.startsWith('report-');
 
   const researchAgenda = document.querySelector('.research-agenda');
   const researchStandard = document.querySelector('.research-method');
@@ -36,7 +36,7 @@
       <div class="nav-group${insightsActive ? ' active' : ''}">
         <button class="nav-group-trigger" type="button" aria-expanded="false">Insights <span aria-hidden="true">⌄</span></button>
         <div class="nav-panel">
-          <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights</strong><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/news/">News</a></div></div>
+          <div class="nav-panel-links"><div class="nav-link-column"><strong>Insights</strong><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/notes-in-form/">Notes in Form</a><a href="/news/">News</a></div></div>
         </div>
       </div>
       <a class="mobile-nav-contact" href="/contact/"${route === 'contact' ? ' aria-current="page"' : ''}>Contact <span aria-hidden="true">↗</span></a>
