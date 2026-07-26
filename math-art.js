@@ -213,85 +213,94 @@
       const ctx = this.ctx;
       const w = this.width, h = this.height;
       const cx = w * .53, cy = h * .49;
-      const scale = Math.min(w, h) * .31;
+      const scale = Math.min(w, h) * .29;
       this.glow(cx, cy, Math.min(w, h) * .54);
       ctx.globalCompositeOperation = 'lighter';
 
-      const crownCount = w < 520 ? 9200 : 15800;
       const golden = Math.PI * (3 - Math.sqrt(5));
-      for (let i = 0; i < crownCount; i++) {
-        const radial = Math.sqrt((i + .5) / crownCount);
+      const shellCount = w < 520 ? 14500 : 24800;
+      for (let i = 0; i < shellCount; i++) {
+        const v = -1 + 2 * ((i + .5) / shellCount);
+        const av = Math.abs(v);
         const theta = i * golden;
-        const scallop = .045 * Math.sin(theta * 5 - t * 7) +
-          .026 * Math.sin(theta * 11 + radial * 18 + t * 5);
-        const shell = 1 + scallop * (.35 + radial);
-        const x = Math.cos(theta) * radial * 1.38 * shell;
-        const z = Math.sin(theta) * radial * 1.08 * shell;
-        const dome = Math.pow(Math.max(0, 1 - radial * radial), .55);
-        const y = .5 * dome - .22 * radial * radial +
-          .035 * Math.sin(theta * 7 + radial * 23 - t * 8) +
-          .018 * Math.cos(theta * 19 - t * 5);
-
+        const twinLobe = Math.pow(Math.sin(Math.PI * av), .52);
+        const asymmetry = v < 0 ? .9 : 1.08;
+        const waist = .105 + twinLobe * 1.02 * asymmetry;
+        const scallop =
+          .075 * Math.sin(theta * 5 + v * 8 - t * 6) +
+          .035 * Math.sin(theta * 11 - v * 19 + t * 8) +
+          .018 * Math.cos(theta * 23 + v * 31 - t * 4);
+        const radius = waist * (1 + scallop * (.35 + twinLobe));
+        const x = Math.cos(theta) * radius * 1.18;
+        const z = Math.sin(theta) * radius * .82;
+        const y = v * 1.28 +
+          .055 * Math.sin(theta * 5 + av * 18 - t * 7) * twinLobe +
+          .018 * Math.sin(theta * 17 + t * 5);
         const point = this.rotateProject(
           x, y, z,
-          -.24 + .055 * Math.sin(t * 2),
-          -.28 + t * .22,
+          -.07 + .035 * Math.sin(t * 2),
+          -.22 + t * .2,
           scale, cx, cy
         );
-        const depth = Math.max(0, Math.min(1, (point[2] + 1.25) / 2.5));
-        const ring = .5 + .5 * Math.sin(radial * 72 + theta * 3 - t * 10);
-        const vein = Math.pow(.5 + .5 * Math.sin(theta * 13 + radial * 17 + t * 4), 8);
-        const alpha = .07 + depth * .36 + ring * .1 + vein * .16;
-        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - radial * 13 + t * 3), 7);
-        const red = Math.round(116 + warm * 108);
-        const green = Math.round(185 + warm * 43);
-        const blue = Math.round(231 - warm * 56);
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
+        const latitudeBand = .5 + .5 * Math.sin(v * 84 + theta * 3 - t * 10);
+        const vein = Math.pow(.5 + .5 * Math.sin(theta * 13 + v * 21 + t * 4), 9);
+        const waistFlare = Math.exp(-av * 12);
+        const alpha = .055 + depth * .34 + latitudeBand * .09 + vein * .18 + waistFlare * .13;
+        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - v * 17 + t * 3), 8);
+        const red = Math.round(108 + warm * 116 + waistFlare * 20);
+        const green = Math.round(181 + warm * 47 + waistFlare * 12);
+        const blue = Math.round(232 - warm * 59);
         ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
-        const size = (.4 + depth * .86 + vein * .34) * this.dpr;
+        const size = (.38 + depth * .82 + vein * .4 + waistFlare * .22) * this.dpr;
         ctx.fillRect(point[0], point[1], size, size);
       }
 
-      // A folded underside gives the cloud the suspended, organic No.055 silhouette.
-      const folds = w < 520 ? 4200 : 7600;
-      for (let i = 0; i < folds; i++) {
-        const radial = Math.sqrt((i + .5) / folds);
-        const theta = i * golden * 1.07;
-        const lobe = .72 + .16 * Math.sin(theta * 5 + t * 4) +
-          .07 * Math.sin(theta * 10 - radial * 15);
-        const x = Math.cos(theta) * radial * 1.22 * lobe;
-        const z = Math.sin(theta) * radial * .96 * lobe;
-        const hollow = Math.pow(1 - radial, 1.35);
-        const y = -.2 - hollow * (.34 + .12 * Math.sin(theta * 5 - t * 6)) +
-          .035 * Math.sin(radial * 28 + theta * 4 + t * 7);
+      // Dense inner membranes pull both lobes into the narrow central throat.
+      const membraneCount = w < 520 ? 5200 : 9000;
+      for (let i = 0; i < membraneCount; i++) {
+        const side = i % 2 ? 1 : -1;
+        const radial = Math.sqrt((i + .5) / membraneCount);
+        const theta = i * golden * 1.11;
+        const lobeY = side * (.08 + radial * 1.12);
+        const spread = Math.pow(Math.sin(Math.PI * Math.min(.99, radial)), .62);
+        const radius = .08 + spread * (side > 0 ? 1.02 : .86);
+        const fold = .76 + .18 * Math.sin(theta * 5 - t * 6) +
+          .07 * Math.cos(theta * 10 + radial * 22 + t * 4);
+        const x = Math.cos(theta) * radius * 1.16 * fold;
+        const z = Math.sin(theta) * radius * .8 * fold;
+        const y = lobeY + side * .045 * Math.sin(theta * 5 + radial * 27 - t * 7);
         const point = this.rotateProject(
           x, y, z,
-          -.24 + .055 * Math.sin(t * 2),
-          -.28 + t * .22,
+          -.07 + .035 * Math.sin(t * 2),
+          -.22 + t * .2,
           scale, cx, cy
         );
-        const depth = Math.max(0, Math.min(1, (point[2] + 1.2) / 2.4));
-        const filament = Math.pow(.5 + .5 * Math.sin(theta * 10 + radial * 34 - t * 8), 6);
-        ctx.fillStyle = `rgba(${142 + filament * 66},${191 + filament * 43},${220 + filament * 25},${.045 + depth * .29 + filament * .18})`;
-        const size = (.38 + depth * .74 + filament * .3) * this.dpr;
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
+        const filament = Math.pow(.5 + .5 * Math.sin(theta * 10 + radial * 38 - t * 9), 7);
+        ctx.fillStyle = `rgba(${136 + filament * 76},${188 + filament * 45},${222 + filament * 24},${.04 + depth * .25 + filament * .2})`;
+        const size = (.36 + depth * .7 + filament * .34) * this.dpr;
         ctx.fillRect(point[0], point[1], size, size);
       }
 
-      // Sparse analytical trajectories cut through the softer particle body.
+      // Long trajectories bind the two chambers into one continuous system.
       ctx.lineWidth = Math.max(.55, this.dpr * .55);
-      for (let path = 0; path < 4; path++) {
+      for (let path = 0; path < 5; path++) {
         ctx.beginPath();
-        const phase = path / 4 * TAU + t * (.35 + path * .035);
-        for (let step = 0; step <= 120; step++) {
-          const u = step / 120 * TAU;
-          const radius = 1.02 + .08 * Math.sin(u * 3 + phase);
-          const x = Math.cos(u) * radius * 1.25;
-          const y = .02 + .32 * Math.sin(u * (1 + path % 2) + phase);
-          const z = Math.sin(u) * radius * .84;
-          const point = this.rotateProject(x, y, z, -.24, -.28 + t * .22, scale, cx, cy);
+        const phase = path / 5 * TAU + t * (.28 + path * .025);
+        for (let step = 0; step <= 150; step++) {
+          const v = -1 + step / 150 * 2;
+          const av = Math.abs(v);
+          const envelope = .12 + Math.pow(Math.sin(Math.PI * av), .58) * .96;
+          const angle = phase + v * (4.4 + path * .24);
+          const x = Math.cos(angle) * envelope * 1.16;
+          const y = v * 1.27;
+          const z = Math.sin(angle) * envelope * .8;
+          const point = this.rotateProject(x, y, z, -.07, -.22 + t * .2, scale, cx, cy);
           if (step === 0) ctx.moveTo(point[0], point[1]);
           else ctx.lineTo(point[0], point[1]);
         }
-        ctx.strokeStyle = `rgba(177,219,239,${.045 + path * .012})`;
+        ctx.strokeStyle = `rgba(177,219,239,${.04 + path * .012})`;
         ctx.stroke();
       }
       ctx.globalCompositeOperation = 'source-over';
