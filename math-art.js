@@ -24,7 +24,8 @@
 
     resize() {
       const rect = this.canvas.getBoundingClientRect();
-      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      this.mobile = matchMedia('(max-width: 760px)').matches;
+      const dpr = Math.min(devicePixelRatio || 1, this.mobile ? 1.2 : 1.5);
       const width = Math.max(1, Math.round(rect.width * dpr));
       const height = Math.max(1, Math.round(rect.height * dpr));
       if (this.canvas.width !== width || this.canvas.height !== height) {
@@ -39,7 +40,8 @@
     frame(now) {
       const slide = this.canvas.closest('.story-slide');
       const active = !slide || slide.classList.contains('active');
-      if (this.visible && active && (now - this.last > (reducedMotion ? 1000 : 30))) {
+      const frameInterval = reducedMotion ? 1000 : (this.mobile ? 42 : 30);
+      if (!document.hidden && this.visible && active && (now - this.last > frameInterval)) {
         this.last = now;
         const t = reducedMotion ? 1.25 : (now - this.start) * 0.00022;
         this.ctx.clearRect(0, 0, this.width, this.height);
@@ -81,8 +83,8 @@
       this.glow(cx, cy, Math.min(w, h) * .48);
       ctx.globalCompositeOperation = 'lighter';
 
-      const rings = w < 520 ? 240 : 330;
-      const sides = w < 520 ? 24 : 34;
+      const rings = this.mobile ? 180 : 330;
+      const sides = this.mobile ? 20 : 34;
       for (let i = 0; i < rings; i++) {
         const u = i / rings * TAU;
         const p = 3, q = 8;
@@ -130,7 +132,7 @@
       this.glow(cx, cy, Math.min(w, h) * .5);
       ctx.globalCompositeOperation = 'lighter';
 
-      const count = w < 520 ? 9800 : 17800;
+      const count = this.mobile ? 6400 : 17800;
       const golden = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < count; i++) {
         const y0 = 1 - (i / (count - 1)) * 2;
@@ -173,8 +175,8 @@
       }
 
       // Resonant contour lines make the surface read like a living acoustic field.
-      const contours = w < 520 ? 34 : 48;
-      const contourPoints = w < 520 ? 112 : 156;
+      const contours = this.mobile ? 27 : 48;
+      const contourPoints = this.mobile ? 90 : 156;
       for (let ring = 1; ring < contours; ring++) {
         const latitude = -Math.PI / 2 + ring / contours * Math.PI;
         const pulse = .012 + .026 * (.5 + .5 * Math.sin(ring * .72 - t * 10));
@@ -218,7 +220,7 @@
       this.glow(cx, cy, Math.min(w, h) * .58);
       ctx.globalCompositeOperation = 'lighter';
 
-      const crownCount = w < 520 ? 12800 : 22000;
+      const crownCount = this.mobile ? 7600 : 22000;
       const golden = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < crownCount; i++) {
         const radial = Math.sqrt((i + .5) / crownCount);
@@ -255,7 +257,7 @@
       }
 
       // A denser folded underside preserves the floating crown silhouette.
-      const folds = w < 520 ? 6800 : 11800;
+      const folds = this.mobile ? 4000 : 11800;
       for (let i = 0; i < folds; i++) {
         const radial = Math.sqrt((i + .5) / folds);
         const theta = i * golden * 1.07;
@@ -282,11 +284,13 @@
 
       // Fine trajectories add analytical depth without changing the form.
       ctx.lineWidth = Math.max(.5, this.dpr * .52);
-      for (let path = 0; path < 7; path++) {
+      const pathCount = this.mobile ? 5 : 7;
+      for (let path = 0; path < pathCount; path++) {
         ctx.beginPath();
-        const phase = path / 7 * TAU + t * (.3 + path * .025);
-        for (let step = 0; step <= 150; step++) {
-          const u = step / 150 * TAU;
+        const phase = path / pathCount * TAU + t * (.3 + path * .025);
+        const pathSteps = this.mobile ? 108 : 150;
+        for (let step = 0; step <= pathSteps; step++) {
+          const u = step / pathSteps * TAU;
           const radius = 1.04 + .1 * Math.sin(u * 3 + phase);
           const x = Math.cos(u) * radius * 1.36;
           const y = .01 + .36 * Math.sin(u * (1 + path % 2) + phase);
@@ -301,120 +305,6 @@
       ctx.globalCompositeOperation = 'source-over';
     }
 
-    drawResearchLegacy(t) {
-      const ctx = this.ctx;
-      const w = this.width, h = this.height;
-      const cx = w * .53, cy = h * .49;
-      const scale = Math.min(w, h) * .29;
-      this.glow(cx, cy, Math.min(w, h) * .54);
-      ctx.globalCompositeOperation = 'lighter';
-
-      const golden = Math.PI * (3 - Math.sqrt(5));
-      // No.055's upper chamber is a compact ovoid, not a mirrored lower lobe.
-      const upperCount = w < 520 ? 7200 : 11800;
-      for (let i = 0; i < upperCount; i++) {
-        const s = (i + .5) / upperCount;
-        const vertical = -1 + s * 2;
-        const theta = i * golden;
-        const envelope = Math.pow(Math.sin(Math.PI * s), .48);
-        const scallop =
-          .055 * Math.sin(theta * 5 + s * 15 - t * 6) +
-          .025 * Math.sin(theta * 12 - s * 27 + t * 8);
-        const radius = (.055 + envelope * .76) * (1 + scallop);
-        const x = Math.cos(theta) * radius * 1.12;
-        const z = Math.sin(theta) * radius * .86;
-        const y = -.68 + vertical * .52 +
-          .035 * Math.sin(theta * 5 + s * 21 - t * 7) * envelope;
-        const point = this.rotateProject(
-          x, y, z,
-          -.07 + .035 * Math.sin(t * 2),
-          -.22 + t * .2,
-          scale, cx, cy
-        );
-        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
-        const latitudeBand = .5 + .5 * Math.sin(s * 78 + theta * 3 - t * 10);
-        const vein = Math.pow(.5 + .5 * Math.sin(theta * 13 + s * 25 + t * 4), 9);
-        const alpha = .055 + depth * .35 + latitudeBand * .09 + vein * .18;
-        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - s * 19 + t * 3), 8);
-        const red = Math.round(108 + warm * 116);
-        const green = Math.round(181 + warm * 47);
-        const blue = Math.round(232 - warm * 59);
-        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
-        const size = (.38 + depth * .82 + vein * .4) * this.dpr;
-        ctx.fillRect(point[0], point[1], size, size);
-      }
-
-      // The lower chamber opens downward into a broad, two-lobed canopy.
-      const lowerCount = w < 520 ? 9800 : 16600;
-      for (let i = 0; i < lowerCount; i++) {
-        const s = (i + .5) / lowerCount;
-        const theta = i * golden * 1.07;
-        const flare = Math.pow(Math.sin(s * Math.PI * .72), .58);
-        const twinLobe = 1 + .17 * Math.cos(theta * 2) +
-          .055 * Math.sin(theta * 5 - s * 18 - t * 5);
-        const radius = (.06 + flare * 1.04) * twinLobe;
-        const x = Math.cos(theta) * radius * 1.18;
-        const z = Math.sin(theta) * radius * .76;
-        const y = -.1 + s * 1.28 +
-          .12 * Math.cos(theta * 2) * flare +
-          .035 * Math.sin(theta * 7 + s * 25 - t * 7);
-        const point = this.rotateProject(
-          x, y, z,
-          -.07 + .035 * Math.sin(t * 2),
-          -.22 + t * .2,
-          scale, cx, cy
-        );
-        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
-        const filament = Math.pow(.5 + .5 * Math.sin(theta * 10 + s * 42 - t * 9), 7);
-        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - s * 16 + t * 3), 9);
-        ctx.fillStyle = `rgba(${126 + filament * 58 + warm * 42},${185 + filament * 43 + warm * 22},${226 + filament * 24 - warm * 38},${.045 + depth * .28 + filament * .2})`;
-        const size = (.36 + depth * .7 + filament * .34) * this.dpr;
-        ctx.fillRect(point[0], point[1], size, size);
-      }
-
-      // A narrow, turbulent stem makes the transition feel continuous.
-      const neckCount = w < 520 ? 2600 : 4800;
-      for (let i = 0; i < neckCount; i++) {
-        const s = (i + .5) / neckCount;
-        const theta = i * golden * 1.23 + t * 2;
-        const radius = .045 + .06 * Math.sin(s * Math.PI) +
-          .018 * Math.sin(theta * 5 + s * 23 - t * 8);
-        const x = Math.cos(theta) * radius;
-        const z = Math.sin(theta) * radius * .8;
-        const y = -.17 + s * .28;
-        const point = this.rotateProject(x, y, z, -.07, -.22 + t * .2, scale, cx, cy);
-        const pulse = .5 + .5 * Math.sin(s * 48 - t * 12);
-        ctx.fillStyle = `rgba(${168 + pulse * 62},${206 + pulse * 30},${232 - pulse * 21},${.17 + pulse * .34})`;
-        const size = (.48 + pulse * .72) * this.dpr;
-        ctx.fillRect(point[0], point[1], size, size);
-      }
-
-      // Long trajectories sweep from the upper ovoid through the stem and canopy.
-      ctx.lineWidth = Math.max(.55, this.dpr * .55);
-      for (let path = 0; path < 5; path++) {
-        ctx.beginPath();
-        const phase = path / 5 * TAU + t * (.28 + path * .025);
-        for (let step = 0; step <= 150; step++) {
-          const s = step / 150;
-          const y = -1.18 + s * 2.36;
-          const upper = s < .46;
-          const local = upper ? s / .46 : (s - .46) / .54;
-          const envelope = upper
-            ? .055 + Math.pow(Math.sin(local * Math.PI), .52) * .72
-            : .055 + Math.pow(Math.sin(local * Math.PI * .72), .58) * 1.02;
-          const angle = phase + s * (8.2 + path * .35);
-          const x = Math.cos(angle) * envelope * 1.16;
-          const z = Math.sin(angle) * envelope * .78;
-          const point = this.rotateProject(x, y, z, -.07, -.22 + t * .2, scale, cx, cy);
-          if (step === 0) ctx.moveTo(point[0], point[1]);
-          else ctx.lineTo(point[0], point[1]);
-        }
-        ctx.strokeStyle = `rgba(177,219,239,${.04 + path * .012})`;
-        ctx.stroke();
-      }
-      ctx.globalCompositeOperation = 'source-over';
-    }
-
     drawMarket(t) {
       const ctx = this.ctx;
       const w = this.width, h = this.height;
@@ -423,8 +313,8 @@
       ctx.globalCompositeOperation = 'lighter';
       ctx.lineWidth = Math.max(.38, this.dpr * .42);
 
-      const columns = w < 520 ? 94 : 148;
-      const rows = w < 520 ? 72 : 108;
+      const columns = this.mobile ? 68 : 148;
+      const rows = this.mobile ? 52 : 108;
       const points = Array.from({ length: columns }, () => []);
       const wave = (u, v) =>
         Math.sin(u * 13 + v * 8 - t * 10) * .4 +
@@ -498,7 +388,7 @@
       ctx.fillStyle = 'rgba(171, 220, 238, .29)';
 
       let x = 1, y = 1;
-      const count = w < 520 ? 24000 : 40000;
+      const count = this.mobile ? 16000 : 40000;
       for (let i = 0; i < count; i++) {
         const a = .003, b = .06, u = -.8;
         const f = value => u * value + 2 * (1 - u) * value * value / (1 + value * value);
@@ -529,8 +419,9 @@
       this.glow(cx, cy, Math.min(w, h) * .5);
       ctx.globalCompositeOperation = 'lighter';
 
-      for (let gy = 99; gy < 300; gy += 2) {
-        for (let gx = 99; gx < 300; gx += 2) {
+      const gridStep = this.mobile ? 3 : 2;
+      for (let gy = 99; gy < 300; gy += gridStep) {
+        for (let gx = 99; gx < 300; gx += gridStep) {
           const k = gx / 8 - 25;
           const e = gy / 8 - 25;
           const d = Math.cos(Math.hypot(k, e) / 3) * e / 5;
