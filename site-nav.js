@@ -44,6 +44,20 @@
     <a class="header-cta" href="/contact/"${route === 'contact' ? ' aria-current="page"' : ''}>Contact</a>
   `;
 
+  const footer = document.querySelector('.footer');
+  if (footer) {
+    footer.innerHTML = `
+      <div class="footer-grid">
+        <div class="footer-identity"><a class="brand" href="/" aria-label="SKAR Corporation home"><img class="brand-wordmark" src="/assets/skar-wordmark.png" alt="SKAR Corporation"></a></div>
+        <div class="footer-section"><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
+        <div class="footer-section"><h4>Expertise</h4><a href="/solutions/">Solutions</a><a href="/industries/">Industries</a></div>
+        <div class="footer-section footer-insights"><h4>Insights</h4><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/notes-in-form/">Notes in Form</a><a href="/news/">News</a></div>
+        <div class="footer-section footer-contact"><h4>Contact</h4><a href="/contact/">Start a conversation <span aria-hidden="true">↗</span></a></div>
+      </div>
+      <div class="copyright">© 2026 Skar Corporation. All rights reserved.</div>
+    `;
+  }
+
   const nav = header.querySelector('#skar-navigation');
   const toggle = header.querySelector('.nav-toggle');
   const groups = [...header.querySelectorAll('.nav-group')];
@@ -66,21 +80,25 @@
     });
   });
 
-  toggle.addEventListener('click', () => {
-    const opening = !header.classList.contains('nav-open');
+  function setMenu(opening) {
     if (opening) closeGroups();
     header.classList.toggle('nav-open', opening);
-    document.documentElement.classList.toggle('menu-open', opening);
     toggle.setAttribute('aria-expanded', String(opening));
     nav.setAttribute('data-open', String(opening));
+  }
+
+  function closeMenu() {
+    closeGroups();
+    setMenu(false);
+  }
+
+  toggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    setMenu(!header.classList.contains('nav-open'));
   });
 
   nav.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      header.classList.remove('nav-open');
-      document.documentElement.classList.remove('menu-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
+    link.addEventListener('click', closeMenu);
   });
 
   document.addEventListener('click', (event) => {
@@ -89,9 +107,13 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
-    closeGroups();
-    header.classList.remove('nav-open');
-    document.documentElement.classList.remove('menu-open');
-    toggle.setAttribute('aria-expanded', 'false');
+    closeMenu();
   });
+
+  window.addEventListener('pageshow', closeMenu);
+  window.addEventListener('pagehide', closeMenu);
+  window.addEventListener('orientationchange', closeMenu);
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 760) closeMenu();
+  }, { passive: true });
 })();
