@@ -46,6 +46,7 @@
         if (this.kind === 'torus') this.drawTorus(t);
         else if (this.kind === 'sphere') this.drawSphere(t);
         else if (this.kind === 'research') this.drawResearch(t);
+        else if (this.kind === 'market') this.drawMarket(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else this.drawFlow(t);
       }
@@ -319,6 +320,76 @@
         }
         ctx.strokeStyle = `rgba(177,219,239,${.04 + path * .012})`;
         ctx.stroke();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawMarket(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const horizon = h * .16;
+      this.glow(w * .5, h * .47, Math.min(w, h) * .7);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineWidth = Math.max(.45, this.dpr * .48);
+
+      const columns = w < 520 ? 78 : 124;
+      const rows = w < 520 ? 58 : 82;
+      const points = Array.from({ length: columns }, () => []);
+      const wave = (u, v) =>
+        Math.sin(u * 18 + v * 9 - t * 11) * .46 +
+        Math.sin(u * 47 - v * 17 + t * 7) * .24 +
+        Math.cos(u * 91 + v * 31 - t * 4) * .13 +
+        Math.sin((u + v) * 7 + t * 3) * .17;
+
+      for (let column = 0; column < columns; column++) {
+        const u = column / (columns - 1);
+        ctx.beginPath();
+        for (let row = 0; row < rows; row++) {
+          const v = row / (rows - 1);
+          const depth = Math.pow(v, 1.55);
+          const field = wave(u, v);
+          const macro = Math.sin(u * 9 - t * 4 + depth * 6) * .55 +
+            Math.sin(u * 23 + t * 3) * .22;
+          const px = u * w +
+            field * w * (.002 + depth * .012) +
+            macro * w * depth * .008;
+          const py = horizon + depth * h * .82 +
+            field * h * (.01 + depth * .052) -
+            Math.abs(macro) * h * depth * .016;
+          points[column].push([px, py]);
+          if (row === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        const crest = .5 + .5 * Math.sin(u * 17 - t * 5);
+        ctx.strokeStyle = `rgba(${119 + crest * 58},${174 + crest * 49},${213 + crest * 32},${.12 + crest * .18})`;
+        ctx.stroke();
+      }
+
+      // Sparse cross-sections reveal the field as a connected market surface.
+      for (let row = 2; row < rows; row += 4) {
+        const v = row / (rows - 1);
+        ctx.beginPath();
+        for (let column = 0; column < columns; column++) {
+          const point = points[column][row];
+          if (column === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        }
+        ctx.strokeStyle = `rgba(151,205,234,${.035 + v * .07})`;
+        ctx.stroke();
+      }
+
+      // Bright pulses travel through selected traces like emergent signals.
+      for (let pulse = 0; pulse < 7; pulse++) {
+        const u = (pulse * .173 + t * .08) % 1;
+        const column = Math.min(columns - 1, Math.floor(u * columns));
+        const phase = (t * 2.4 + pulse * .137) % 1;
+        const row = Math.min(rows - 1, Math.floor(phase * rows));
+        const point = points[column][row];
+        const radius = (1.1 + phase * 1.8) * this.dpr;
+        ctx.fillStyle = `rgba(197,230,245,${.28 + (1 - phase) * .42})`;
+        ctx.beginPath();
+        ctx.arc(point[0], point[1], radius, 0, TAU);
+        ctx.fill();
       }
       ctx.globalCompositeOperation = 'source-over';
     }
