@@ -49,6 +49,7 @@
         else if (this.kind === 'sphere') this.drawSphere(t);
         else if (this.kind === 'research') this.drawResearch(t);
         else if (this.kind === 'market') this.drawMarket(t);
+        else if (this.kind === 'terrain') this.drawTerrain(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else this.drawFlow(t);
       }
@@ -375,6 +376,133 @@
         ctx.strokeStyle = 'rgba(207,232,242,.22)';
         ctx.stroke();
       }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawTerrain(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5;
+      const count = this.mobile ? 9000 : 26000;
+      const pathX = v => .015 - .38 * v +
+        .065 * Math.sin(v * 8.4 - .4) +
+        .028 * Math.sin(v * 19 + .7);
+      const heightAt = (u, v) => {
+        const peak = (x, z, width, depth, height) =>
+          Math.exp(-((u - x) ** 2 / width + (v - z) ** 2 / depth)) * height;
+        const mountains =
+          peak(-.58, .34, .11, .17, 1.08) +
+          peak(.48, .27, .075, .13, 1.34) +
+          peak(.79, .54, .12, .18, .82) +
+          peak(-.82, .67, .16, .2, .62) +
+          peak(.05, .08, .19, .055, .42);
+        const ridge =
+          .17 * Math.sin(u * 8.8 + v * 2.5) +
+          .08 * Math.sin(u * 19 - v * 8) +
+          .035 * Math.cos(u * 43 + v * 17);
+        const pass = Math.exp(-((u - pathX(v)) ** 2) / (.026 + v * .016)) *
+          (.46 + .48 * Math.sin(v * Math.PI));
+        return Math.max(-.12, mountains + ridge * (.35 + mountains * .42) - pass);
+      };
+
+      this.glow(w * .55, h * .44, Math.min(w, h) * .76);
+      ctx.globalCompositeOperation = 'lighter';
+
+      for (let i = 0; i < count; i++) {
+        const v = (i * .61803398875) % 1;
+        const u = ((i * .75487766625) % 1) * 2 - 1;
+        const jitter = Math.sin(i * 91.733) * .008;
+        const elevation = heightAt(u, v);
+        const perspective = .54 + v * .72;
+        const px = cx + (u + jitter) * w * .48 * perspective +
+          Math.sin(v * 7 + t * 1.4) * w * .003;
+        const py = h * .19 + v * h * .72 -
+          elevation * h * .255 * perspective;
+        if (py < h * .04 || py > h * .98) continue;
+
+        const routeDistance = Math.abs(u - pathX(v));
+        const ridgeLight = Math.pow(.5 + .5 * Math.sin(
+          elevation * 31 + u * 22 - v * 17 - t * 5
+        ), 8);
+        const strata = .5 + .5 * Math.sin(elevation * 48 + v * 65 + u * 9);
+        const trailGlow = Math.exp(-routeDistance * 28);
+        const depth = .28 + v * .72;
+        const warm = Math.pow(.5 + .5 * Math.sin(u * 7 - v * 11 + t * 2.2), 12);
+        const alpha = .045 + depth * .25 + ridgeLight * .24 +
+          strata * .055 + trailGlow * .17;
+        const red = Math.round(91 + depth * 48 + warm * 72 + trailGlow * 36);
+        const green = Math.round(157 + depth * 47 + warm * 48 + trailGlow * 32);
+        const blue = Math.round(215 + depth * 27 - warm * 27);
+        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
+        const size = (.38 + depth * .86 + ridgeLight * .48 + trailGlow * .3) * this.dpr;
+        ctx.fillRect(px, py, size, size);
+      }
+
+      // Multiple sparse ridgelines give the particle mass a legible mountain silhouette.
+      const ridgeCount = this.mobile ? 8 : 13;
+      const ridgeSteps = this.mobile ? 120 : 190;
+      ctx.lineWidth = Math.max(.4, this.dpr * .44);
+      for (let ridge = 0; ridge < ridgeCount; ridge++) {
+        const v = .08 + ridge / (ridgeCount - 1) * .82;
+        ctx.beginPath();
+        for (let step = 0; step <= ridgeSteps; step++) {
+          const u = -1 + step / ridgeSteps * 2;
+          const elevation = heightAt(u, v);
+          const perspective = .54 + v * .72;
+          const px = cx + u * w * .48 * perspective;
+          const py = h * .19 + v * h * .72 - elevation * h * .255 * perspective;
+          if (step === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        const shimmer = .5 + .5 * Math.sin(ridge * .9 - t * 5);
+        ctx.strokeStyle = `rgba(166,215,238,${.025 + shimmer * .055})`;
+        ctx.stroke();
+      }
+
+      // The way through is a beaded light stream sitting directly on the pass.
+      const routeSteps = this.mobile ? 150 : 240;
+      const routePoints = [];
+      for (let step = 0; step <= routeSteps; step++) {
+        const v = 1 - step / routeSteps * .94;
+        const u = pathX(v);
+        const elevation = heightAt(u, v) + .06;
+        const perspective = .54 + v * .72;
+        routePoints.push([
+          cx + u * w * .48 * perspective,
+          h * .19 + v * h * .72 - elevation * h * .255 * perspective
+        ]);
+      }
+
+      ctx.beginPath();
+      routePoints.forEach((point, index) => {
+        if (index === 0) ctx.moveTo(point[0], point[1]);
+        else ctx.lineTo(point[0], point[1]);
+      });
+      ctx.lineWidth = Math.max(1.2, this.dpr * 1.35);
+      ctx.strokeStyle = 'rgba(184,222,241,.22)';
+      ctx.shadowBlur = 10 * this.dpr;
+      ctx.shadowColor = 'rgba(91,176,226,.55)';
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      for (let step = 0; step <= routeSteps; step++) {
+        const [px, py] = routePoints[step];
+        const pulsePosition = (t * .34) % 1;
+        const progress = step / routeSteps;
+        const pulse = Math.exp(-((progress - pulsePosition) ** 2) / .0035);
+        const baseAlpha = .5 + .28 * Math.sin(step * .31 - t * 8) ** 2;
+
+        ctx.fillStyle = `rgba(${214 + pulse * 30},${221 + pulse * 23},${190 + pulse * 65},${baseAlpha + pulse * .5})`;
+        const size = (1.35 + pulse * 2.6) * this.dpr;
+        ctx.fillRect(px - size / 2, py - size / 2, size, size);
+
+        if (step % (this.mobile ? 7 : 9) === 0) {
+          const halo = (2.4 + pulse * 4) * this.dpr;
+          ctx.fillStyle = `rgba(122,194,231,${.14 + pulse * .26})`;
+          ctx.fillRect(px - halo / 2, py - halo / 2, halo, halo);
+        }
+      }
+
       ctx.globalCompositeOperation = 'source-over';
     }
 
