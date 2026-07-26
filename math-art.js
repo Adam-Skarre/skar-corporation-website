@@ -309,72 +309,92 @@
     drawMarket(t) {
       const ctx = this.ctx;
       const w = this.width, h = this.height;
-      const horizon = h * .08;
-      this.glow(w * .5, h * .47, Math.min(w, h) * .7);
+      const cy = h * .5;
+      this.glow(w * .5, cy, Math.max(w, h) * .62);
       ctx.globalCompositeOperation = 'lighter';
-      ctx.lineWidth = Math.max(.38, this.dpr * .42);
+      const strands = this.mobile ? 16 : 28;
+      const samples = this.mobile ? 170 : 290;
+      const signalPoint = (u, phase, depth = 0) => {
+        const carrier = u * TAU * (3.15 + .28 * Math.sin(u * TAU * 1.3 - t)) +
+          t * 3.7;
+        const envelope = .58 +
+          .3 * Math.sin(u * TAU * 3.1 - t * 1.6) +
+          .12 * Math.cos(u * TAU * 7.3 + t * 2.2);
+        const amplitude = h * (.135 + envelope * .082);
+        const fineSignal =
+          Math.sin(u * TAU * 5.4 - t * 2.4 + phase * .35) * h * .038 +
+          Math.sin(u * TAU * 11.2 + t * 1.7 - phase) * h * .012;
+        const twist = carrier + phase;
+        return [
+          u * w + Math.cos(twist) * depth * w * .012,
+          cy + Math.sin(twist) * amplitude + fineSignal + depth * h * .018
+        ];
+      };
 
-      const columns = this.mobile ? 68 : 148;
-      const rows = this.mobile ? 52 : 108;
-      const points = Array.from({ length: columns }, () => []);
-      const wave = (u, v) =>
-        Math.sin(u * 13 + v * 8 - t * 10) * .4 +
-        Math.sin(u * 31 - v * 15 + t * 7) * .26 +
-        Math.cos(u * 67 + v * 29 - t * 5) * .18 +
-        Math.sin(u * 113 - v * 43 + t * 3) * .08 +
-        Math.sin((u + v) * 6 + t * 2) * .08;
+      // Quiet center signal: orientation without turning the field into a chart.
+      ctx.beginPath();
+      ctx.moveTo(0, cy);
+      ctx.lineTo(w, cy);
+      ctx.lineWidth = Math.max(.35, this.dpr * .4);
+      ctx.strokeStyle = 'rgba(118,178,210,.09)';
+      ctx.stroke();
 
-      for (let column = 0; column < columns; column++) {
-        const u = column / (columns - 1);
+      // Phase-shifted ribbons create a living helix rather than a flat waveform.
+      for (let strand = 0; strand < strands; strand++) {
+        const z = strands === 1 ? 0 : strand / (strands - 1) * 2 - 1;
+        const phase = z * 1.08 + Math.sin(strand * 1.7) * .06;
+        const depth = 1 - Math.abs(z) * .56;
         ctx.beginPath();
-        for (let row = 0; row < rows; row++) {
-          const v = row / (rows - 1);
-          const depth = Math.pow(v, 1.38);
-          const field = wave(u, v);
-          const macro = Math.sin(u * 8 - t * 4 + depth * 7) * .58 +
-            Math.sin(u * 21 + depth * 3 + t * 3) * .26;
-          const foreground = Math.pow(depth, 5) *
-            (Math.sin(u * 9 - t * 3) * .55 + Math.sin(u * 27 + t * 5) * .2);
-          const px = u * w +
-            field * w * (.001 + depth * .008) +
-            macro * w * depth * .004;
-          const py = horizon + depth * h * .84 +
-            field * h * (.009 + depth * .066) +
-            macro * h * (.004 + depth * .026) +
-            foreground * h * .075;
-          points[column].push([px, py]);
-          if (row === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        const shimmer = .5 + .5 * Math.sin(u * 19 - t * 5);
-        ctx.strokeStyle = `rgba(${144 + shimmer * 43},${188 + shimmer * 38},${216 + shimmer * 27},${.1 + shimmer * .19})`;
-        ctx.stroke();
-      }
-
-      // Diagonal stitches form a continuous triangular surface without chart axes.
-      for (let row = 1; row < rows - 1; row += 2) {
-        const v = row / (rows - 1);
-        ctx.beginPath();
-        for (let column = 0; column < columns - 1; column += 2) {
-          const a = points[column][row];
-          const b = points[column + 1][row + 1];
-          ctx.moveTo(a[0], a[1]);
-          ctx.lineTo(b[0], b[1]);
-        }
-        ctx.strokeStyle = `rgba(160,207,230,${.018 + v * .075})`;
-        ctx.stroke();
-      }
-
-      // A few brighter contour seams move through the otherwise uniform field.
-      for (let seam = 0; seam < 5; seam++) {
-        const column = Math.floor(((seam * .193 + t * .035) % 1) * (columns - 1));
-        ctx.beginPath();
-        points[column].forEach((point, row) => {
-          if (row === 0) ctx.moveTo(point[0], point[1]);
+        for (let sample = 0; sample <= samples; sample++) {
+          const u = sample / samples;
+          const point = signalPoint(u, phase, z);
+          if (sample === 0) ctx.moveTo(point[0], point[1]);
           else ctx.lineTo(point[0], point[1]);
-        });
-        ctx.strokeStyle = 'rgba(207,232,242,.22)';
+
+          if (sample % (this.mobile ? 5 : 4) === strand % 3) {
+            const shimmer = .5 + .5 * Math.sin(
+              sample * .19 + strand * .73 - t * 8
+            );
+            const size = (.34 + depth * .5 + shimmer * .28) * this.dpr;
+            ctx.fillStyle = `rgba(${104 + depth * 65},${175 + depth * 45},${219 + depth * 24},${.045 + depth * .13 + shimmer * .065})`;
+            ctx.fillRect(point[0], point[1], size, size);
+          }
+        }
+        const warm = .5 + .5 * Math.sin(strand * .46 - t * 2.3);
+        ctx.lineWidth = Math.max(.35, this.dpr * (.34 + depth * .22));
+        ctx.strokeStyle = `rgba(${105 + warm * 43},${177 + warm * 35},${222 + warm * 18},${.035 + depth * .12})`;
         ctx.stroke();
+      }
+
+      // A brighter composite signal travels through the helix and reveals change.
+      const primary = [];
+      for (let sample = 0; sample <= samples; sample++) {
+        const u = sample / samples;
+        const phase = .22 * Math.sin(u * TAU * 1.8 - t * 2.1);
+        primary.push(signalPoint(u, phase, 0));
+      }
+      ctx.beginPath();
+      primary.forEach((point, index) => {
+        if (index === 0) ctx.moveTo(point[0], point[1]);
+        else ctx.lineTo(point[0], point[1]);
+      });
+      ctx.lineWidth = Math.max(1, this.dpr * 1.05);
+      ctx.strokeStyle = 'rgba(137,224,232,.54)';
+      ctx.shadowBlur = 8 * this.dpr;
+      ctx.shadowColor = 'rgba(71,211,224,.5)';
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Moving beads make the signal feel observed in real time.
+      const pulseU = (t * .23) % 1;
+      for (let bead = 0; bead < (this.mobile ? 70 : 110); bead++) {
+        const u = bead / (this.mobile ? 69 : 109);
+        const point = signalPoint(u, .22 * Math.sin(u * TAU * 1.8 - t * 2.1), 0);
+        const distance = Math.min(Math.abs(u - pulseU), 1 - Math.abs(u - pulseU));
+        const pulse = Math.exp(-(distance * distance) / .0025);
+        const size = (.7 + pulse * 2.8) * this.dpr;
+        ctx.fillStyle = `rgba(${177 + pulse * 68},${226 + pulse * 25},${230 - pulse * 39},${.3 + pulse * .66})`;
+        ctx.fillRect(point[0] - size / 2, point[1] - size / 2, size, size);
       }
       ctx.globalCompositeOperation = 'source-over';
     }
