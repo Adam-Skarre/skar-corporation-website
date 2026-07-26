@@ -51,6 +51,7 @@
         else if (this.kind === 'market') this.drawMarket(t);
         else if (this.kind === 'terrain') this.drawTerrain(t);
         else if (this.kind === 'wings') this.drawWings(t);
+        else if (this.kind === 'piece') this.drawPiece(t);
         else this.drawFlow(t);
       }
       requestAnimationFrame(this.frame);
@@ -597,6 +598,114 @@
         ctx.fillRect(sx, sy, size, size);
       }
       ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawPiece(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .39, cy = h * .5;
+      const unit = Math.min(w * .17, h * .235);
+      const gap = unit * .17;
+      const pitch = unit + gap;
+      const cycle = (t / 1.1) % 1;
+      const smooth = value => {
+        const clamped = Math.max(0, Math.min(1, value));
+        return clamped * clamped * (3 - 2 * clamped);
+      };
+      const arrive = smooth((cycle - .15) / .33);
+      const depart = smooth((cycle - .72) / .28);
+      const installed = Math.max(0, Math.min(1, arrive - depart));
+      const completion = smooth((installed - .62) / .28);
+      const pulse = completion * (.52 + .48 * Math.sin((cycle - .46) * 23) ** 2);
+
+      this.glow(cx, cy, Math.min(w, h) * (.42 + pulse * .13));
+      ctx.globalCompositeOperation = 'lighter';
+
+      const pointsPerTile = this.mobile ? 230 : 390;
+      const drawTile = (column, row, tileInstalled, moving = false) => {
+        let tx = cx + (column - 1) * pitch;
+        let ty = cy + (row - 1) * pitch;
+        let rotation = 0;
+
+        if (moving) {
+          tx += (1 - installed) * unit * 3.18;
+          ty += Math.sin((1 - installed) * Math.PI) * unit * .08;
+          rotation = (1 - installed) * .15;
+        }
+
+        const cos = Math.cos(rotation), sin = Math.sin(rotation);
+        const localPulse = tileInstalled ? pulse : 0;
+        const expansion = 1 + localPulse * .045;
+
+        for (let i = 0; i < pointsPerTile; i++) {
+          const seed = i * 12.9898 + column * 71.17 + row * 119.41;
+          const randomA = Math.sin(seed) * 43758.5453 % 1;
+          const randomB = Math.sin(seed * 1.713 + 4.2) * 24634.6345 % 1;
+          const a = Math.abs(randomA);
+          const b = Math.abs(randomB);
+          const edgePoint = i % 5 === 0;
+          let lx, ly;
+
+          if (edgePoint) {
+            const edge = i % 4;
+            const travel = (i * .61803398875) % 1 - .5;
+            lx = edge < 2 ? travel : (edge === 2 ? -.5 : .5);
+            ly = edge >= 2 ? travel : (edge === 0 ? -.5 : .5);
+          } else {
+            lx = a - .5;
+            ly = b - .5;
+          }
+
+          const contour = Math.sin(lx * 19 + ly * 13 - t * 8 + column * 2.1) * unit * .012;
+          lx = lx * unit * expansion + contour;
+          ly = ly * unit * expansion + contour * .42;
+          const px = tx + lx * cos - ly * sin;
+          const py = ty + lx * sin + ly * cos;
+          const wave = .5 + .5 * Math.sin(i * .071 + t * 12 + column * 1.7 - row);
+          const centerEnergy = 1 - Math.min(1, Math.hypot(lx, ly) / (unit * .7));
+          const alpha = .15 + wave * .26 + localPulse * (.24 + centerEnergy * .32);
+          const warm = .5 + .5 * Math.sin(seed * .09 + t * 5);
+          ctx.fillStyle = `rgba(${132 + warm * 74},${194 + warm * 37},${229 - warm * 24},${alpha})`;
+          const size = (.52 + wave * .64 + localPulse * .38) * this.dpr;
+          ctx.fillRect(px - size / 2, py - size / 2, size, size);
+        }
+
+        ctx.strokeStyle = `rgba(158,207,246,${.16 + localPulse * .46})`;
+        ctx.lineWidth = Math.max(.7, this.dpr * (.5 + localPulse * .28));
+        ctx.shadowBlur = localPulse * 18 * this.dpr;
+        ctx.shadowColor = 'rgba(93,178,238,.75)';
+        ctx.strokeRect(tx - unit * expansion / 2, ty - unit * expansion / 2, unit * expansion, unit * expansion);
+        ctx.shadowBlur = 0;
+      };
+
+      for (let row = 0; row < 3; row++) {
+        for (let column = 0; column < 3; column++) {
+          if (column === 1 && row === 1) continue;
+          drawTile(column, row, true);
+        }
+      }
+
+      if (installed < .96) {
+        ctx.setLineDash([3 * this.dpr, 5 * this.dpr]);
+        ctx.strokeStyle = `rgba(155,207,247,${.38 * (1 - installed)})`;
+        ctx.lineWidth = this.dpr;
+        ctx.strokeRect(cx - unit / 2, cy - unit / 2, unit, unit);
+        ctx.setLineDash([]);
+      }
+      drawTile(1, 1, true, true);
+
+      if (completion > .05) {
+        for (let ring = 0; ring < 3; ring++) {
+          const progress = ((cycle * 3.8 + ring / 3) % 1);
+          ctx.strokeStyle = `rgba(115,194,239,${completion * (1 - progress) * .25})`;
+          ctx.lineWidth = Math.max(.7, this.dpr * .65);
+          ctx.beginPath();
+          ctx.arc(cx, cy, unit * (1.35 + progress * 2.25), 0, TAU);
+          ctx.stroke();
+        }
+      }
+
       ctx.globalCompositeOperation = 'source-over';
     }
 
