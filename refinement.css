@@ -1012,14 +1012,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .way-copy>p:not(.eyebrow),.insight-subhero>div>p:not(.eyebrow){max-width:590px;color:#c4d1dc;font-size:18px;line-height:1.65}
 .way-copy .button{width:max-content;margin-top:28px}
 .way-terrain{position:relative;min-height:690px;overflow:hidden;background:radial-gradient(circle at 62% 38%,rgba(77,133,202,.22),transparent 25%),linear-gradient(145deg,#0c3153,#041321)}
-.way-terrain:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 54px,rgba(126,166,211,.045) 55px),repeating-linear-gradient(90deg,transparent 0 74px,rgba(126,166,211,.035) 75px)}
+.way-terrain:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 52% 58%,rgba(60,137,190,.1),transparent 62%),repeating-linear-gradient(0deg,transparent 0 54px,rgba(126,166,211,.026) 55px),repeating-linear-gradient(90deg,transparent 0 74px,rgba(126,166,211,.02) 75px)}
+.math-art-terrain{inset:0;z-index:2;filter:drop-shadow(0 0 16px rgba(94,187,224,.15));-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 96%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 96%,transparent 100%)}
 .way-contour{position:absolute;border:1px solid rgba(118,166,222,.17);border-radius:48% 52% 45% 55%/55% 40% 60% 45%;animation:wayContour 16s ease-in-out infinite alternate}
 .contour-one{width:660px;height:430px;right:-170px;top:-90px}.contour-two{width:520px;height:350px;right:-90px;top:35px;animation-delay:-5s}.contour-three{width:380px;height:270px;right:5px;top:145px;animation-delay:-9s}
 .way-ridge{position:absolute;inset:auto -8% 0;height:83%;background:#0a2945;clip-path:polygon(0 100%,0 70%,16% 45%,28% 62%,43% 25%,52% 51%,64% 11%,75% 46%,87% 28%,100% 61%,100% 100%)}
 .ridge-back{opacity:.48;transform:translateY(-58px) scale(1.12);background:#16456b}.ridge-front{background:linear-gradient(90deg,#071d31,#0a2a47 55%,#061828)}
 .way-route{position:absolute;z-index:3;inset:6% 12% 7% 18%;width:70%;height:87%;filter:drop-shadow(0 0 9px rgba(126,184,248,.45))}.way-route path{fill:none;stroke-linecap:round}.route-shadow{stroke:rgba(134,176,221,.24);stroke-width:8}.route-progress{stroke:#b9dcff;stroke-width:3;stroke-dasharray:1;stroke-dashoffset:1;animation:wayDraw 7s cubic-bezier(.3,.05,.25,1) infinite}
 .way-traveler{position:absolute;z-index:4;left:22%;bottom:12%;width:12px;height:12px;border:2px solid #d5eaff;border-radius:50%;background:#4e8ee0;box-shadow:0 0 0 8px rgba(94,151,221,.12),0 0 24px #8fc4ff;animation:wayBeacon 2.1s ease-in-out infinite}
-.way-origin,.way-destination{position:absolute;z-index:4;color:#87a8ca;font-size:8px;font-weight:800;letter-spacing:.2em}.way-origin{left:15%;bottom:7%}.way-destination{right:9%;top:8%}
+.way-origin,.way-destination{position:absolute;z-index:4;color:#9dbbd7;font-size:8px;font-weight:800;letter-spacing:.2em;text-shadow:0 0 12px rgba(83,154,213,.6)}.way-origin{left:12%;bottom:5%}.way-destination{left:52%;top:7%;transform:translateX(-50%)}
 @keyframes wayDraw{0%{stroke-dashoffset:1;opacity:.45}62%,82%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:.2}}
 @keyframes wayContour{to{transform:translate(-18px,12px) rotate(7deg)}}
 @keyframes wayBeacon{50%{box-shadow:0 0 0 15px rgba(94,151,221,0),0 0 34px #b3d8ff}}
