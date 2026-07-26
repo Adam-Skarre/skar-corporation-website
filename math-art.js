@@ -128,7 +128,7 @@
       this.glow(cx, cy, Math.min(w, h) * .5);
       ctx.globalCompositeOperation = 'lighter';
 
-      const count = w < 520 ? 7200 : 11800;
+      const count = w < 520 ? 9800 : 17800;
       const golden = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < count; i++) {
         const y0 = 1 - (i / (count - 1)) * 2;
@@ -136,17 +136,21 @@
         const theta = golden * i;
         const longitude = Math.atan2(Math.sin(theta), Math.cos(theta));
         const latitude = Math.asin(y0);
-        const wave =
-          .055 * Math.sin(longitude * 9 + latitude * 13 - t * 8) +
-          .035 * Math.sin(longitude * 17 - latitude * 7 + t * 5) +
-          .02 * Math.cos(latitude * 31 + t * 3);
-        const band = .5 + .5 * Math.sin(latitude * 38 + longitude * 4 - t * 9);
-        const radius = 1 + wave * (.45 + band);
+        const slowPulse = .5 + .5 * Math.sin(latitude * 5 - t * 4);
+        const harmonic =
+          .052 * Math.sin(longitude * 9 + latitude * 13 - t * 9) +
+          .034 * Math.sin(longitude * 17 - latitude * 7 + t * 5) +
+          .022 * Math.cos(latitude * 31 + longitude * 3 + t * 3) +
+          .012 * Math.sin(longitude * 29 + latitude * 43 - t * 12);
+        const sonicBand = .5 + .5 * Math.sin(latitude * 52 + longitude * 5 - t * 11);
+        const fineBand = .5 + .5 * Math.sin(latitude * 93 - longitude * 2 + t * 7);
+        const radius = 1 + harmonic * (.52 + sonicBand * .58) + .012 * slowPulse;
         let x = Math.cos(theta) * latitudeRadius * radius;
         let y = y0 * radius;
         let z = Math.sin(theta) * latitudeRadius * radius;
 
-        const twist = .22 * Math.sin(latitude * 6 + t * 3);
+        const twist = .22 * Math.sin(latitude * 6 + t * 3) +
+          .035 * Math.sin(longitude * 8 - t * 5);
         const ct = Math.cos(twist), st = Math.sin(twist);
         const tx = x * ct - z * st;
         z = x * st + z * ct;
@@ -154,15 +158,52 @@
 
         const point = this.rotateProject(x, y, z, -.22 + .08 * Math.sin(t * 2), t * .42, scale, cx, cy);
         const depth = Math.max(0, Math.min(1, (point[2] + 1.2) / 2.4));
-        const highlight = Math.pow(Math.max(0, .25 + .75 * band), 2);
-        const alpha = .08 + depth * .46 + highlight * .12;
-        const warm = .5 + .5 * Math.sin(longitude * 2 + latitude * 5 - t * 4);
-        const red = Math.round(105 + warm * 78);
-        const green = Math.round(176 + warm * 55);
-        const blue = Math.round(226 - warm * 72);
+        const rim = Math.pow(Math.max(0, 1 - Math.abs(point[2])), 3);
+        const highlight = Math.pow(sonicBand, 5) * .72 + Math.pow(fineBand, 9) * .28;
+        const alpha = .055 + depth * .38 + highlight * .24 + rim * .08;
+        const warm = .5 + .5 * Math.sin(longitude * 2 + latitude * 5 - t * 4 + harmonic * 18);
+        const red = Math.round(94 + warm * 92 + highlight * 22);
+        const green = Math.round(171 + warm * 60 + highlight * 18);
+        const blue = Math.round(231 - warm * 74);
         ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
-        const size = (.45 + depth * .9 + highlight * .25) * this.dpr;
+        const size = (.38 + depth * .82 + highlight * .38) * this.dpr;
         ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // Resonant contour lines make the surface read like a living acoustic field.
+      const contours = w < 520 ? 34 : 48;
+      const contourPoints = w < 520 ? 112 : 156;
+      for (let ring = 1; ring < contours; ring++) {
+        const latitude = -Math.PI / 2 + ring / contours * Math.PI;
+        const pulse = .012 + .026 * (.5 + .5 * Math.sin(ring * .72 - t * 10));
+        for (let j = 0; j < contourPoints; j++) {
+          const longitude = j / contourPoints * TAU;
+          const resonance =
+            pulse * Math.sin(longitude * 8 + ring * .44 - t * 8) +
+            .012 * Math.cos(longitude * 19 - ring * .31 + t * 5);
+          const radius = 1.012 + resonance;
+          const latRadius = Math.cos(latitude);
+          const x = Math.cos(longitude) * latRadius * radius;
+          const y = Math.sin(latitude) * radius;
+          const z = Math.sin(longitude) * latRadius * radius;
+          const point = this.rotateProject(x, y, z, -.22 + .08 * Math.sin(t * 2), t * .42, scale, cx, cy);
+          const depth = Math.max(0, Math.min(1, (point[2] + 1.15) / 2.3));
+          const crest = .5 + .5 * Math.sin(ring * .8 - t * 9);
+          ctx.fillStyle = `rgba(184,226,236,${.035 + depth * (.1 + crest * .13)})`;
+          const size = (.42 + depth * .68 + crest * .2) * this.dpr;
+          ctx.fillRect(point[0], point[1], size, size);
+        }
+      }
+
+      // Three quiet outward echoes reinforce the sonic motif without changing scale.
+      ctx.lineWidth = Math.max(.6, this.dpr * .65);
+      for (let echo = 0; echo < 3; echo++) {
+        const phase = (t * 1.8 + echo / 3) % 1;
+        const radius = scale * (1.01 + phase * .18);
+        ctx.strokeStyle = `rgba(119,196,224,${(1 - phase) * .075})`;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, radius, radius * (.94 - phase * .04), 0, 0, TAU);
+        ctx.stroke();
       }
       ctx.globalCompositeOperation = 'source-over';
     }
