@@ -312,90 +312,131 @@
       const cy = h * .5;
       this.glow(w * .5, cy, Math.max(w, h) * .62);
       ctx.globalCompositeOperation = 'lighter';
-      const strands = this.mobile ? 16 : 28;
-      const samples = this.mobile ? 170 : 290;
+      const strands = this.mobile ? 17 : 27;
+      const samples = this.mobile ? 180 : 300;
+      const pulseU = (t * .2) % 1;
+      const pulseDistance = u => {
+        const distance = Math.abs(u - pulseU);
+        return Math.min(distance, 1 - distance);
+      };
+      const pulseAt = u => Math.exp(-(pulseDistance(u) ** 2) / .0048);
       const signalPoint = (u, phase, depth = 0) => {
-        const carrier = u * TAU * (3.15 + .28 * Math.sin(u * TAU * 1.3 - t)) +
-          t * 3.7;
-        const envelope = .58 +
-          .3 * Math.sin(u * TAU * 3.1 - t * 1.6) +
-          .12 * Math.cos(u * TAU * 7.3 + t * 2.2);
-        const amplitude = h * (.135 + envelope * .082);
+        const broad =
+          Math.sin(u * TAU * 4.35 - t * 1.75 + phase) +
+          .42 * Math.sin(u * TAU * 2.05 + t * .72 - phase * .55) +
+          .18 * Math.sin(u * TAU * 8.4 - t * 2.6 + phase * .28);
+        const breathing = .84 + .16 * Math.sin(u * TAU * 1.5 - t * .7);
+        const pulse = pulseAt(u);
+        const amplitude = h * .155 * breathing * (1 + pulse * .52);
         const fineSignal =
-          Math.sin(u * TAU * 5.4 - t * 2.4 + phase * .35) * h * .038 +
-          Math.sin(u * TAU * 11.2 + t * 1.7 - phase) * h * .012;
-        const twist = carrier + phase;
+          Math.sin(u * TAU * 12.2 + t * 1.15 - phase * .65) * h * .009;
         return [
-          u * w + Math.cos(twist) * depth * w * .012,
-          cy + Math.sin(twist) * amplitude + fineSignal + depth * h * .018
+          u * w,
+          cy + broad * amplitude + fineSignal + depth * h * .045
         ];
       };
 
-      // Quiet center signal: orientation without turning the field into a chart.
+      // A quiet horizon gives the signal a center without making it a graph.
       ctx.beginPath();
       ctx.moveTo(0, cy);
       ctx.lineTo(w, cy);
-      ctx.lineWidth = Math.max(.35, this.dpr * .4);
-      ctx.strokeStyle = 'rgba(118,178,210,.09)';
+      ctx.lineWidth = Math.max(.32, this.dpr * .36);
+      ctx.strokeStyle = 'rgba(118,178,210,.075)';
       ctx.stroke();
 
-      // Phase-shifted ribbons create a living helix rather than a flat waveform.
+      const ribbons = [];
       for (let strand = 0; strand < strands; strand++) {
         const z = strands === 1 ? 0 : strand / (strands - 1) * 2 - 1;
-        const phase = z * 1.08 + Math.sin(strand * 1.7) * .06;
-        const depth = 1 - Math.abs(z) * .56;
+        const phase = z * 1.08;
+        const depth = 1 - Math.abs(z) * .5;
+        const points = [];
         ctx.beginPath();
         for (let sample = 0; sample <= samples; sample++) {
           const u = sample / samples;
           const point = signalPoint(u, phase, z);
+          points.push(point);
           if (sample === 0) ctx.moveTo(point[0], point[1]);
           else ctx.lineTo(point[0], point[1]);
 
-          if (sample % (this.mobile ? 5 : 4) === strand % 3) {
-            const shimmer = .5 + .5 * Math.sin(
-              sample * .19 + strand * .73 - t * 8
-            );
-            const size = (.34 + depth * .5 + shimmer * .28) * this.dpr;
-            ctx.fillStyle = `rgba(${104 + depth * 65},${175 + depth * 45},${219 + depth * 24},${.045 + depth * .13 + shimmer * .065})`;
+          if (sample % (this.mobile ? 6 : 5) === strand % 4) {
+            const shimmer = .5 + .5 * Math.sin(sample * .16 + strand * .71 - t * 7);
+            const pulse = pulseAt(u);
+            const size = (.3 + depth * .42 + shimmer * .22 + pulse * .55) * this.dpr;
+            ctx.fillStyle = `rgba(${103 + depth * 54 + pulse * 55},${170 + depth * 42 + pulse * 37},${217 + depth * 23 + pulse * 19},${.035 + depth * .1 + shimmer * .045 + pulse * .16})`;
             ctx.fillRect(point[0], point[1], size, size);
           }
         }
-        const warm = .5 + .5 * Math.sin(strand * .46 - t * 2.3);
-        ctx.lineWidth = Math.max(.35, this.dpr * (.34 + depth * .22));
-        ctx.strokeStyle = `rgba(${105 + warm * 43},${177 + warm * 35},${222 + warm * 18},${.035 + depth * .12})`;
+        ribbons.push({ points, depth });
+        const shimmer = .5 + .5 * Math.sin(strand * .42 - t * 1.7);
+        ctx.lineWidth = Math.max(.34, this.dpr * (.33 + depth * .21));
+        ctx.strokeStyle = `rgba(${101 + shimmer * 34},${170 + shimmer * 32},${219 + shimmer * 20},${.065 + depth * .14})`;
         ctx.stroke();
       }
 
-      // A brighter composite signal travels through the helix and reveals change.
+      // The traveling energy front briefly revives every trace it crosses.
+      const pulseWidth = w * (this.mobile ? .105 : .082);
+      const pulseX = pulseU * w;
+      const pulseGlow = ctx.createRadialGradient(pulseX, cy, 0, pulseX, cy, pulseWidth * 1.65);
+      pulseGlow.addColorStop(0, 'rgba(91,224,230,.16)');
+      pulseGlow.addColorStop(.45, 'rgba(67,190,216,.07)');
+      pulseGlow.addColorStop(1, 'rgba(33,116,166,0)');
+      ctx.fillStyle = pulseGlow;
+      ctx.fillRect(pulseX - pulseWidth * 1.8, 0, pulseWidth * 3.6, h);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(pulseX - pulseWidth, 0, pulseWidth * 2, h);
+      ctx.clip();
+      ctx.shadowBlur = (this.mobile ? 8 : 12) * this.dpr;
+      ctx.shadowColor = 'rgba(73,221,230,.7)';
+      ribbons.forEach(({ points, depth }) => {
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        });
+        ctx.lineWidth = Math.max(.75, this.dpr * (.58 + depth * .36));
+        ctx.strokeStyle = `rgba(119,222,231,${.13 + depth * .2})`;
+        ctx.stroke();
+      });
+      ctx.restore();
+
+      // A luminous primary signal anchors the layered ribbon.
       const primary = [];
       for (let sample = 0; sample <= samples; sample++) {
         const u = sample / samples;
-        const phase = .22 * Math.sin(u * TAU * 1.8 - t * 2.1);
-        primary.push(signalPoint(u, phase, 0));
+        primary.push(signalPoint(u, 0, 0));
       }
       ctx.beginPath();
       primary.forEach((point, index) => {
         if (index === 0) ctx.moveTo(point[0], point[1]);
         else ctx.lineTo(point[0], point[1]);
       });
-      ctx.lineWidth = Math.max(1, this.dpr * 1.05);
-      ctx.strokeStyle = 'rgba(137,224,232,.54)';
-      ctx.shadowBlur = 8 * this.dpr;
-      ctx.shadowColor = 'rgba(71,211,224,.5)';
+      ctx.lineWidth = Math.max(1, this.dpr * 1.08);
+      ctx.strokeStyle = 'rgba(139,225,232,.58)';
+      ctx.shadowBlur = 9 * this.dpr;
+      ctx.shadowColor = 'rgba(67,216,226,.62)';
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Moving beads make the signal feel observed in real time.
-      const pulseU = (t * .23) % 1;
-      for (let bead = 0; bead < (this.mobile ? 70 : 110); bead++) {
-        const u = bead / (this.mobile ? 69 : 109);
-        const point = signalPoint(u, .22 * Math.sin(u * TAU * 1.8 - t * 2.1), 0);
-        const distance = Math.min(Math.abs(u - pulseU), 1 - Math.abs(u - pulseU));
-        const pulse = Math.exp(-(distance * distance) / .0025);
-        const size = (.7 + pulse * 2.8) * this.dpr;
-        ctx.fillStyle = `rgba(${177 + pulse * 68},${226 + pulse * 25},${230 - pulse * 39},${.3 + pulse * .66})`;
+      // Beads and a small flare make the pulse legible even on a phone.
+      const beadCount = this.mobile ? 76 : 126;
+      for (let bead = 0; bead < beadCount; bead++) {
+        const u = bead / (beadCount - 1);
+        const point = signalPoint(u, 0, 0);
+        const pulse = pulseAt(u);
+        const size = (.62 + pulse * 2.35) * this.dpr;
+        ctx.fillStyle = `rgba(${169 + pulse * 73},${222 + pulse * 31},${231 - pulse * 20},${.25 + pulse * .68})`;
         ctx.fillRect(point[0] - size / 2, point[1] - size / 2, size, size);
       }
+      const flare = signalPoint(pulseU, 0, 0);
+      const flareRadius = (this.mobile ? 11 : 15) * this.dpr;
+      const flareGlow = ctx.createRadialGradient(flare[0], flare[1], 0, flare[0], flare[1], flareRadius);
+      flareGlow.addColorStop(0, 'rgba(224,255,255,.94)');
+      flareGlow.addColorStop(.18, 'rgba(130,235,239,.72)');
+      flareGlow.addColorStop(1, 'rgba(76,193,220,0)');
+      ctx.fillStyle = flareGlow;
+      ctx.fillRect(flare[0] - flareRadius, flare[1] - flareRadius, flareRadius * 2, flareRadius * 2);
       ctx.globalCompositeOperation = 'source-over';
     }
 
