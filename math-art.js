@@ -25,7 +25,7 @@
     resize() {
       const rect = this.canvas.getBoundingClientRect();
       this.mobile = matchMedia('(max-width: 760px)').matches;
-      const dpr = Math.min(devicePixelRatio || 1, this.mobile ? 1.2 : 1.5);
+      const dpr = Math.min(devicePixelRatio || 1, this.mobile ? 2 : 1.5);
       const width = Math.max(1, Math.round(rect.width * dpr));
       const height = Math.max(1, Math.round(rect.height * dpr));
       if (this.canvas.width !== width || this.canvas.height !== height) {
