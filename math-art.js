@@ -45,6 +45,7 @@
         this.ctx.clearRect(0, 0, this.width, this.height);
         if (this.kind === 'torus') this.drawTorus(t);
         else if (this.kind === 'sphere') this.drawSphere(t);
+        else if (this.kind === 'market') this.drawMarket(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else this.drawFlow(t);
       }
@@ -204,6 +205,190 @@
         ctx.beginPath();
         ctx.ellipse(cx, cy, radius, radius * (.94 - phase * .04), 0, 0, TAU);
         ctx.stroke();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawResearch(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .53, cy = h * .49;
+      const scale = Math.min(w, h) * .29;
+      this.glow(cx, cy, Math.min(w, h) * .54);
+      ctx.globalCompositeOperation = 'lighter';
+
+      const golden = Math.PI * (3 - Math.sqrt(5));
+      // No.055's upper chamber is a compact ovoid, not a mirrored lower lobe.
+      const upperCount = w < 520 ? 7200 : 11800;
+      for (let i = 0; i < upperCount; i++) {
+        const s = (i + .5) / upperCount;
+        const vertical = -1 + s * 2;
+        const theta = i * golden;
+        const envelope = Math.pow(Math.sin(Math.PI * s), .48);
+        const scallop =
+          .055 * Math.sin(theta * 5 + s * 15 - t * 6) +
+          .025 * Math.sin(theta * 12 - s * 27 + t * 8);
+        const radius = (.055 + envelope * .76) * (1 + scallop);
+        const x = Math.cos(theta) * radius * 1.12;
+        const z = Math.sin(theta) * radius * .86;
+        const y = -.68 + vertical * .52 +
+          .035 * Math.sin(theta * 5 + s * 21 - t * 7) * envelope;
+        const point = this.rotateProject(
+          x, y, z,
+          -.07 + .035 * Math.sin(t * 2),
+          -.22 + t * .2,
+          scale, cx, cy
+        );
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
+        const latitudeBand = .5 + .5 * Math.sin(s * 78 + theta * 3 - t * 10);
+        const vein = Math.pow(.5 + .5 * Math.sin(theta * 13 + s * 25 + t * 4), 9);
+        const alpha = .055 + depth * .35 + latitudeBand * .09 + vein * .18;
+        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - s * 19 + t * 3), 8);
+        const red = Math.round(108 + warm * 116);
+        const green = Math.round(181 + warm * 47);
+        const blue = Math.round(232 - warm * 59);
+        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
+        const size = (.38 + depth * .82 + vein * .4) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // The lower chamber opens downward into a broad, two-lobed canopy.
+      const lowerCount = w < 520 ? 9800 : 16600;
+      for (let i = 0; i < lowerCount; i++) {
+        const s = (i + .5) / lowerCount;
+        const theta = i * golden * 1.07;
+        const flare = Math.pow(Math.sin(s * Math.PI * .72), .58);
+        const twinLobe = 1 + .17 * Math.cos(theta * 2) +
+          .055 * Math.sin(theta * 5 - s * 18 - t * 5);
+        const radius = (.06 + flare * 1.04) * twinLobe;
+        const x = Math.cos(theta) * radius * 1.18;
+        const z = Math.sin(theta) * radius * .76;
+        const y = -.1 + s * 1.28 +
+          .12 * Math.cos(theta * 2) * flare +
+          .035 * Math.sin(theta * 7 + s * 25 - t * 7);
+        const point = this.rotateProject(
+          x, y, z,
+          -.07 + .035 * Math.sin(t * 2),
+          -.22 + t * .2,
+          scale, cx, cy
+        );
+        const depth = Math.max(0, Math.min(1, (point[2] + 1.05) / 2.1));
+        const filament = Math.pow(.5 + .5 * Math.sin(theta * 10 + s * 42 - t * 9), 7);
+        const warm = Math.pow(.5 + .5 * Math.sin(theta * 3 - s * 16 + t * 3), 9);
+        ctx.fillStyle = `rgba(${126 + filament * 58 + warm * 42},${185 + filament * 43 + warm * 22},${226 + filament * 24 - warm * 38},${.045 + depth * .28 + filament * .2})`;
+        const size = (.36 + depth * .7 + filament * .34) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // A narrow, turbulent stem makes the transition feel continuous.
+      const neckCount = w < 520 ? 2600 : 4800;
+      for (let i = 0; i < neckCount; i++) {
+        const s = (i + .5) / neckCount;
+        const theta = i * golden * 1.23 + t * 2;
+        const radius = .045 + .06 * Math.sin(s * Math.PI) +
+          .018 * Math.sin(theta * 5 + s * 23 - t * 8);
+        const x = Math.cos(theta) * radius;
+        const z = Math.sin(theta) * radius * .8;
+        const y = -.17 + s * .28;
+        const point = this.rotateProject(x, y, z, -.07, -.22 + t * .2, scale, cx, cy);
+        const pulse = .5 + .5 * Math.sin(s * 48 - t * 12);
+        ctx.fillStyle = `rgba(${168 + pulse * 62},${206 + pulse * 30},${232 - pulse * 21},${.17 + pulse * .34})`;
+        const size = (.48 + pulse * .72) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // Long trajectories sweep from the upper ovoid through the stem and canopy.
+      ctx.lineWidth = Math.max(.55, this.dpr * .55);
+      for (let path = 0; path < 5; path++) {
+        ctx.beginPath();
+        const phase = path / 5 * TAU + t * (.28 + path * .025);
+        for (let step = 0; step <= 150; step++) {
+          const s = step / 150;
+          const y = -1.18 + s * 2.36;
+          const upper = s < .46;
+          const local = upper ? s / .46 : (s - .46) / .54;
+          const envelope = upper
+            ? .055 + Math.pow(Math.sin(local * Math.PI), .52) * .72
+            : .055 + Math.pow(Math.sin(local * Math.PI * .72), .58) * 1.02;
+          const angle = phase + s * (8.2 + path * .35);
+          const x = Math.cos(angle) * envelope * 1.16;
+          const z = Math.sin(angle) * envelope * .78;
+          const point = this.rotateProject(x, y, z, -.07, -.22 + t * .2, scale, cx, cy);
+          if (step === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        }
+        ctx.strokeStyle = `rgba(177,219,239,${.04 + path * .012})`;
+        ctx.stroke();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawMarket(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const horizon = h * .16;
+      this.glow(w * .5, h * .47, Math.min(w, h) * .7);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineWidth = Math.max(.45, this.dpr * .48);
+
+      const columns = w < 520 ? 78 : 124;
+      const rows = w < 520 ? 58 : 82;
+      const points = Array.from({ length: columns }, () => []);
+      const wave = (u, v) =>
+        Math.sin(u * 18 + v * 9 - t * 11) * .46 +
+        Math.sin(u * 47 - v * 17 + t * 7) * .24 +
+        Math.cos(u * 91 + v * 31 - t * 4) * .13 +
+        Math.sin((u + v) * 7 + t * 3) * .17;
+
+      for (let column = 0; column < columns; column++) {
+        const u = column / (columns - 1);
+        ctx.beginPath();
+        for (let row = 0; row < rows; row++) {
+          const v = row / (rows - 1);
+          const depth = Math.pow(v, 1.55);
+          const field = wave(u, v);
+          const macro = Math.sin(u * 9 - t * 4 + depth * 6) * .55 +
+            Math.sin(u * 23 + t * 3) * .22;
+          const px = u * w +
+            field * w * (.002 + depth * .012) +
+            macro * w * depth * .008;
+          const py = horizon + depth * h * .82 +
+            field * h * (.01 + depth * .052) -
+            Math.abs(macro) * h * depth * .016;
+          points[column].push([px, py]);
+          if (row === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        const crest = .5 + .5 * Math.sin(u * 17 - t * 5);
+        ctx.strokeStyle = `rgba(${119 + crest * 58},${174 + crest * 49},${213 + crest * 32},${.12 + crest * .18})`;
+        ctx.stroke();
+      }
+
+      // Sparse cross-sections reveal the field as a connected market surface.
+      for (let row = 2; row < rows; row += 4) {
+        const v = row / (rows - 1);
+        ctx.beginPath();
+        for (let column = 0; column < columns; column++) {
+          const point = points[column][row];
+          if (column === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        }
+        ctx.strokeStyle = `rgba(151,205,234,${.035 + v * .07})`;
+        ctx.stroke();
+      }
+
+      // Bright pulses travel through selected traces like emergent signals.
+      for (let pulse = 0; pulse < 7; pulse++) {
+        const u = (pulse * .173 + t * .08) % 1;
+        const column = Math.min(columns - 1, Math.floor(u * columns));
+        const phase = (t * 2.4 + pulse * .137) % 1;
+        const row = Math.min(rows - 1, Math.floor(phase * rows));
+        const point = points[column][row];
+        const radius = (1.1 + phase * 1.8) * this.dpr;
+        ctx.fillStyle = `rgba(197,230,245,${.28 + (1 - phase) * .42})`;
+        ctx.beginPath();
+        ctx.arc(point[0], point[1], radius, 0, TAU);
+        ctx.fill();
       }
       ctx.globalCompositeOperation = 'source-over';
     }
