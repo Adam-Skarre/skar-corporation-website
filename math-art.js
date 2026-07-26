@@ -45,7 +45,6 @@
         this.ctx.clearRect(0, 0, this.width, this.height);
         if (this.kind === 'torus') this.drawTorus(t);
         else if (this.kind === 'sphere') this.drawSphere(t);
-        else if (this.kind === 'research') this.drawResearch(t);
         else if (this.kind === 'market') this.drawMarket(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else this.drawFlow(t);
