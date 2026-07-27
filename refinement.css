@@ -984,6 +984,81 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .home-intro .section-top .mountain-sketch{top:auto;bottom:-3%;right:0;width:63%;height:104%;background-position:center bottom;background-size:100% 100%}
 @media(max-width:760px){.home-intro .section-top{margin-bottom:0}.home-intro .section-top .mountain-sketch{top:auto;bottom:-2%;right:-18%;width:118%;height:86%;background-size:100% 100%}}
 
+/* Home: explain the engagement instead of repeating the primary navigation. */
+.home-engagement .section-top{
+  grid-template-columns:minmax(0,.9fr) minmax(320px,1.1fr);
+  gap:clamp(42px,7vw,112px);
+  padding-bottom:48px;
+}
+.engagement-eyebrow{
+  display:block;
+  margin-bottom:22px;
+  color:var(--electric);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.home-engagement .section-top p{
+  margin:35px 0 0;
+  max-width:680px;
+  font-size:clamp(17px,1.45vw,21px);
+  line-height:1.65;
+}
+.engagement-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  border-top:1px solid #173a58;
+  border-bottom:1px solid var(--line);
+}
+.engagement-step{
+  min-height:290px;
+  padding:31px clamp(28px,3vw,48px) 38px 0;
+  border-right:1px solid var(--line);
+}
+.engagement-step:not(:first-child){padding-left:clamp(28px,3vw,48px)}
+.engagement-step:last-child{border-right:0}
+.engagement-step span{
+  color:var(--electric);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.engagement-step h3{
+  margin:54px 0 17px;
+  color:#171a20;
+  font-size:clamp(23px,2vw,30px);
+  letter-spacing:-.03em;
+}
+.engagement-step p{
+  margin:0;
+  max-width:390px;
+  color:#646a72;
+  font-size:15px;
+  line-height:1.7;
+}
+.engagement-note{
+  max-width:900px;
+  margin:32px 0 0 auto;
+  color:#4f5660;
+  font-size:14px;
+  line-height:1.65;
+}
+@media(max-width:760px){
+  .home-engagement .section-top{grid-template-columns:1fr;gap:18px;padding-bottom:38px}
+  .home-engagement .section-top p{margin-top:0;font-size:17px}
+  .engagement-grid{grid-template-columns:1fr}
+  .engagement-step,.engagement-step:not(:first-child){
+    min-height:0;
+    padding:28px 0 31px;
+    border-right:0;
+    border-bottom:1px solid var(--line);
+  }
+  .engagement-step:last-child{border-bottom:0}
+  .engagement-step h3{margin:24px 0 12px}
+  .engagement-note{margin-top:26px;font-size:13px}
+}
+
 
 
 /* Brand order: full SKAR wordmark by default; mountain emblem on desktop hover */
