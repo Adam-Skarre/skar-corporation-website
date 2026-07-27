@@ -150,40 +150,26 @@
       const ctx = this.ctx;
       const w = this.width, h = this.height;
       const cx = w * .5, cy = h * .5;
-      const scale = Math.min(w, h) * .34;
-      this.prepare(cx, cy, Math.min(w, h) * .5);
+      const fit = Math.min(w, h) / 400 * .92;
+      const phase = t * 8.7;
+      this.prepare(cx, cy, Math.min(w, h) * .54);
 
-      const sides = [-1, 1];
-      sides.forEach((side, index) => {
-        const threads = this.mobile ? 38 : 64;
-        for (let r = 0; r < threads; r++) {
-          const v = (r / (threads - 1) - .5) * 2;
-          ctx.beginPath();
-          const steps = 108;
-          for (let i = 0; i <= steps; i++) {
-            const u = i / steps * Math.PI * 1.55 - Math.PI * .78;
-            const lobe = .62 + .2 * Math.cos(u * 3 - t * 2 + index);
-            const x = side * (.42 + Math.abs(Math.cos(u)) * .36 + v * .16 * Math.sin(u * 2));
-            const y = Math.sin(u) * lobe + v * .13 * Math.cos(u * 3 - t * 2.4);
-            const px = cx + x * scale;
-            const py = cy + y * scale;
-            if (i === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
-          }
-          const signal = .5 + .5 * Math.sin(r * .25 - t * 6 + index * 2);
-          ctx.strokeStyle = `rgba(${166 + signal * 60},${207 + signal * 35},${225 + signal * 20},${.1 + signal * .27})`;
-          ctx.lineWidth = Math.max(.62, this.dpr * .5);
-          ctx.stroke();
-        }
-      });
-
-      for (let i = 0; i < 120; i++) {
-        const progress = (i / 120 + t * .16) % 1;
-        const x = cx + (progress - .5) * scale * .72;
-        const y = cy + Math.sin(progress * TAU * 2 - t * 4) * scale * .035;
-        ctx.fillStyle = `rgba(223,240,246,${Math.sin(progress * Math.PI) * .48})`;
-        const size = (1 + Math.sin(progress * Math.PI) * 1.1) * this.dpr;
-        ctx.fillRect(x, y, size, size);
+      const stride = this.mobile ? 2 : 1;
+      const pointSize = Math.max(.56, this.dpr * .4);
+      for (let i = 20000; i > 0; i -= stride) {
+        const y = i / 470;
+        const k = (1.5 + Math.atan(Math.cos(y % 12) * 8)) * Math.cos(i / 3);
+        const e = y / 8 - 13;
+        const d = Math.hypot(k, e);
+        const q = 10 * Math.cos(d - phase) + y / 8 * k *
+          (2 + Math.sin(d * 3 + y - phase * 2)) + 99;
+        const c = d / 4 - phase / 8 + i % 6;
+        const px = q * Math.cos(c) * fit;
+        const py = q * Math.sin(c + i % 3 * 7 + 2.3) * fit;
+        const shimmer = .35 + .65 * Math.sin(i * .053 + phase * 1.8) ** 2;
+        ctx.fillStyle = `rgba(${184 + shimmer * 47},${216 + shimmer * 26},${230 + shimmer * 18},${.12 + shimmer * .5})`;
+        const size = pointSize * (1 + shimmer * .5);
+        ctx.fillRect(cx + px, cy + py, size, size);
       }
       this.finish();
     }
@@ -305,16 +291,17 @@
       const fit = Math.min(w, h) / 400;
       this.prepare(cx, cy, Math.min(w, h) * .54);
 
-      const count = this.mobile ? 8200 : 13800;
+      const stride = this.mobile ? 2 : 1;
+      const phase = t * 12;
       const pointSize = Math.max(.58, this.dpr * .42);
-      for (let i = count; i > 0; i--) {
+      for (let i = 20000; i > 0; i -= stride) {
         const y = i / 940;
         const k = (4 + Math.cos(y)) * Math.cos(i);
         const e = y / 6 - 13;
         const d = Math.hypot(k, e) - 3;
         const q = 3 * Math.sin(k * 2) + k / 16 * y *
-          (e + 2 * Math.sin(e - d * 5 + t * 4.2)) + 99;
-        const c = d / 1.2 - t + (i % 2) * 3;
+          (e + 2 * Math.sin(e - d * 5 + phase)) + 99;
+        const c = d / 1.2 - phase / 4 + (i % 2) * 3;
         const px = q * Math.sin(c) * Math.sin(c / 4 + e / 6 - 8) * fit;
         const py = (q * d / 9 * Math.cos(c) + d * 22 - 200) * fit;
         const angle = -.16;
@@ -330,67 +317,27 @@
     drawMedusa(t) {
       const ctx = this.ctx;
       const w = this.width, h = this.height;
-      const cx = w * .5, cy = h * .43;
-      const scale = Math.min(w, h) * .36;
-      const pulse = .5 + .5 * Math.sin(t * 5);
+      const cx = w * .5, cy = h * .5;
+      const fit = Math.min(w, h) / 400 * .92;
+      const phase = t * 10;
       this.prepare(cx, cy, Math.min(w, h) * .54);
 
-      const bellLayers = this.mobile ? 22 : 34;
-      for (let layer = 0; layer < bellLayers; layer++) {
-        const v = layer / (bellLayers - 1);
-        const rx = scale * (.62 - v * .31) * (1 + pulse * .07);
-        const ry = scale * (.54 - v * .25) * (1 - pulse * .08);
-        const yOffset = v * scale * .12;
-        ctx.beginPath();
-        const steps = 80;
-        for (let i = 0; i <= steps; i++) {
-          const u = i / steps * Math.PI;
-          const ripple = Math.sin(u * 9 - t * 6 + layer * .23) * scale * .012 * (1 - v);
-          const px = cx + Math.cos(u) * (rx + ripple);
-          const py = cy + yOffset - Math.sin(u) * ry + Math.cos(u * 5 - t * 3) * scale * .012;
-          if (i === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        const light = .5 + .5 * Math.sin(layer * .42 - t * 7);
-        ctx.strokeStyle = `rgba(${170 + light * 60},${211 + light * 31},${228 + light * 19},${.08 + light * .26})`;
-        ctx.lineWidth = Math.max(.58, this.dpr * .46);
-        ctx.stroke();
-      }
-
-      const tentacles = this.mobile ? 11 : 15;
-      for (let strand = 0; strand < tentacles; strand++) {
-        const n = strand / (tentacles - 1) * 2 - 1;
-        ctx.beginPath();
-        const steps = 74;
-        for (let i = 0; i <= steps; i++) {
-          const u = i / steps;
-          const narrowing = 1 - u * .42;
-          const wave = Math.sin(u * 15 + n * 4 - t * 7) * scale * (.025 + u * .07);
-          const curl = Math.sin(u * Math.PI) * n * scale * .14;
-          const px = cx + n * scale * .42 * narrowing + wave + curl;
-          const py = cy + scale * (.04 + u * 1.32) + Math.sin(u * 8 - t * 4) * scale * .018;
-          if (i === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        const light = .5 + .5 * Math.sin(strand * .67 + t * 6);
-        ctx.strokeStyle = `rgba(185,222,235,${.1 + light * .3})`;
-        ctx.lineWidth = Math.max(.62, this.dpr * (.45 + light * .12));
-        ctx.stroke();
-      }
-
-      for (let side of [-1, 1]) {
-        for (let arm = 0; arm < 7; arm++) {
-          const a = arm / 6;
-          ctx.beginPath();
-          ctx.moveTo(cx + side * scale * .1, cy + scale * (.08 + a * .25));
-          ctx.bezierCurveTo(
-            cx + side * scale * (.35 + a * .08), cy + scale * (.15 + a * .14),
-            cx + side * scale * (.72 + pulse * .06), cy + scale * (.28 + a * .21),
-            cx + side * scale * (.58 + a * .2), cy + scale * (.55 + a * .17)
-          );
-          ctx.strokeStyle = `rgba(173,216,233,${.08 + (1 - a) * .2})`;
-          ctx.stroke();
-        }
+      const stride = this.mobile ? 2 : 1;
+      const pointSize = Math.max(.56, this.dpr * .4);
+      for (let i = 20000; i > 0; i -= stride) {
+        const m = i % 2 * 3;
+        const k = 9 * Math.cos(i / 61);
+        const e = i / 652 - 13;
+        const d = Math.hypot(k, e) ** 2 / 89 + 1;
+        const q = 79 - e / 2 * Math.sin(k) + k / d *
+          (6 + 5 * Math.sin(Math.sin(d * d + e / 9 - phase + m)));
+        const c = d / 1.9 + Math.cos(phase - d * 3 + m) / 11 - phase / 16 + m;
+        const px = q * Math.sin(c) * fit;
+        const py = (q + 40) * Math.cos(c) * fit;
+        const shimmer = .35 + .65 * Math.sin(i * .061 + phase * 2) ** 2;
+        ctx.fillStyle = `rgba(${187 + shimmer * 45},${218 + shimmer * 25},${230 + shimmer * 18},${.13 + shimmer * .52})`;
+        const size = pointSize * (1 + shimmer * .48);
+        ctx.fillRect(cx + px, cy + py, size, size);
       }
       this.finish();
     }
