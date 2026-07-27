@@ -177,30 +177,39 @@
     drawConvergence(t) {
       const ctx = this.ctx;
       const w = this.width, h = this.height;
-      const cx = w * .56, cy = h * .5;
-      const radius = Math.min(w, h) * .31;
-      this.prepare(cx, cy, Math.min(w, h) * .55);
+      const cx = w * .56, cy = h * .52;
+      const radius = Math.min(w, h) * (this.mobile ? .3 : .32);
+      this.prepare(cx, cy, radius * 1.72);
 
-      const cycle = 2.65;
+      const cycle = 3.05;
       const local = (t % cycle) / cycle;
-      const settle = Math.max(0, Math.min(1, (local - .06) / .7));
-      const eased = 1 - Math.pow(1 - settle, 3);
-      const fade = local > .9 ? Math.max(0, (1 - local) / .1) : 1;
+      const settle = Math.max(0, Math.min(1, (local - .09) / .68));
+      const eased = settle * settle * (3 - 2 * settle);
+      const fade = local > .92 ? Math.max(0, (1 - local) / .08) : 1;
       const generation = Math.floor(t / cycle);
-      const count = this.mobile ? 1050 : 1900;
+      const count = this.mobile ? 1250 : 2250;
       const hash = n => {
         const x = Math.sin(n * 91.345 + generation * 17.17) * 47453.5453;
         return x - Math.floor(x);
       };
 
       ctx.globalAlpha = fade;
-      ctx.strokeStyle = 'rgba(112,176,211,.13)';
-      ctx.lineWidth = this.dpr * .55;
-      for (let ring = 0; ring < 5; ring++) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * .97, 0, TAU);
+      ctx.clip();
+
+      const envelopeAlpha = (.035 + eased * .105) * fade;
+      ctx.lineWidth = Math.max(.55, this.dpr * .48);
+      for (let ring = 0; ring < 6; ring++) {
+        const orbitX = radius * (.66 + ring * .045);
+        const orbitY = radius * (.18 + ring * .055);
         ctx.beginPath();
-        ctx.ellipse(cx, cy, radius * (1.03 + ring * .035), radius * (.34 + ring * .075), t * .45 + ring * .31, 0, TAU);
+        ctx.ellipse(cx, cy, orbitX, orbitY, t * .27 + ring * .47, 0, TAU);
+        ctx.strokeStyle = `rgba(116,180,212,${envelopeAlpha * (1 - ring * .06)})`;
         ctx.stroke();
       }
+      ctx.restore();
 
       for (let i = 0; i < count; i++) {
         const a = hash(i * 3 + 1);
@@ -209,34 +218,59 @@
         const phi = TAU * a;
         const z = 2 * b - 1;
         const shell = Math.sqrt(Math.max(0, 1 - z * z));
-        const depth = .82 + .2 * c;
+        const interior = c < .19 ? Math.cbrt(Math.max(.01, hash(i * 11 + 41))) : .84 + .14 * c;
+        const depth = interior;
         const sx = shell * Math.cos(phi) * depth;
         const sy = z * depth;
         const sz = shell * Math.sin(phi) * depth;
-        const rotation = t * .42;
+        const rotation = t * .31;
         const rx = sx * Math.cos(rotation) - sz * Math.sin(rotation);
         const rz = sx * Math.sin(rotation) + sz * Math.cos(rotation);
-        const targetX = cx + rx * radius * (1 + .09 * Math.sin(phi * 5 + t));
-        const targetY = cy + sy * radius * .95 + rz * radius * .12;
+        const perspective = .9 + .1 * (rz * .5 + .5);
+        const surfaceRipple = 1 + .025 * Math.sin(phi * 7 + z * 5 - t * 2.2);
+        const targetX = cx + rx * radius * .92 * perspective * surfaceRipple;
+        const targetY = cy + (sy * .9 + rz * .075) * radius * perspective * surfaceRipple;
 
-        const sourceX = w * (.08 + .84 * hash(i * 7 + 11));
-        const sourceY = -h * (.08 + .7 * hash(i * 7 + 17)) + h * local * (1.15 + .65 * c);
-        const drift = Math.sin(i * .73 + t * 4) * radius * .045 * (1 - eased);
-        const px = sourceX + (targetX - sourceX) * eased + drift;
-        const py = sourceY + (targetY - sourceY) * eased;
-        const probability = .22 + .72 * (rz * .5 + .5);
-        const bright = hash(i * 5 + 29) > .965;
-        ctx.fillStyle = bright ? `rgba(236,241,210,${.55 * fade})` : `rgba(${120 + probability * 95},${181 + probability * 47},${210 + probability * 25},${(.16 + probability * .48) * fade})`;
-        const size = (bright ? 1.7 : .58 + probability * .72) * this.dpr;
+        const sourceX = w * (.1 + .8 * hash(i * 7 + 11));
+        const fallSpeed = .82 + .72 * c;
+        const sourceY = -h * (.18 + .66 * hash(i * 7 + 17)) + h * local * fallSpeed;
+        const curve = Math.sin(Math.PI * eased);
+        const bend = (hash(i * 13 + 31) - .5) * radius * .7 * curve;
+        const drift = Math.sin(i * .73 + t * 3.1) * radius * .032 * (1 - eased);
+        const px = sourceX + (targetX - sourceX) * eased + bend + drift;
+        const py = sourceY + (targetY - sourceY) * eased - curve * radius * (.08 + .12 * c);
+        const front = rz * .5 + .5;
+        const bright = hash(i * 5 + 29) > .972;
+        const alpha = (.14 + front * .48 + eased * .08) * fade;
+        ctx.fillStyle = bright
+          ? `rgba(239,243,213,${(.48 + front * .3) * fade})`
+          : `rgba(${119 + front * 92},${176 + front * 55},${204 + front * 31},${alpha})`;
+        const size = (bright ? 1.55 : .52 + front * .78) * this.dpr;
         ctx.fillRect(px, py, size, size);
 
-        if (i % 97 === 0 && eased > .55) {
+        if (i % 137 === 0 && eased > .42) {
           ctx.beginPath();
           ctx.moveTo(px, py);
-          ctx.quadraticCurveTo(cx + Math.sin(phi * 3) * radius * .45, cy + Math.cos(phi * 2) * radius * .35, targetX, targetY);
-          ctx.strokeStyle = `rgba(177,211,224,${.08 * eased * fade})`;
+          ctx.quadraticCurveTo(
+            cx + Math.sin(phi * 2.7) * radius * .37,
+            cy + Math.cos(phi * 2.1) * radius * .29,
+            targetX,
+            targetY
+          );
+          ctx.strokeStyle = `rgba(177,211,224,${.055 * eased * fade})`;
+          ctx.lineWidth = Math.max(.45, this.dpr * .4);
           ctx.stroke();
         }
+      }
+
+      if (eased > .7) {
+        const resolved = (eased - .7) / .3;
+        const pulse = .5 + .5 * Math.sin(t * 3.4);
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * (.935 + pulse * .012), 0, TAU);
+        ctx.strokeStyle = `rgba(156,211,229,${resolved * (.055 + pulse * .035) * fade})`;
+        ctx.lineWidth = this.dpr * .7;
+        ctx.stroke();
       }
 
       ctx.globalCompositeOperation = 'source-over';
@@ -244,7 +278,10 @@
       ctx.font = `${Math.max(8, 9 * this.dpr)}px Inter, Arial, sans-serif`;
       ctx.letterSpacing = `${1.6 * this.dpr}px`;
       ctx.fillText(`SAMPLES  ${String(Math.round(count * eased)).padStart(4, '0')}`, w * .06, h * .1);
-      ctx.fillText(`CONVERGENCE  ${(eased * 100).toFixed(1)}%`, w * .06, h * .9);
+      ctx.fillText(`CONVERGENCE  ${(eased * 100).toFixed(1)}%`, w * .06, h * .88);
+      ctx.fillStyle = 'rgba(111,157,185,.62)';
+      ctx.font = `${Math.max(7, 7.5 * this.dpr)}px Inter, Arial, sans-serif`;
+      ctx.fillText(eased > .985 ? 'STABLE DISTRIBUTION' : 'ITERATIVE RESOLUTION', w * .06, h * .925);
       this.finish();
     }
 
