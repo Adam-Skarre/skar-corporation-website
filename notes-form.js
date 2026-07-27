@@ -41,7 +41,10 @@
         else if (this.kind === 'wreath') this.drawWreath(t);
         else if (this.kind === 'dialogue') this.drawDialogue(t);
         else if (this.kind === 'convergence') this.drawConvergence(t);
-        else this.drawChamber(t);
+        else if (this.kind === 'chamber') this.drawChamber(t);
+        else if (this.kind === 'migration') this.drawMigration(t);
+        else if (this.kind === 'medusa') this.drawMedusa(t);
+        else if (this.kind === 'infinite') this.drawInfinite(t);
       }
       requestAnimationFrame(this.frame);
     }
@@ -291,6 +294,195 @@
         ctx.strokeStyle = `rgba(179,219,234,${.09 + bright * .24})`;
         ctx.lineWidth = Math.max(.58, this.dpr * .47);
         ctx.stroke();
+      }
+      this.finish();
+    }
+
+    drawMigration(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .5;
+      const scale = Math.min(w, h) * .34;
+      this.prepare(cx, cy, Math.min(w, h) * .52);
+
+      const fishCount = this.mobile ? 5 : 7;
+      const ribs = this.mobile ? 12 : 18;
+      for (let fish = 0; fish < fishCount; fish++) {
+        const orbit = fish / fishCount * TAU + t * .7;
+        const radiusX = scale * (1.02 + .06 * Math.sin(orbit * 3 - t * 2));
+        const radiusY = scale * (.78 + .05 * Math.cos(orbit * 2 + t));
+        const fx = cx + Math.cos(orbit) * radiusX;
+        const fy = cy + Math.sin(orbit) * radiusY;
+        const tangent = Math.atan2(Math.cos(orbit) * radiusY, -Math.sin(orbit) * radiusX);
+        const size = scale * (.27 + .035 * Math.sin(fish * 1.9 + t * 3));
+        const pulse = .5 + .5 * Math.sin(fish * 2.1 - t * 5);
+        const cos = Math.cos(tangent), sin = Math.sin(tangent);
+
+        const point = (x, y) => ({
+          x: fx + x * cos - y * sin,
+          y: fy + x * sin + y * cos
+        });
+
+        for (let rib = 0; rib < ribs; rib++) {
+          const side = rib / (ribs - 1) * 2 - 1;
+          ctx.beginPath();
+          const steps = 42;
+          for (let i = 0; i <= steps; i++) {
+            const u = i / steps;
+            const longitudinal = (u * 2 - 1) * size;
+            const envelope = Math.sin(u * Math.PI) ** .72;
+            const flex = Math.sin(u * Math.PI * 2 + fish - t * 4) * size * .055 * u;
+            const lateral = side * envelope * size * (.34 + .05 * Math.sin(t * 3 + fish)) + flex;
+            const p = point(longitudinal, lateral);
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+          }
+          const alpha = .08 + .24 * Math.sin(rib * .48 + fish - t * 5) ** 2;
+          ctx.strokeStyle = `rgba(${175 + pulse * 55},${214 + pulse * 28},${229 + pulse * 18},${alpha})`;
+          ctx.lineWidth = Math.max(.56, this.dpr * .44);
+          ctx.stroke();
+        }
+
+        const tailBase = point(-size * .92, 0);
+        for (let tail = 0; tail < 9; tail++) {
+          const s = tail / 8 * 2 - 1;
+          const tip = point(-size * 1.52, s * size * (.48 + .08 * Math.sin(t * 4 + fish)));
+          const control = point(-size * 1.2, s * size * .12 + Math.sin(t * 5 + fish) * size * .08);
+          ctx.beginPath();
+          ctx.moveTo(tailBase.x, tailBase.y);
+          ctx.quadraticCurveTo(control.x, control.y, tip.x, tip.y);
+          ctx.strokeStyle = `rgba(193,225,236,${.12 + .22 * (1 - Math.abs(s))})`;
+          ctx.stroke();
+        }
+
+        for (let dot = 0; dot < 54; dot++) {
+          const u = dot / 53;
+          const side = Math.sin(dot * 4.13 + fish) * .85;
+          const envelope = Math.sin(u * Math.PI) ** .7;
+          const p = point((u * 2 - 1) * size, side * envelope * size * .34);
+          const shimmer = .35 + .65 * Math.sin(dot * .71 + t * 8 + fish) ** 2;
+          ctx.fillStyle = `rgba(219,239,244,${.14 + shimmer * .48})`;
+          const d = (.5 + shimmer * .7) * this.dpr;
+          ctx.fillRect(p.x, p.y, d, d);
+        }
+      }
+      this.finish();
+    }
+
+    drawMedusa(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .43;
+      const scale = Math.min(w, h) * .36;
+      const pulse = .5 + .5 * Math.sin(t * 5);
+      this.prepare(cx, cy, Math.min(w, h) * .54);
+
+      const bellLayers = this.mobile ? 22 : 34;
+      for (let layer = 0; layer < bellLayers; layer++) {
+        const v = layer / (bellLayers - 1);
+        const rx = scale * (.62 - v * .31) * (1 + pulse * .07);
+        const ry = scale * (.54 - v * .25) * (1 - pulse * .08);
+        const yOffset = v * scale * .12;
+        ctx.beginPath();
+        const steps = 80;
+        for (let i = 0; i <= steps; i++) {
+          const u = i / steps * Math.PI;
+          const ripple = Math.sin(u * 9 - t * 6 + layer * .23) * scale * .012 * (1 - v);
+          const px = cx + Math.cos(u) * (rx + ripple);
+          const py = cy + yOffset - Math.sin(u) * ry + Math.cos(u * 5 - t * 3) * scale * .012;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        const light = .5 + .5 * Math.sin(layer * .42 - t * 7);
+        ctx.strokeStyle = `rgba(${170 + light * 60},${211 + light * 31},${228 + light * 19},${.08 + light * .26})`;
+        ctx.lineWidth = Math.max(.58, this.dpr * .46);
+        ctx.stroke();
+      }
+
+      const tentacles = this.mobile ? 11 : 15;
+      for (let strand = 0; strand < tentacles; strand++) {
+        const n = strand / (tentacles - 1) * 2 - 1;
+        ctx.beginPath();
+        const steps = 74;
+        for (let i = 0; i <= steps; i++) {
+          const u = i / steps;
+          const narrowing = 1 - u * .42;
+          const wave = Math.sin(u * 15 + n * 4 - t * 7) * scale * (.025 + u * .07);
+          const curl = Math.sin(u * Math.PI) * n * scale * .14;
+          const px = cx + n * scale * .42 * narrowing + wave + curl;
+          const py = cy + scale * (.04 + u * 1.32) + Math.sin(u * 8 - t * 4) * scale * .018;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        const light = .5 + .5 * Math.sin(strand * .67 + t * 6);
+        ctx.strokeStyle = `rgba(185,222,235,${.1 + light * .3})`;
+        ctx.lineWidth = Math.max(.62, this.dpr * (.45 + light * .12));
+        ctx.stroke();
+      }
+
+      for (let side of [-1, 1]) {
+        for (let arm = 0; arm < 7; arm++) {
+          const a = arm / 6;
+          ctx.beginPath();
+          ctx.moveTo(cx + side * scale * .1, cy + scale * (.08 + a * .25));
+          ctx.bezierCurveTo(
+            cx + side * scale * (.35 + a * .08), cy + scale * (.15 + a * .14),
+            cx + side * scale * (.72 + pulse * .06), cy + scale * (.28 + a * .21),
+            cx + side * scale * (.58 + a * .2), cy + scale * (.55 + a * .17)
+          );
+          ctx.strokeStyle = `rgba(173,216,233,${.08 + (1 - a) * .2})`;
+          ctx.stroke();
+        }
+      }
+      this.finish();
+    }
+
+    drawInfinite(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .5;
+      const scale = Math.min(w, h) * .36;
+      this.prepare(cx, cy, Math.min(w, h) * .54);
+
+      const strands = this.mobile ? 28 : 44;
+      for (let body = 0; body < 2; body++) {
+        const phase = body * Math.PI;
+        for (let strand = 0; strand < strands; strand++) {
+          const offset = (strand / (strands - 1) - .5) * .42;
+          ctx.beginPath();
+          const steps = 128;
+          for (let i = 0; i <= steps; i++) {
+            const u = i / steps * TAU;
+            const a = u + phase + t * .42;
+            const baseX = Math.sin(a);
+            const baseY = Math.sin(a * 2) * .78;
+            const dx = Math.cos(a);
+            const dy = 1.56 * Math.cos(a * 2);
+            const length = Math.max(.001, Math.hypot(dx, dy));
+            const nx = -dy / length;
+            const ny = dx / length;
+            const breathing = 1 + .12 * Math.sin(a * 3 - t * 4 + body);
+            const weave = offset * breathing + .045 * Math.sin(a * 7 + strand * .19 - t * 5);
+            const px = cx + (baseX * .93 + nx * weave) * scale;
+            const py = cy + (baseY + ny * weave) * scale;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          const depth = .5 + .5 * Math.sin(strand * .23 + phase - t * 5);
+          ctx.strokeStyle = `rgba(${163 + depth * 68},${207 + depth * 34},${225 + depth * 23},${.07 + depth * .28})`;
+          ctx.lineWidth = Math.max(.58, this.dpr * (.43 + depth * .14));
+          ctx.stroke();
+        }
+      }
+
+      for (let i = 0; i < (this.mobile ? 220 : 360); i++) {
+        const u = i / (this.mobile ? 220 : 360) * TAU + t * .42;
+        const px = cx + Math.sin(u) * scale * .93;
+        const py = cy + Math.sin(u * 2) * scale * .78;
+        const front = .5 + .5 * Math.cos(u - t * 2);
+        ctx.fillStyle = `rgba(225,239,241,${.12 + front * .52})`;
+        const d = (.5 + front * .9) * this.dpr;
+        ctx.fillRect(px, py, d, d);
       }
       this.finish();
     }
