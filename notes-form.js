@@ -302,69 +302,27 @@
       const ctx = this.ctx;
       const w = this.width, h = this.height;
       const cx = w * .5, cy = h * .5;
-      const scale = Math.min(w, h) * .34;
-      this.prepare(cx, cy, Math.min(w, h) * .52);
+      const fit = Math.min(w, h) / 400;
+      this.prepare(cx, cy, Math.min(w, h) * .54);
 
-      const fishCount = this.mobile ? 5 : 7;
-      const ribs = this.mobile ? 12 : 18;
-      for (let fish = 0; fish < fishCount; fish++) {
-        const orbit = fish / fishCount * TAU + t * .7;
-        const radiusX = scale * (1.02 + .06 * Math.sin(orbit * 3 - t * 2));
-        const radiusY = scale * (.78 + .05 * Math.cos(orbit * 2 + t));
-        const fx = cx + Math.cos(orbit) * radiusX;
-        const fy = cy + Math.sin(orbit) * radiusY;
-        const tangent = Math.atan2(Math.cos(orbit) * radiusY, -Math.sin(orbit) * radiusX);
-        const size = scale * (.27 + .035 * Math.sin(fish * 1.9 + t * 3));
-        const pulse = .5 + .5 * Math.sin(fish * 2.1 - t * 5);
-        const cos = Math.cos(tangent), sin = Math.sin(tangent);
-
-        const point = (x, y) => ({
-          x: fx + x * cos - y * sin,
-          y: fy + x * sin + y * cos
-        });
-
-        for (let rib = 0; rib < ribs; rib++) {
-          const side = rib / (ribs - 1) * 2 - 1;
-          ctx.beginPath();
-          const steps = 42;
-          for (let i = 0; i <= steps; i++) {
-            const u = i / steps;
-            const longitudinal = (u * 2 - 1) * size;
-            const envelope = Math.sin(u * Math.PI) ** .72;
-            const flex = Math.sin(u * Math.PI * 2 + fish - t * 4) * size * .055 * u;
-            const lateral = side * envelope * size * (.34 + .05 * Math.sin(t * 3 + fish)) + flex;
-            const p = point(longitudinal, lateral);
-            if (i === 0) ctx.moveTo(p.x, p.y);
-            else ctx.lineTo(p.x, p.y);
-          }
-          const alpha = .08 + .24 * Math.sin(rib * .48 + fish - t * 5) ** 2;
-          ctx.strokeStyle = `rgba(${175 + pulse * 55},${214 + pulse * 28},${229 + pulse * 18},${alpha})`;
-          ctx.lineWidth = Math.max(.56, this.dpr * .44);
-          ctx.stroke();
-        }
-
-        const tailBase = point(-size * .92, 0);
-        for (let tail = 0; tail < 9; tail++) {
-          const s = tail / 8 * 2 - 1;
-          const tip = point(-size * 1.52, s * size * (.48 + .08 * Math.sin(t * 4 + fish)));
-          const control = point(-size * 1.2, s * size * .12 + Math.sin(t * 5 + fish) * size * .08);
-          ctx.beginPath();
-          ctx.moveTo(tailBase.x, tailBase.y);
-          ctx.quadraticCurveTo(control.x, control.y, tip.x, tip.y);
-          ctx.strokeStyle = `rgba(193,225,236,${.12 + .22 * (1 - Math.abs(s))})`;
-          ctx.stroke();
-        }
-
-        for (let dot = 0; dot < 54; dot++) {
-          const u = dot / 53;
-          const side = Math.sin(dot * 4.13 + fish) * .85;
-          const envelope = Math.sin(u * Math.PI) ** .7;
-          const p = point((u * 2 - 1) * size, side * envelope * size * .34);
-          const shimmer = .35 + .65 * Math.sin(dot * .71 + t * 8 + fish) ** 2;
-          ctx.fillStyle = `rgba(219,239,244,${.14 + shimmer * .48})`;
-          const d = (.5 + shimmer * .7) * this.dpr;
-          ctx.fillRect(p.x, p.y, d, d);
-        }
+      const count = this.mobile ? 8200 : 13800;
+      const pointSize = Math.max(.58, this.dpr * .42);
+      for (let i = count; i > 0; i--) {
+        const y = i / 940;
+        const k = (4 + Math.cos(y)) * Math.cos(i);
+        const e = y / 6 - 13;
+        const d = Math.hypot(k, e) - 3;
+        const q = 3 * Math.sin(k * 2) + k / 16 * y *
+          (e + 2 * Math.sin(e - d * 5 + t * 4.2)) + 99;
+        const c = d / 1.2 - t + (i % 2) * 3;
+        const px = q * Math.sin(c) * Math.sin(c / 4 + e / 6 - 8) * fit;
+        const py = (q * d / 9 * Math.cos(c) + d * 22 - 200) * fit;
+        const angle = -.16;
+        const x = cx + px * Math.cos(angle) - py * Math.sin(angle);
+        const yy = cy + px * Math.sin(angle) + py * Math.cos(angle);
+        const shimmer = .35 + .65 * Math.sin(i * .071 + t * 9) ** 2;
+        ctx.fillStyle = `rgba(${188 + shimmer * 42},${218 + shimmer * 25},${230 + shimmer * 18},${.14 + shimmer * .5})`;
+        ctx.fillRect(x, yy, pointSize * (1 + shimmer * .45), pointSize * (1 + shimmer * .45));
       }
       this.finish();
     }
