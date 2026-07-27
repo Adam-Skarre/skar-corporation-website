@@ -37,3 +37,43 @@
 @media(max-width:900px){.form-hero{grid-template-columns:1fr;padding:76px 7vw 38px}.form-hero h1{font-size:76px}.form-hero-art{height:430px}.form-thesis-grid,.form-library-intro{grid-template-columns:1fr}.form-uses{grid-template-columns:1fr}.form-uses article,.form-uses article:first-child{min-height:0;padding:28px 0;border-right:0;border-bottom:1px solid #d9e0e5}.convergence{grid-template-columns:1fr}.convergence-copy{padding:76px 7vw 56px;border-right:0;border-bottom:1px solid rgba(126,175,213,.14)}.convergence-visual{height:570px}.form-studies{grid-template-columns:1fr}}
 @media(max-width:600px){.form-hero{min-height:700px;padding:62px max(22px,env(safe-area-inset-right)) 18px max(22px,env(safe-area-inset-left))}.form-hero h1{font-size:clamp(57px,17vw,72px);line-height:.83}.form-hero-copy>p:not(.eyebrow){font-size:16px}.form-index{display:none}.form-hero-art{height:330px;margin-top:8px}.form-thesis,.form-library{padding:72px 22px}.form-thesis h2,.form-library h2{font-size:44px}.form-thesis-copy>p{font-size:16px}.form-uses{margin-top:50px}.convergence-copy{padding:66px 22px 48px}.convergence h2{font-size:58px}.convergence h3{font-size:27px}.convergence-copy p{font-size:15px}.convergence-meta{grid-template-columns:1fr}.convergence-visual{height:390px}.form-library-intro{gap:26px;margin-bottom:40px}.form-study-visual{height:310px}.form-study-copy{padding:27px 24px 32px}.form-study-copy h3{font-size:30px}}
 @media(prefers-reduced-motion:reduce){.form-canvas{opacity:.8}}
+
+/* Notes in Form: intentional phone composition rather than a stacked desktop layout. */
+@media(max-width:600px){
+  .form-hero{display:block;min-height:0;padding-top:54px;padding-bottom:42px}
+  .form-hero h1{max-width:100%;margin:20px 0 24px;font-size:clamp(48px,14.3vw,58px);line-height:.88;letter-spacing:-.065em}
+  .form-hero-copy>p:not(.eyebrow){max-width:100%;font-size:15px;line-height:1.65}
+  .form-hero-art{width:calc(100% + 20px);height:292px;margin:24px -10px 0}
+
+  .form-thesis,.form-library{padding:62px 22px}
+  .form-thesis-grid{gap:34px}
+  .form-thesis h2,.form-library h2{font-size:clamp(40px,11.3vw,45px);line-height:.98}
+  .form-thesis-copy>p{font-size:15px;line-height:1.72}
+  .form-thesis-copy>p+p{margin-top:18px}
+  .form-uses{margin-top:42px}
+  .form-uses h3{margin:27px 0 12px;font-size:22px}
+
+  .convergence-copy{padding:56px 22px 34px}
+  .convergence h2{margin-top:22px;font-size:52px}
+  .convergence h3{margin-bottom:26px;font-size:25px}
+  .convergence-copy p{margin-bottom:15px;font-size:14px;line-height:1.7}
+  .convergence-meta{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:27px}
+  .convergence-meta span{display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px 5px;font-size:7px;line-height:1.35;letter-spacing:.08em}
+  .convergence-visual{height:350px}
+  .convergence-visual:before,.convergence-visual:after{display:none}
+
+  .form-library-intro{gap:22px;margin-bottom:34px}
+  .form-library-intro>p{font-size:15px;line-height:1.65}
+  .form-studies{gap:14px}
+  .form-study-visual{height:280px}
+  .form-study-copy{padding:25px 22px 29px}
+  .form-study-copy h3{margin:14px 0 12px;font-size:28px}
+  .form-study-copy p{font-size:14px;line-height:1.65}
+  .form-equation{gap:6px;margin-top:19px}
+  .form-equation span{padding:6px 7px;font-size:8px}
+}
+@media(max-width:360px){
+  .form-hero h1{font-size:46px}
+  .form-thesis h2,.form-library h2{font-size:39px}
+  .convergence-meta span{font-size:6.5px;letter-spacing:.055em}
+}
