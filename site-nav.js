@@ -3,8 +3,9 @@
   if (!header) return;
 
   const route = location.pathname.replace(/^\/|\/$/g, '').toLowerCase();
+  const routeRoot = route.split('/')[0];
   const firmActive = ['about', 'careers'].includes(route);
-  const workActive = ['solutions', 'industries', 'services', 'technology'].includes(route);
+  const workActive = ['solutions', 'industries', 'services', 'technology', 'engineering', 'modeling-data-analysis', 'artificial-intelligence', 'design-manufacturing', 'supply-chain', 'energy-infrastructure', 'industrial-technology', 'small-business'].includes(routeRoot);
   const insightsActive = ['insights', 'research', 'market-views', 'way-through', 'notes-in-form', 'news'].includes(route) || route.startsWith('report-');
 
   const researchAgenda = document.querySelector('.research-agenda');
@@ -29,8 +30,25 @@
       </div>
       <div class="nav-group${workActive ? ' active' : ''}">
         <button class="nav-group-trigger" type="button" aria-expanded="false">What We Do <span aria-hidden="true">⌄</span></button>
-        <div class="nav-panel">
-          <div class="nav-panel-links"><div class="nav-link-column"><strong>What We Do</strong><a href="/solutions/">Solutions</a><a href="/industries/">Industries</a></div></div>
+        <div class="nav-panel nav-panel-work">
+          <div class="nav-panel-links nav-work-columns">
+            <div class="nav-link-column">
+              <strong>Solutions</strong>
+              <a href="/solutions/">Overview</a>
+              <a href="/engineering/">Engineering</a>
+              <a href="/modeling-data-analysis/">Modeling &amp; Data Analysis</a>
+              <a href="/artificial-intelligence/">Artificial Intelligence</a>
+            </div>
+            <div class="nav-link-column">
+              <strong>Industries</strong>
+              <a href="/industries/">Overview</a>
+              <a href="/design-manufacturing/">Design &amp; Manufacturing</a>
+              <a href="/supply-chain/">Supply Chain</a>
+              <a href="/energy-infrastructure/">Energy &amp; Infrastructure</a>
+              <a href="/industrial-technology/">Industrial &amp; Technology</a>
+              <a href="/small-business/">Small Businesses</a>
+            </div>
+          </div>
         </div>
       </div>
       <div class="nav-group${insightsActive ? ' active' : ''}">
