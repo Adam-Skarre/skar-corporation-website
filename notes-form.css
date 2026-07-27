@@ -3,7 +3,7 @@
 .form-hero-copy{position:relative;z-index:2;max-width:690px}
 .form-hero .eyebrow{color:#8db8ef}
 .form-hero h1{margin:24px 0 30px;font-size:clamp(72px,8.5vw,132px);font-weight:640;line-height:.8;letter-spacing:-.07em}
-.form-hero h1 span{display:block;color:#73a7f5}
+.form-hero h1 span{display:block}.form-hero h1 .blue-type{color:transparent}
 .form-hero-copy>p:not(.eyebrow){max-width:620px;color:#c4d1dc;font-size:18px;line-height:1.7}
 .form-hero-art{position:relative;height:560px;min-width:0}
 .form-canvas{display:block;width:100%;height:100%;background:transparent}
