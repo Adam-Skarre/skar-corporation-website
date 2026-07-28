@@ -1327,6 +1327,33 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 }
 @media(prefers-reduced-motion:reduce){.capability-mark span:after{animation:none}}
 
+/* Distinct capability studies */
+.capability-art-wrap{position:absolute;z-index:1;right:4%;top:50%;width:min(43vw,650px);aspect-ratio:1;transform:translateY(-50%);pointer-events:none}
+.capability-art-wrap:before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(50,134,215,.16),rgba(14,55,91,.04) 48%,transparent 72%);filter:blur(18px)}
+.capability-art{position:absolute;inset:0;width:100%;height:100%;display:block}
+.capability-art-label{position:absolute;right:8%;bottom:8%;display:flex;gap:12px;color:rgba(164,205,242,.54);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+.capability-art-label:before{content:"";width:38px;height:1px;margin-top:5px;background:currentColor}
+.capability-lens{padding:clamp(78px,8vw,126px) max(8vw,70px);background:#061b2d;color:#fff}
+.capability-lens-head{display:grid;grid-template-columns:.8fr 1.2fr;gap:9vw;padding-bottom:54px;border-bottom:1px solid rgba(153,194,229,.25)}
+.capability-lens-head h2{max-width:700px;margin:0;font-size:clamp(43px,5vw,76px);line-height:.98;letter-spacing:-.055em}
+.capability-lens-head p{max-width:730px;margin:0;color:#b6c8d8;font-size:clamp(18px,1.5vw,23px);line-height:1.65}
+.capability-lens-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.capability-lens-grid article{min-height:245px;padding:42px 40px 24px 0}
+.capability-lens-grid article+article{padding-left:40px;border-left:1px solid rgba(153,194,229,.2)}
+.capability-lens-grid span{color:#72aaf2;font-size:11px;font-weight:800;letter-spacing:.18em}
+.capability-lens-grid h3{margin:28px 0 16px;font-size:clamp(23px,2vw,31px);line-height:1.08}
+.capability-lens-grid p{margin:0;color:#9fb3c4;font-size:16px;line-height:1.65}
+.capability-page-engineering .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 50%,rgba(7,31,50,.7)),repeating-linear-gradient(90deg,transparent 0 63px,rgba(111,161,216,.055) 64px),repeating-linear-gradient(0deg,transparent 0 63px,rgba(111,161,216,.045) 64px)}
+.capability-page-modeling .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 49%,rgba(5,29,50,.62)),radial-gradient(circle at 78% 42%,rgba(41,113,178,.18),transparent 38%)}
+.capability-page-ai .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 48%,rgba(6,27,47,.72)),repeating-radial-gradient(circle at 79% 50%,rgba(112,173,230,.05) 0 1px,transparent 1px 38px)}
+.capability-page-manufacturing .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 48%,rgba(7,29,48,.66)),repeating-linear-gradient(0deg,transparent 0 31px,rgba(127,181,239,.04) 32px)}
+.capability-page-supply .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 49%,rgba(5,28,48,.64)),radial-gradient(circle at 77% 50%,rgba(32,104,168,.2),transparent 40%)}
+.capability-page-energy .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 49%,rgba(5,30,51,.64)),linear-gradient(135deg,transparent 55%,rgba(72,142,207,.08))}
+.capability-page-industrial .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 49%,rgba(4,27,47,.68)),repeating-conic-gradient(from 0deg at 79% 50%,rgba(99,159,215,.035) 0 8deg,transparent 8deg 24deg)}
+.capability-page-small .capability-hero:before{background:linear-gradient(90deg,rgba(3,18,32,.99) 0 50%,rgba(6,30,51,.64)),repeating-linear-gradient(90deg,transparent 0 75px,rgba(111,161,216,.045) 76px)}
+@media(max-width:900px){.capability-art-wrap{right:-7%;width:58vw}.capability-lens-head{grid-template-columns:1fr;gap:28px}.capability-lens-grid{grid-template-columns:1fr}.capability-lens-grid article{min-height:0;padding:30px 0}.capability-lens-grid article+article{padding-left:0;border-left:0;border-top:1px solid rgba(153,194,229,.2)}}
+@media(max-width:760px){.capability-art-wrap{right:4%;top:auto;bottom:0;width:92vw;transform:none}.capability-art-label{right:4%;bottom:3%}.capability-lens{padding:68px 24px}.capability-lens-head{padding-bottom:38px}.capability-lens-grid article{padding:28px 0}.capability-hero-copy{z-index:3}}
+
 /* Preserve the two information groups inside the full-screen phone menu. */
 @media(max-width:900px){
   .mobile-nav-layer .nav-panel-work .nav-link-column strong{
