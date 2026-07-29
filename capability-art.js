@@ -1,8 +1,9 @@
 (() => {
   const TAU = Math.PI * 2;
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fract = value => value - Math.floor(value);
   const hash = value => fract(Math.sin(value * 91.3458) * 47453.5453);
+  const clamp = (value, low = 0, high = 1) => Math.max(low, Math.min(high, value));
 
   class CapabilityArt {
     constructor(canvas) {
@@ -10,122 +11,127 @@
       this.ctx = canvas.getContext('2d', { alpha: true });
       this.mode = canvas.dataset.capabilityArt;
       this.visible = true;
-      this.last = 0;
       this.start = performance.now();
+      this.last = 0;
       this.resize = this.resize.bind(this);
       this.frame = this.frame.bind(this);
+      this.resize();
 
       new ResizeObserver(this.resize).observe(canvas);
       new IntersectionObserver(([entry]) => {
         this.visible = entry.isIntersecting;
-      }, { rootMargin: '160px' }).observe(canvas);
+      }, { rootMargin: '140px' }).observe(canvas);
 
-      this.resize();
       requestAnimationFrame(this.frame);
     }
 
     resize() {
       const rect = this.canvas.getBoundingClientRect();
-      this.mobile = innerWidth < 760;
-      const dpr = Math.min(devicePixelRatio || 1, this.mobile ? 2.4 : 1.85);
-      this.canvas.width = Math.max(1, Math.round(rect.width * dpr));
-      this.canvas.height = Math.max(1, Math.round(rect.height * dpr));
-      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.w = rect.width;
-      this.h = rect.height;
+      this.mobile = matchMedia('(max-width: 760px)').matches;
+      const dpr = Math.min(devicePixelRatio || 1, this.mobile ? 2 : 1.65);
+      const width = Math.max(1, Math.round(rect.width * dpr));
+      const height = Math.max(1, Math.round(rect.height * dpr));
+      if (this.canvas.width !== width || this.canvas.height !== height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+      }
+      this.width = width;
+      this.height = height;
       this.dpr = dpr;
     }
 
     frame(now) {
-      const interval = reduceMotion ? 1000 : (this.mobile ? 42 : 30);
-      if (this.visible && !document.hidden && now - this.last >= interval) {
+      const interval = reducedMotion ? 1000 : (this.mobile ? 42 : 30);
+      if (!document.hidden && this.visible && now - this.last > interval) {
         this.last = now;
-        const t = reduceMotion ? 2.4 : (now - this.start) * 0.0003;
-        this.ctx.clearRect(0, 0, this.w, this.h);
-        this.ctx.save();
-        this.ctx.translate(this.w / 2, this.h / 2);
-        const scale = Math.min(this.w, this.h) / 520;
-        this.ctx.scale(scale, scale);
+        const t = reducedMotion ? 1.35 : (now - this.start) * .00024;
+        this.ctx.clearRect(0, 0, this.width, this.height);
         this.prepare();
         this.draw(t);
         this.finish();
-        this.ctx.restore();
       }
       requestAnimationFrame(this.frame);
     }
 
     prepare() {
-      const glow = this.ctx.createRadialGradient(8, -5, 0, 8, -5, 250);
-      glow.addColorStop(0, 'rgba(45,143,204,.105)');
-      glow.addColorStop(.46, 'rgba(25,97,161,.055)');
-      glow.addColorStop(1, 'rgba(3,27,48,0)');
-      this.ctx.fillStyle = glow;
-      this.ctx.fillRect(-270, -270, 540, 540);
-      this.ctx.globalCompositeOperation = 'lighter';
-      this.ctx.lineCap = 'round';
-      this.ctx.lineJoin = 'round';
+      const ctx = this.ctx;
+      const cx = this.width * .5;
+      const cy = this.height * .5;
+      const radius = Math.min(this.width, this.height) * .55;
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      glow.addColorStop(0, 'rgba(54,145,187,.15)');
+      glow.addColorStop(.48, 'rgba(17,72,105,.065)');
+      glow.addColorStop(1, 'rgba(3,15,27,0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, this.width, this.height);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
     }
 
     finish() {
-      this.ctx.globalCompositeOperation = 'source-over';
-      const vignette = this.ctx.createRadialGradient(0, 0, 110, 0, 0, 285);
-      vignette.addColorStop(0, 'rgba(2,25,45,0)');
-      vignette.addColorStop(1, 'rgba(2,25,45,.10)');
-      this.ctx.fillStyle = vignette;
-      this.ctx.fillRect(-270, -270, 540, 540);
+      const ctx = this.ctx;
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'source-over';
+      const vignette = ctx.createRadialGradient(
+        this.width * .5,
+        this.height * .5,
+        Math.min(this.width, this.height) * .22,
+        this.width * .5,
+        this.height * .5,
+        Math.min(this.width, this.height) * .62
+      );
+      vignette.addColorStop(0, 'rgba(3,20,35,0)');
+      vignette.addColorStop(1, 'rgba(3,20,35,.16)');
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, this.width, this.height);
     }
 
-    color(alpha = .4, warm = 0) {
-      const value = Math.min(1, alpha * 2.85 + .03);
-      if (warm > .6) return `rgba(236,232,173,${value})`;
-      if (warm > .15) return `rgba(181,235,223,${value})`;
-      return `rgba(172,224,255,${value})`;
+    shimmer(index, t, speed = 8) {
+      return .5 + .5 * Math.sin(index * .061 + t * speed) ** 2;
     }
 
-    stroke(alpha = .3, width = .65, warm = 0) {
-      this.ctx.strokeStyle = this.color(alpha, warm);
-      this.ctx.lineWidth = width * 1.12;
+    point(x, y, size, alpha, shimmer = .5, warmth = 0) {
+      if (x < -4 || y < -4 || x > this.width + 4 || y > this.height + 4) return;
+      const ctx = this.ctx;
+      const red = Math.round(178 + shimmer * 56 + warmth * 10);
+      const green = Math.round(211 + shimmer * 34 + warmth * 8);
+      const blue = Math.round(230 + shimmer * 18 - warmth * 40);
+      ctx.fillStyle = `rgba(${red},${green},${blue},${clamp(alpha)})`;
+      ctx.fillRect(x, y, size, size);
     }
 
-    point(x, y, size = .72, alpha = .45, warm = 0) {
-      this.ctx.fillStyle = this.color(alpha, warm);
-      if (size <= 1) {
-        this.ctx.fillRect(x, y, size, size);
-      } else {
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, size, 0, TAU);
-        this.ctx.fill();
-      }
-    }
-
-    line(points, alpha = .25, width = .55, warm = 0, close = false) {
-      if (!points.length) return;
-      this.stroke(alpha, width, warm);
-      this.ctx.beginPath();
+    line(points, alpha = .16, width = .65, warmth = 0) {
+      if (points.length < 2) return;
+      const ctx = this.ctx;
+      ctx.beginPath();
       points.forEach(([x, y], index) => {
-        if (index) this.ctx.lineTo(x, y);
-        else this.ctx.moveTo(x, y);
+        if (index) ctx.lineTo(x, y);
+        else ctx.moveTo(x, y);
       });
-      if (close) this.ctx.closePath();
-      this.ctx.stroke();
+      ctx.strokeStyle = warmth
+        ? `rgba(204,226,198,${alpha})`
+        : `rgba(163,211,235,${alpha})`;
+      ctx.lineWidth = Math.max(.55, width * this.dpr);
+      ctx.stroke();
     }
 
-    curve(p0, p1, p2, p3, alpha = .2, width = .55, warm = 0) {
-      this.stroke(alpha, width, warm);
-      this.ctx.beginPath();
-      this.ctx.moveTo(p0[0], p0[1]);
-      this.ctx.bezierCurveTo(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]);
-      this.ctx.stroke();
-    }
-
-    project(x, y, z, yaw = .5, pitch = .65) {
-      const cy = Math.cos(yaw);
-      const sy = Math.sin(yaw);
-      const cp = Math.cos(pitch);
-      const sp = Math.sin(pitch);
-      const rx = x * cy - z * sy;
-      const rz = x * sy + z * cy;
-      return [rx, y * cp - rz * sp];
+    project(x, y, z, yaw, pitch, scale, cx = .5, cy = .5) {
+      const cosY = Math.cos(yaw);
+      const sinY = Math.sin(yaw);
+      const x1 = x * cosY + z * sinY;
+      const z1 = -x * sinY + z * cosY;
+      const cosP = Math.cos(pitch);
+      const sinP = Math.sin(pitch);
+      const y1 = y * cosP - z1 * sinP;
+      const z2 = y * sinP + z1 * cosP;
+      const perspective = 4.7 / (5.2 - z2 * .0045);
+      return [
+        this.width * cx + x1 * scale * perspective,
+        this.height * cy + y1 * scale * perspective,
+        z2
+      ];
     }
 
     draw(t) {
@@ -143,447 +149,1281 @@
     }
 
     engineering(t) {
-      const blades = 11;
-      const ribbons = this.mobile ? 9 : 14;
-      const steps = this.mobile ? 38 : 52;
-      const rotation = t * .42;
+      const scale = Math.min(this.width, this.height) / 520;
+      const yaw = .48 + Math.sin(t * .22) * .07;
+      const pitch = .29 + Math.cos(t * .18) * .055;
+      const cycle = (t * .085) % 1;
+      const smooth = value => {
+        const bounded = clamp(value);
+        return bounded * bounded * (3 - 2 * bounded);
+      };
+      const seated = (arrivalStart, arrivalEnd, departureStart, departureEnd) => {
+        const arrival = smooth((cycle - arrivalStart) / (arrivalEnd - arrivalStart));
+        const departure = smooth((cycle - departureStart) / (departureEnd - departureStart));
+        return arrival * (1 - departure);
+      };
+      const frontHousingSeat = seated(.07, .17, .96, .995);
+      const frontStatorSeat = seated(.15, .25, .92, .975);
+      const rotorSeat = seated(.23, .35, .88, .94);
+      const rearStatorSeat = seated(.31, .41, .84, .9);
+      const rearHousingSeat = seated(.39, .49, .78, .86);
+      const assemblyComplete = Math.min(
+        frontHousingSeat,
+        frontStatorSeat,
+        rotorSeat,
+        rearStatorSeat,
+        rearHousingSeat
+      );
+      const operatingTurns = cycle <= .5
+        ? 0
+        : cycle >= .78
+          ? 3
+          : 3 * smooth((cycle - .5) / .28);
+      const rotorAngle = TAU * (cycle + operatingTurns);
+      const project = (x, y, z) => this.project(x, y, z, yaw, pitch, scale);
+      const ringPoint = (axis, center, radius, angle) => {
+        if (axis === 'x') return project(center, Math.cos(angle) * radius, Math.sin(angle) * radius);
+        if (axis === 'y') return project(Math.cos(angle) * radius, center, Math.sin(angle) * radius);
+        return project(Math.cos(angle) * radius, Math.sin(angle) * radius, center);
+      };
+      const drawRing = (axis, center, radius, alpha, width, warmth = 0) => {
+        const path = [];
+        for (let step = 0; step <= 128; step++) {
+          path.push(ringPoint(axis, center, radius, step / 128 * TAU));
+        }
+        this.line(path, alpha, width, warmth);
+        const particles = this.mobile ? 130 : 230;
+        for (let i = particles; i > 0; i--) {
+          const angle = hash(i * 7.3 + center * .17 + radius) * TAU;
+          const p = ringPoint(axis, center, radius + (hash(i * 13.9) - .5) * 4.5, angle);
+          const light = this.shimmer(i + Math.round(radius * 11), t, 7);
+          this.point(p[0], p[1], (.38 + light * .56) * this.dpr, .045 + light * .2, light, warmth);
+        }
+      };
 
-      this.ctx.save();
-      this.ctx.rotate(-.08);
-      this.ctx.scale(1, .82);
+      const frontHousing = -208 + frontHousingSeat * 120;
+      const frontStator = -154 + frontStatorSeat * 112;
+      const rotorCenter = -105 + rotorSeat * 105;
+      const rearStator = 162 - rearStatorSeat * 120;
+      const rearHousing = 220 - rearHousingSeat * 132;
 
-      for (let blade = 0; blade < blades; blade++) {
-        const base = blade / blades * TAU + rotation;
-        for (let ribbon = 0; ribbon < ribbons; ribbon++) {
-          const edge = ribbon / (ribbons - 1) - .5;
-          const path = [];
-          for (let step = 0; step <= steps; step++) {
-            const u = step / steps;
-            const r = 34 + 181 * u;
-            const sweep = .23 + 1.04 * Math.pow(u, 1.58);
-            const thickness = (18 + 25 * Math.sin(u * Math.PI)) * edge;
-            const angle = base + sweep + edge * .16 * (1 - u);
-            const x = Math.cos(angle) * (r + thickness);
-            const y = Math.sin(angle) * (r + thickness);
-            path.push([x, y]);
-            if ((step + ribbon) % 4 === 0) {
-              const highlight = hash(blade * 77 + ribbon * 19 + step) > .8;
-              this.point(x, y, highlight ? 1.15 : .62, highlight ? .54 : .2, highlight ? .85 : .15);
-            }
-          }
-          this.line(path, .07 + .18 * (1 - Math.abs(edge)), .42, ribbon % 5 === 0 ? .65 : 0);
+      this.line([project(-215, 0, 0), project(215, 0, 0)], .23, .88, .42);
+      drawRing('x', frontHousing, 143, .2, .72, .3);
+      drawRing('x', frontHousing + 8, 132, .09, .42);
+      drawRing('x', frontStator, 119, .13, .52, .2);
+      drawRing('x', rearStator, 119, .13, .52, .2);
+      drawRing('x', rearHousing - 8, 132, .09, .42);
+      drawRing('x', rearHousing, 143, .2, .72, .3);
+      drawRing('x', rotorCenter, 31, .28, .8, .72);
+
+      [frontStator, rearStator].forEach((x, sideIndex) => {
+        for (let vane = 0; vane < 16; vane++) {
+          const angle = vane / 16 * TAU + sideIndex * .11;
+          const inner = project(x, Math.cos(angle) * 73, Math.sin(angle) * 73);
+          const outer = project(x, Math.cos(angle + .11) * 117, Math.sin(angle + .11) * 117);
+          this.line([inner, outer], .1, .48, sideIndex ? .12 : .28);
+        }
+      });
+
+      for (let blade = 0; blade < 12; blade++) {
+        const angle = blade / 12 * TAU + rotorAngle;
+        const vertices = [
+          [rotorCenter, Math.cos(angle) * 30, Math.sin(angle) * 30],
+          [rotorCenter, Math.cos(angle + .11) * 109, Math.sin(angle + .11) * 109],
+          [rotorCenter, Math.cos(angle + .34) * 96, Math.sin(angle + .34) * 96],
+          [rotorCenter, Math.cos(angle + .2) * 36, Math.sin(angle + .2) * 36]
+        ];
+        const outline = vertices.map(point => project(...point));
+        outline.push(outline[0]);
+        this.line(outline, .17, .58, .58);
+        const bladeParticles = this.mobile ? 90 : 165;
+        for (let i = bladeParticles; i > 0; i--) {
+          const u = Math.sqrt(hash(i * 4.7 + blade * 17));
+          const v = hash(i * 11.9 + blade * 7);
+          const radial = 31 + u * 78;
+          const sweep = angle + .1 + u * .22 + (v - .5) * .12;
+          const p = project(
+            rotorCenter + (hash(i * 19.1 + blade) - .5) * 5,
+            Math.cos(sweep) * radial,
+            Math.sin(sweep) * radial
+          );
+          const light = this.shimmer(i + blade * 180, t, 9);
+          this.point(p[0], p[1], (.4 + light * .62) * this.dpr, .055 + light * .25, light, .62);
         }
       }
 
-      for (let ring = 0; ring < 9; ring++) {
-        const radius = 26 + ring * 20.2;
-        this.stroke(.09 + ring * .006, .45);
-        this.ctx.beginPath();
-        this.ctx.ellipse(0, 0, radius, radius, 0, 0, TAU);
-        this.ctx.stroke();
+      const hubCount = this.mobile ? 750 : 1350;
+      for (let i = hubCount; i > 0; i--) {
+        const u = hash(i * 5.1);
+        const angle = hash(i * 11.7 + 4) * TAU;
+        const x = rotorCenter + (u - .5) * 116;
+        const radius = 12 + Math.sin(u * Math.PI) * 22 * hash(i * 17.4);
+        const p = project(x, Math.cos(angle) * radius, Math.sin(angle) * radius);
+        const light = this.shimmer(i + 4200, t, 8);
+        this.point(p[0], p[1], (.4 + light * .56) * this.dpr, .05 + light * .22, light, .46);
       }
 
-      for (let i = 0; i < 120; i++) {
-        const angle = i / 120 * TAU + rotation * .6;
-        const radius = 17 + 15 * hash(i * 9);
-        this.point(Math.cos(angle) * radius, Math.sin(angle) * radius, .75, .34, i % 11 === 0 ? .8 : 0);
+      for (let pulse = 0; pulse < 28; pulse++) {
+        const progress = (pulse / 28 + t * .13) % 1;
+        const x = -205 + progress * 410;
+        const radius = 6 + Math.sin(progress * Math.PI) * 11;
+        const angle = rotorAngle * .35 + pulse * 1.7;
+        const p = project(x, Math.cos(angle) * radius, Math.sin(angle) * radius);
+        this.point(
+          p[0],
+          p[1],
+          (pulse % 7 === 0 ? 1.7 : .75) * this.dpr,
+          (pulse % 7 === 0 ? .72 : .3) * assemblyComplete,
+          .94,
+          .78
+        );
       }
-      this.ctx.restore();
+
+      [
+        [-88, .17],
+        [-42, .25],
+        [0, .35],
+        [42, .41],
+        [88, .49]
+      ].forEach(([center, moment], index) => {
+        const elapsed = cycle - moment;
+        if (elapsed < 0 || elapsed > .045) return;
+        const fade = 1 - elapsed / .045;
+        for (let point = 0; point < 22; point++) {
+          const angle = point / 22 * TAU;
+          const radius = 10 + elapsed * 420;
+          const p = ringPoint('x', center, radius, angle);
+          this.point(
+            p[0],
+            p[1],
+            (point % 5 === 0 ? 1.45 : .7) * this.dpr,
+            fade * (point % 5 === 0 ? .66 : .24),
+            .96,
+            index === 2 ? .8 : .5
+          );
+        }
+      });
     }
 
     modeling(t) {
-      const rows = this.mobile ? 25 : 38;
-      const columns = this.mobile ? 62 : 92;
-      const surface = (x, z) => {
-        const peakA = 72 * Math.exp(-((x + 55) ** 2 + (z - 12) ** 2 * 1.3) / 7600);
-        const peakB = 53 * Math.exp(-((x - 105) ** 2 + (z + 35) ** 2) / 4800);
-        const basin = -38 * Math.exp(-((x - 8) ** 2 + (z - 82) ** 2) / 3100);
-        const wave = 13 * Math.sin(x * .033 + t * 2.2) * Math.cos(z * .045 - t);
-        return peakA + peakB + basin + wave;
+      const count = this.mobile ? 4200 : 9200;
+      const scale = Math.min(this.width, this.height) / 520;
+      const cycle = (t * .18) % 1;
+      const smooth = value => {
+        const bounded = clamp(value);
+        return bounded * bounded * (3 - 2 * bounded);
+      };
+      let resolution = 0;
+      if (cycle >= .12 && cycle < .42) resolution = smooth((cycle - .12) / .3);
+      else if (cycle >= .42 && cycle < .71) resolution = 1;
+      else if (cycle >= .71 && cycle < .94) {
+        resolution = 1 - smooth((cycle - .71) / .23);
+      }
+      const model = (x, z) => {
+        const rise = 65 * Math.exp(-((x + 62) ** 2 + (z - 8) ** 2 * 1.2) / 6900);
+        const shoulder = 38 * Math.exp(-((x - 105) ** 2 + (z + 52) ** 2) / 5400);
+        const basin = -43 * Math.exp(-((x - 12) ** 2 + (z - 70) ** 2) / 3600);
+        return rise + shoulder + basin + x * .045 +
+          9 * Math.sin(x * .026) * Math.cos(z * .031);
+      };
+      const toScreen = (x, y, z) => [
+        this.width * .5 + (x + z * .35) * scale,
+        this.height * .53 + (z * .46 - y) * scale
+      ];
+      const datum = i => {
+        const targetX = (hash(i * 2.17) - .5) * 390;
+        const targetZ = (hash(i * 4.63 + 10) - .5) * 300;
+        const targetY = model(targetX, targetZ);
+        const delay = hash(i * 7.81 + 31) * .17;
+        const pointResolution = smooth((resolution - delay) / (1 - delay));
+        const drift = 1 - pointResolution;
+        const rawX = targetX + (hash(i * 9.71 + 4) - .5) * 160 +
+          Math.sin(t * .75 + i * .041) * 14 * drift;
+        const rawZ = targetZ + (hash(i * 12.31 + 7) - .5) * 125 +
+          Math.cos(t * .62 + i * .033) * 11 * drift;
+        const rawY = (hash(i * 15.73 + 19) - .5) * 290 +
+          Math.sin(t * .9 + i * .057) * 12 * drift;
+        return {
+          pointResolution,
+          target: [targetX, targetY, targetZ],
+          current: [
+            rawX + (targetX - rawX) * pointResolution,
+            rawY + (targetY - rawY) * pointResolution,
+            rawZ + (targetZ - rawZ) * pointResolution
+          ]
+        };
       };
 
-      this.ctx.save();
-      this.ctx.translate(0, 20);
-      for (let row = 0; row < rows; row++) {
-        const z = -185 + row / (rows - 1) * 370;
-        const path = [];
-        for (let column = 0; column < columns; column++) {
-          const x = -228 + column / (columns - 1) * 456;
-          const y = surface(x, z);
-          const px = x + z * .34;
-          const py = z * .44 - y;
-          path.push([px, py]);
-          if ((column + row) % 3 === 0) {
-            const h = hash(row * 131 + column * 17);
-            this.point(px, py, h > .94 ? 1.18 : .58, h > .94 ? .52 : .16, h > .94 ? .85 : .1);
+      const modelPresence = smooth(resolution);
+      if (modelPresence > .01) {
+        for (let row = 0; row < 18; row++) {
+          const z = -150 + row / 17 * 300;
+          const path = [];
+          for (let step = 0; step <= 72; step++) {
+            const x = -195 + step / 72 * 390;
+            path.push(toScreen(x, model(x, z), z));
           }
+          this.line(
+            path,
+            modelPresence * (row % 4 === 0 ? .14 : .045),
+            row % 4 === 0 ? .52 : .3
+          );
         }
-        this.line(path, row % 5 === 0 ? .22 : .065, row % 5 === 0 ? .6 : .35);
+        for (let column = 0; column < 15; column++) {
+          const x = -195 + column / 14 * 390;
+          const path = [];
+          for (let step = 0; step <= 60; step++) {
+            const z = -150 + step / 60 * 300;
+            path.push(toScreen(x, model(x, z), z));
+          }
+          this.line(
+            path,
+            modelPresence * (column % 4 === 0 ? .12 : .035),
+            column % 4 === 0 ? .48 : .28
+          );
+        }
       }
 
-      const samples = this.mobile ? 1700 : 3200;
-      for (let i = 0; i < samples; i++) {
-        const x = (hash(i * 2.17) - .5) * 430;
-        const z = (hash(i * 4.63 + 10) - .5) * 330;
-        const y = surface(x, z) + (hash(i * 8.9) - .5) * 9;
-        const px = x + z * .34;
-        const py = z * .44 - y;
-        const bright = hash(i * 13.7) > .978;
-        this.point(px, py, bright ? 1.2 : .56, bright ? .58 : .105, bright ? .9 : 0);
+      const residualAlpha = Math.sin(resolution * Math.PI) * .2;
+      if (residualAlpha > .01) {
+        for (let sample = 0; sample < 24; sample++) {
+          const observation = datum(83 + sample * 337);
+          const from = toScreen(...observation.current);
+          const to = toScreen(...observation.target);
+          this.line([from, to], residualAlpha, .42, .35);
+          this.point(to[0], to[1], 1.05 * this.dpr, residualAlpha * 1.8, .95, .45);
+        }
       }
 
-      for (let route = 0; route < 7; route++) {
-        const offset = (route - 3) * 12;
-        const points = [];
-        for (let step = 0; step <= 70; step++) {
-          const u = step / 70;
-          const x = -212 + u * 424;
-          const z = offset + Math.sin(u * TAU * 1.6 + route) * 36;
-          points.push([x + z * .34, z * .44 - surface(x, z) - 8]);
-        }
-        this.line(points, route === 3 ? .48 : .105, route === 3 ? 1.05 : .45, route === 3 ? .8 : 0);
+      for (let i = count; i > 0; i--) {
+        const observation = datum(i);
+        const [x, y] = toScreen(...observation.current);
+        const light = this.shimmer(i, t, 7.5);
+        const resolved = observation.pointResolution;
+        this.point(
+          x,
+          y,
+          (.36 + light * .52 + resolved * .13) * this.dpr,
+          .045 + light * (.1 + resolved * .22) + resolved * .05,
+          light,
+          resolved * .38
+        );
       }
-      this.ctx.restore();
+
+      if (modelPresence > .02) {
+        const fittedSignal = [];
+        for (let step = 0; step <= 100; step++) {
+          const u = step / 100;
+          const x = -185 + u * 370;
+          const z = Math.sin(u * TAU * 1.3) * 27;
+          fittedSignal.push(toScreen(x, model(x, z) + 6, z));
+        }
+        this.line(fittedSignal, modelPresence * .62, 1.02, .85);
+      }
     }
 
     ai(t) {
-      const ribbons = this.mobile ? 34 : 58;
-      const steps = this.mobile ? 82 : 126;
-      for (let ribbon = 0; ribbon < ribbons; ribbon++) {
-        const offset = ribbon / (ribbons - 1) - .5;
-        const path = [];
-        for (let step = 0; step <= steps; step++) {
-          const u = step / steps * TAU;
-          const phase = t * .75 + offset * 1.3;
-          const radius = 118 + 46 * Math.sin(3 * u + phase) + offset * 62;
-          const x = Math.sin(u * 2 + phase * .18) * radius * .98;
-          const y = Math.sin(u * 3 - phase * .27) * (82 + 38 * Math.cos(u * 2)) + offset * 58 * Math.cos(u);
-          const twist = 24 * Math.sin(u * 7 + phase + offset * 8);
-          path.push([x + twist * offset, y]);
-          if ((step + ribbon) % 7 === 0) {
-            const bright = hash(ribbon * 83 + step * 11) > .87;
-            this.point(x + twist * offset, y, bright ? 1.05 : .56, bright ? .46 : .12, bright ? .7 : 0);
-          }
-        }
-        this.line(path, .045 + .13 * (1 - Math.abs(offset)), .38);
-      }
+      const count = this.mobile ? 10500 : 20000;
+      const stride = this.mobile ? 2 : 1;
+      const fit = Math.min(this.width, this.height) / 400 * .92;
+      const phase = t * 10;
+      const pointSize = Math.max(.54, this.dpr * .4);
 
-      for (let pulse = 0; pulse < 22; pulse++) {
-        const u = (pulse / 22 * TAU + t * 1.65) % TAU;
-        const radius = 118 + 46 * Math.sin(3 * u + t * .75);
-        const x = Math.sin(u * 2 + t * .13) * radius;
-        const y = Math.sin(u * 3 - t * .2) * (82 + 38 * Math.cos(u * 2));
-        this.point(x, y, pulse % 6 === 0 ? 2.2 : 1.15, pulse % 6 === 0 ? .82 : .48, .8);
+      for (let i = count; i > 0; i -= stride) {
+        const alternating = (i % 2) * 3;
+        const k = 9 * Math.cos(i / 61);
+        const e = i / 652 - 13;
+        const d = Math.hypot(k, e) ** 2 / 89 + 1;
+        const q = 79 - e / 2 * Math.sin(k) + k / d *
+          (6 + 5 * Math.sin(Math.sin(d * d + e / 9 - phase + alternating)));
+        const c = d / 1.9 + Math.cos(phase - d * 3 + alternating) / 11 - phase / 16 + alternating;
+        const x = this.width * .5 + q * Math.sin(c) * fit;
+        const y = this.height * .5 + (q + 40) * Math.cos(c) * fit;
+        const light = this.shimmer(i, t, 18);
+        this.point(
+          x,
+          y,
+          pointSize * (.88 + light * .7),
+          .12 + light * .52,
+          light,
+          i % 17 === 0 ? .35 : 0
+        );
       }
     }
 
     manufacturing(t) {
-      const sections = this.mobile ? 31 : 45;
-      const pointsPerSection = this.mobile ? 18 : 28;
-      const yaw = .16;
-      const pitch = .72;
-      const surfacePoints = this.mobile ? 1500 : 2850;
+      const count = this.mobile ? 6200 : 16500;
+      const span = Math.min(this.width, this.height);
+      const phase = t * .7;
+      const viewScale = span / 520;
+      const cameraYaw = -.24;
+      const cameraPitch = .1;
+      const cosCameraYaw = Math.cos(cameraYaw);
+      const sinCameraYaw = Math.sin(cameraYaw);
+      const cosCameraPitch = Math.cos(cameraPitch);
+      const sinCameraPitch = Math.sin(cameraPitch);
+      const normalize = vector => {
+        const length = Math.max(.0001, Math.hypot(vector[0], vector[1], vector[2]));
+        return vector.map(value => value / length);
+      };
+      const cross = (a, b) => [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0]
+      ];
+      const pathAt = angle => {
+        const radius = 184;
+        return [
+          Math.cos(angle) * radius,
+          Math.sin(angle * 2 - .35) * 25 + Math.sin(angle + .45) * 9,
+          Math.sin(angle) * radius
+        ];
+      };
+      const tangentAt = angle => {
+        const radius = 184;
+        return [
+          -Math.sin(angle) * radius,
+          Math.cos(angle * 2 - .35) * 50 + Math.cos(angle + .45) * 9,
+          Math.cos(angle) * radius
+        ];
+      };
+      const frameAt = angle => {
+        const center = pathAt(angle);
+        const forward = normalize(tangentAt(angle));
+        const unbankedRight = normalize(cross(forward, [0, 1, 0]));
+        const unbankedUp = normalize(cross(unbankedRight, forward));
+        const bank = -(.46 + .085 * (.5 + .5 * Math.sin(angle * 2 - .4)));
+        const cosBank = Math.cos(bank);
+        const sinBank = Math.sin(bank);
+        const right = [
+          unbankedRight[0] * cosBank + unbankedUp[0] * sinBank,
+          unbankedRight[1] * cosBank + unbankedUp[1] * sinBank,
+          unbankedRight[2] * cosBank + unbankedUp[2] * sinBank
+        ];
+        const up = [
+          unbankedUp[0] * cosBank - unbankedRight[0] * sinBank,
+          unbankedUp[1] * cosBank - unbankedRight[1] * sinBank,
+          unbankedUp[2] * cosBank - unbankedRight[2] * sinBank
+        ];
+        return { center, forward, right, up };
+      };
+      const projectWorld = (x, y, z) => {
+        const rotatedX = x * cosCameraYaw + z * sinCameraYaw;
+        const rotatedZ = -x * sinCameraYaw + z * cosCameraYaw;
+        const pitchedY = y * cosCameraPitch - rotatedZ * sinCameraPitch;
+        const depth = y * sinCameraPitch + rotatedZ * cosCameraPitch;
+        const perspective = 650 / (720 - depth);
+        return [
+          this.width * .5 + rotatedX * viewScale * perspective,
+          this.height * .51 - pitchedY * viewScale * perspective,
+          depth
+        ];
+      };
+      const localToWorld = (frame, x, y, z, localScale = 1) => [
+        frame.center[0] + (
+          frame.forward[0] * x +
+          frame.right[0] * y +
+          frame.up[0] * z
+        ) * localScale,
+        frame.center[1] + (
+          frame.forward[1] * x +
+          frame.right[1] * y +
+          frame.up[1] * z
+        ) * localScale,
+        frame.center[2] + (
+          frame.forward[2] * x +
+          frame.right[2] * y +
+          frame.up[2] * z
+        ) * localScale
+      ];
+      const flightFrame = frameAt(phase);
+      const nearFactor = .5 + .5 * Math.sin(phase - cameraYaw);
+      const aircraftScale = .39 + nearFactor * .055;
+      const flightProject = (x, y, z) => {
+        const world = localToWorld(flightFrame, x, y, z, aircraftScale);
+        return projectWorld(...world);
+      };
 
-      // A point-built aircraft volume: the drafting sections below define the
-      // geometry, while this field gives it the density and depth of the site's
-      // other computational studies.
-      for (let i = 0; i < surfacePoints; i++) {
+      const orbitPath = [];
+      for (let step = 0; step <= 180; step++) {
+        const angle = step / 180 * TAU;
+        orbitPath.push(projectWorld(...pathAt(angle)));
+      }
+      this.line(orbitPath, .024, .3);
+
+      for (let sideIndex = 0; sideIndex < 2; sideIndex++) {
+        const side = sideIndex ? 1 : -1;
+        for (let trail = 1; trail <= 72; trail++) {
+          const angle = phase - trail * .0145;
+          const trailFrame = frameAt(angle);
+          const trailScale = .39 + (.5 + .5 * Math.sin(angle - cameraYaw)) * .055;
+          const world = localToWorld(trailFrame, -72, side * 142, -2, trailScale);
+          const point = projectWorld(...world);
+          const fade = (1 - trail / 73) ** 2;
+          this.point(
+            point[0],
+            point[1],
+            (.34 + fade * .66) * this.dpr,
+            fade * .17,
+            fade,
+            .4
+          );
+          if (trail % 3 === 0 && trail < 63) {
+            const nextAngle = phase - (trail + 1) * .0145;
+            const nextFrame = frameAt(nextAngle);
+            const nextScale = .39 + (.5 + .5 * Math.sin(nextAngle - cameraYaw)) * .055;
+            const nextWorld = localToWorld(nextFrame, -72, side * 142, -2, nextScale);
+            this.line([point, projectWorld(...nextWorld)], fade * .045, .35, .35);
+          }
+        }
+      }
+
+      for (let i = count; i > 0; i--) {
         const selector = hash(i * 11.73);
         let x;
         let y;
         let z;
-        if (selector < .54) {
+
+        if (selector < .46) {
           const u = hash(i * 7.19 + 4);
           const angle = hash(i * 13.07 + 9) * TAU;
           x = -205 + u * 410;
-          const radius = 6 + 24 * Math.pow(Math.sin(u * Math.PI), .58);
+          const radius = 5 + 25 * Math.pow(Math.sin(u * Math.PI), .58);
           y = Math.cos(angle) * radius;
           z = Math.sin(angle) * radius;
-        } else {
-          const tail = selector > .88;
+        } else if (selector < .83) {
           const sign = hash(i * 3.41 + 2) > .5 ? 1 : -1;
-          const v = hash(i * 5.87 + 5);
+          const spanU = Math.pow(hash(i * 5.87 + 5), .8);
           const chordU = hash(i * 17.31 + 1);
-          const span = sign * v * (tail ? 94 : 190);
-          const root = tail ? -148 : -25;
-          const sweep = root - v * (tail ? 22 : 66);
-          const chord = (tail ? 52 : 112) * (1 - v * .74);
+          y = sign * spanU * 198;
+          const sweep = -20 - spanU * 70;
+          const chord = 120 * (1 - spanU * .76);
           x = sweep + (chordU - .4) * chord;
-          y = span;
-          z = (tail ? 12 : -2) + Math.sin(chordU * Math.PI) * (tail ? 6 : 12) * (1 - v);
+          z = -3 + Math.sin(chordU * Math.PI) * 13 * (1 - spanU);
+        } else if (selector < .96) {
+          const sign = hash(i * 3.41 + 2) > .5 ? 1 : -1;
+          const spanU = hash(i * 5.87 + 5);
+          const chordU = hash(i * 17.31 + 1);
+          y = sign * spanU * 96;
+          const sweep = -148 - spanU * 24;
+          const chord = 56 * (1 - spanU * .72);
+          x = sweep + (chordU - .38) * chord;
+          z = 10 + Math.sin(chordU * Math.PI) * 7 * (1 - spanU);
+        } else {
+          const height = Math.sqrt(hash(i * 5.1 + 3));
+          const chordU = hash(i * 17.9 + 8);
+          x = -145 - height * 36 + (chordU - .5) * 42 * (1 - height * .6);
+          y = (hash(i * 9.2) - .5) * 5;
+          z = 12 + height * 74;
         }
-        const p = this.project(x, y, z, yaw, pitch);
-        const glint = hash(i * 29.7 + Math.floor(t * 4)) > .988;
-        this.point(p[0], p[1], glint ? 1.18 : .52, glint ? .54 : .105, glint ? .78 : 0);
+
+        const p = flightProject(x, y, z);
+        const flow = .5 + .5 * Math.sin((x + y * .18) * .045 - t * 7 + i * .009);
+        const depth = clamp((p[2] + 220) / 440);
+        this.point(
+          p[0],
+          p[1],
+          (.4 + flow * .62) * this.dpr,
+          .07 + flow * .3 + depth * .08,
+          flow,
+          flow > .94 ? .75 : 0
+        );
       }
 
-      for (let section = 0; section < sections; section++) {
-        const u = section / (sections - 1);
-        const x = -205 + u * 410;
-        const radius = 6 + 24 * Math.pow(Math.sin(u * Math.PI), .58);
+      for (let section = 0; section < 34; section++) {
+        const u = section / 33;
+        const x = -202 + u * 404;
+        const radius = 5 + 25 * Math.pow(Math.sin(u * Math.PI), .58);
         const ring = [];
-        for (let point = 0; point <= pointsPerSection; point++) {
-          const angle = point / pointsPerSection * TAU;
-          const y = Math.cos(angle) * radius;
-          const z = Math.sin(angle) * radius;
-          const projected = this.project(x, y, z, yaw, pitch);
-          ring.push(projected);
-          if (point < pointsPerSection && (point + section) % 2 === 0) {
-            this.point(projected[0], projected[1], .58, .2, point % 9 === 0 ? .75 : 0);
-          }
+        for (let step = 0; step <= 28; step++) {
+          const angle = step / 28 * TAU;
+          ring.push(flightProject(
+            x,
+            Math.cos(angle) * radius,
+            Math.sin(angle) * radius
+          ));
         }
-        this.line(ring, section % 4 === 0 ? .19 : .045, section % 4 === 0 ? .54 : .3);
-      }
-
-      const wing = (sign, tail = false) => {
-        const spanRows = tail ? 9 : (this.mobile ? 16 : 24);
-        for (let row = 0; row < spanRows; row++) {
-          const v = row / (spanRows - 1);
-          const span = sign * v * (tail ? 94 : 190);
-          const root = tail ? -148 : -25;
-          const sweep = root - v * (tail ? 22 : 66);
-          const chord = (tail ? 52 : 112) * (1 - v * .74);
-          const path = [];
-          for (let step = 0; step <= 22; step++) {
-            const u = step / 22;
-            const x = sweep + (u - .4) * chord;
-            const y = span;
-            const z = (tail ? 12 : -2) + Math.sin(u * Math.PI) * (tail ? 6 : 12) * (1 - v);
-            const p = this.project(x, y, z, yaw, pitch);
-            path.push(p);
-            if (step % 3 === 0) this.point(p[0], p[1], .6, .18, step === 12 ? .65 : 0);
-          }
-          this.line(path, row % 4 === 0 ? .18 : .04, .34);
-        }
-      };
-      wing(1); wing(-1); wing(1, true); wing(-1, true);
-
-      const scan = -220 + ((t * 125) % 440);
-      this.stroke(.27, .62, .7);
-      this.ctx.beginPath();
-      this.ctx.moveTo(scan, -165);
-      this.ctx.lineTo(scan, 165);
-      this.ctx.stroke();
-      for (let i = 0; i < 22; i++) {
-        const y = -154 + i * 14.6;
-        const alpha = .12 + .5 * Math.exp(-Math.abs((i / 21 - .5) * 4));
-        this.point(scan, y, .72, alpha, .8);
+        this.line(ring, section % 5 === 0 ? .16 : .035, .4);
       }
     }
 
     supply(t) {
-      const streams = this.mobile ? 18 : 28;
-      const particles = this.mobile ? 1900 : 3550;
-      for (let stream = 0; stream < streams; stream++) {
-        const lane = stream / (streams - 1) - .5;
+      const count = this.mobile ? 5000 : 13000;
+      const scale = Math.min(this.width, this.height) / 520;
+      const routes = [
+        [[-250, -140], [-130, -142], [-72, -25], [238, -92]],
+        [[-250, -66], [-122, -54], [-58, -5], [238, -36]],
+        [[-250, 4], [-105, -18], [18, 20], [238, 14]],
+        [[-250, 76], [-105, 85], [32, 42], [238, 70]],
+        [[-250, 145], [-90, 132], [72, 88], [238, 126]]
+      ];
+      const bezier = (route, u) => {
+        const omt = 1 - u;
+        return [
+          omt ** 3 * route[0][0] + 3 * omt ** 2 * u * route[1][0] +
+            3 * omt * u ** 2 * route[2][0] + u ** 3 * route[3][0],
+          omt ** 3 * route[0][1] + 3 * omt ** 2 * u * route[1][1] +
+            3 * omt * u ** 2 * route[2][1] + u ** 3 * route[3][1]
+        ];
+      };
+
+      routes.forEach((route, routeIndex) => {
         const path = [];
-        for (let step = 0; step <= 72; step++) {
-          const u = step / 72;
-          const x = -248 + u * 496;
-          const blendA = Math.exp(-((x + 94) ** 2) / 4600);
-          const blendB = Math.exp(-((x - 72) ** 2) / 4300);
-          const envelope = 292 * (1 - .79 * blendA - .74 * blendB);
-          const y = lane * envelope +
-            Math.sin(stream * .72 + t * .23) * 26 * blendA -
-            Math.cos(stream * .57 - t * .18) * 31 * blendB +
-            Math.sin(u * TAU * 2.2 + stream * .3) * 5;
-          path.push([x, y]);
+        for (let step = 0; step <= 100; step++) {
+          const point = bezier(route, step / 100);
+          path.push([
+            this.width * .5 + point[0] * scale,
+            this.height * .5 + point[1] * scale
+          ]);
         }
-        this.line(path, .025 + .075 * (1 - Math.abs(lane)), .3);
+        this.line(path, routeIndex === 2 ? .27 : .09, routeIndex === 2 ? .82 : .42);
+      });
+
+      for (let i = count; i > 0; i--) {
+        const routeIndex = Math.floor(hash(i * 3.17) * routes.length);
+        const speed = .12 + hash(i * 11.4) * .05;
+        const u = (hash(i * 7.91 + 4) + t * speed) % 1;
+        const point = bezier(routes[routeIndex], u);
+        const spread = (hash(i * 17.3 + 8) - .5) * (16 + 42 * Math.sin(u * Math.PI));
+        const x = this.width * .5 + point[0] * scale;
+        const y = this.height * .5 + (point[1] + spread) * scale;
+        const light = this.shimmer(i, t, 10);
+        const fade = Math.sin(u * Math.PI) ** .35;
+        this.point(
+          x,
+          y,
+          (.4 + light * .62) * this.dpr,
+          fade * (.07 + light * .37),
+          light,
+          routeIndex === 2 ? .55 : 0
+        );
       }
 
-      for (let i = 0; i < particles; i++) {
-        const lane = hash(i * 5.31 + 2) - .5;
-        const speed = .012 + hash(i * 17.7) * .014;
-        const u = (hash(i * 8.19 + 4) + t * speed) % 1;
-        const x = -252 + u * 504;
-        const blendA = Math.exp(-((x + 94) ** 2) / 4600);
-        const blendB = Math.exp(-((x - 72) ** 2) / 4300);
-        const envelope = 294 * (1 - .8 * blendA - .75 * blendB);
-        const noise = (hash(i * 31.1) - .5) * (12 + 18 * (1 - blendA - blendB));
-        const y = lane * envelope +
-          Math.sin(i * .72 + t * .23) * 26 * blendA -
-          Math.cos(i * .57 - t * .18) * 31 * blendB +
-          Math.sin(u * TAU * 2.2 + i * .03) * 5 + noise;
-        const nearHub = Math.max(blendA, blendB);
-        const glint = hash(i * 23.9 + Math.floor(t * 5)) > .991;
-        this.point(x, y, glint ? 1.45 : .58, glint ? .7 : .13 + nearHub * .1, glint ? .9 : nearHub * .2);
-      }
-
-      for (let pulse = 0; pulse < 24; pulse++) {
-        const lane = pulse / 23 - .5;
-        const u = (t * .092 + pulse * .071) % 1;
-        const x = -252 + u * 504;
-        const blendA = Math.exp(-((x + 94) ** 2) / 4600);
-        const blendB = Math.exp(-((x - 72) ** 2) / 4300);
-        const y = lane * 294 * (1 - .8 * blendA - .75 * blendB) +
-          Math.sin(pulse * .72 + t * .23) * 26 * blendA -
-          Math.cos(pulse * .57 - t * .18) * 31 * blendB;
-        this.point(x, y, pulse % 6 === 0 ? 2 : .9, pulse % 6 === 0 ? .76 : .38, .82);
-      }
-
-      [[-94, 0], [72, 0]].forEach(([cx, cy], hub) => {
-        for (let i = 0; i < (this.mobile ? 120 : 210); i++) {
-          const angle = hash(i * 9.2 + hub * 4) * TAU + t * (hub ? -.12 : .14);
-          const radius = 8 + Math.pow(hash(i * 3.1 + 7), .62) * 46;
-          this.point(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius * .68,
-            i % 53 === 0 ? 1.25 : .48, i % 53 === 0 ? .58 : .11, i % 53 === 0 ? .75 : .12);
+      [-72, -4, 74].forEach((nodeX, nodeIndex) => {
+        for (let i = 0; i < (this.mobile ? 110 : 190); i++) {
+          const angle = hash(i * 8.3 + nodeIndex) * TAU + t * (nodeIndex % 2 ? -.16 : .13);
+          const radius = 7 + Math.sqrt(hash(i * 4.1 + 5)) * (28 + nodeIndex * 3);
+          const light = this.shimmer(i + nodeIndex * 200, t, 7);
+          this.point(
+            this.width * .5 + (nodeX + Math.cos(angle) * radius) * scale,
+            this.height * .5 + (Math.sin(angle) * radius * .68) * scale,
+            (.42 + light * .5) * this.dpr,
+            .08 + light * .26,
+            light
+          );
         }
       });
     }
 
     energy(t) {
-      const fieldLines = this.mobile ? 16 : 24;
-      const steps = this.mobile ? 72 : 104;
-      const particles = this.mobile ? 2200 : 4200;
-      for (let field = 0; field < fieldLines; field++) {
-        const v = field / fieldLines * TAU;
+      const scale = Math.min(this.width, this.height) / 520;
+      const toScreen = (x, y) => [
+        this.width * .5 + x * scale,
+        this.height * .5 + y * scale
+      ];
+      const sun = [142, -145];
+      const sunRadius = 52;
+      const sunPath = [];
+      for (let step = 0; step <= 100; step++) {
+        const angle = step / 100 * TAU;
+        sunPath.push(toScreen(
+          sun[0] + Math.cos(angle) * sunRadius,
+          sun[1] + Math.sin(angle) * sunRadius
+        ));
+      }
+      this.line(sunPath, .12, .52, .9);
+      const sunCount = this.mobile ? 500 : 900;
+      for (let i = sunCount; i > 0; i--) {
+        const angle = hash(i * 5.1) * TAU;
+        const radius = Math.sqrt(hash(i * 9.7 + 3)) * sunRadius;
+        const light = this.shimmer(i, t, 4);
+        const point = toScreen(
+          sun[0] + Math.cos(angle) * radius,
+          sun[1] + Math.sin(angle) * radius
+        );
+        this.point(
+          point[0],
+          point[1],
+          (.38 + light * .48) * this.dpr,
+          .018 + light * .085,
+          light,
+          .95
+        );
+      }
+
+      const windY = (x, lane, seed = 0) =>
+        -158 + lane * 34 +
+        Math.sin(x * .018 + lane * .74 - t * 1.8 + seed) * 8;
+      for (let lane = 0; lane < 7; lane++) {
         const path = [];
-        for (let step = 0; step <= steps; step++) {
-          const u = step / steps * TAU;
-          const major = 112 + 27 * Math.sin(3 * v + t);
-          const minor = 44 + 13 * Math.cos(v * 2 - t * .8);
-          const x = (major + minor * Math.cos(u)) * Math.cos(v + u * .18);
-          const z = (major + minor * Math.cos(u)) * Math.sin(v + u * .18);
-          const y = minor * Math.sin(u) + 18 * Math.sin(v * 4 + t * 2);
-          const p = this.project(x, y, z, t * .1 + .28, .68);
-          path.push(p);
+        for (let step = 0; step <= 100; step++) {
+          const x = -270 + step / 100 * 540;
+          path.push(toScreen(x, windY(x, lane)));
         }
-        this.line(path, .025 + .065 * Math.pow(Math.sin(v), 2), .31);
+        this.line(path, lane % 3 === 0 ? .075 : .025, lane % 3 === 0 ? .42 : .25);
       }
 
-      for (let i = 0; i < particles; i++) {
-        const v = hash(i * 5.37 + 2) * TAU;
-        const u = (hash(i * 11.13 + 8) * TAU + t * (.13 + hash(i * 7.7) * .08)) % TAU;
-        const major = 112 + 27 * Math.sin(3 * v + t);
-        const minor = 44 + 13 * Math.cos(v * 2 - t * .8);
-        const p = this.project(
-          (major + minor * Math.cos(u)) * Math.cos(v + u * .18),
-          minor * Math.sin(u) + 18 * Math.sin(v * 4 + t * 2),
-          (major + minor * Math.cos(u)) * Math.sin(v + u * .18),
-          t * .1 + .28,
-          .68
+      const windCount = this.mobile ? 1000 : 1800;
+      for (let i = windCount; i > 0; i--) {
+        const lane = Math.floor(hash(i * 3.17) * 7);
+        const speed = .085 + hash(i * 11.4) * .045;
+        const u = (hash(i * 7.91 + 4) + t * speed) % 1;
+        const x = -270 + u * 540;
+        const y = windY(x, lane, i * .013) +
+          (hash(i * 17.3 + 8) - .5) * 12;
+        const point = toScreen(x, y);
+        const light = this.shimmer(i, t, 10);
+        const fade = Math.sin(u * Math.PI) ** .4;
+        this.point(
+          point[0],
+          point[1],
+          (.38 + light * .55) * this.dpr,
+          fade * (.025 + light * .16),
+          light,
+          lane % 3 === 0 ? .28 : 0
         );
-        const edge = .65 + .35 * Math.sin(u) ** 2;
-        const glint = hash(i * 31.7 + Math.floor(t * 4)) > .991;
-        this.point(p[0], p[1], glint ? 1.42 : .58, glint ? .69 : .12 + edge * .07, glint ? .9 : edge * .045);
       }
 
-      for (let pulse = 0; pulse < 18; pulse++) {
-        const v = pulse / 18 * TAU;
-        const u = (t * 1.45 + pulse * .83) % TAU;
-        const major = 112 + 27 * Math.sin(3 * v + t);
-        const minor = 44 + 13 * Math.cos(v * 2 - t * .8);
-        const p = this.project(
-          (major + minor * Math.cos(u)) * Math.cos(v + u * .18),
-          minor * Math.sin(u) + 18 * Math.sin(v * 4 + t * 2),
-          (major + minor * Math.cos(u)) * Math.sin(v + u * .18),
-          t * .1 + .28,
+      const waterY = x => 184 + Math.sin(x * .019 + .6) * 9 +
+        Math.sin(x * .041 - t * .55) * 3;
+      [-5, 0, 5].forEach((offset, index) => {
+        const path = [];
+        for (let step = 0; step <= 110; step++) {
+          const x = -270 + step / 110 * 540;
+          path.push(toScreen(x, waterY(x) + offset));
+        }
+        this.line(path, index === 1 ? .24 : .065, index === 1 ? .75 : .4);
+      });
+      const waterCount = this.mobile ? 750 : 1350;
+      for (let i = waterCount; i > 0; i--) {
+        const speed = .06 + hash(i * 7.4) * .04;
+        const u = (hash(i * 3.8 + 1) + t * speed) % 1;
+        const x = -270 + u * 540;
+        const point = toScreen(
+          x,
+          waterY(x) + (hash(i * 12.7 + 5) - .5) * 12
+        );
+        const light = this.shimmer(i + 7000, t, 7);
+        const fade = Math.sin(u * Math.PI) ** .34;
+        this.point(
+          point[0],
+          point[1],
+          (.42 + light * .65) * this.dpr,
+          fade * (.09 + light * .33),
+          light,
+          0
+        );
+      }
+
+      const roots = [];
+      const growRoot = (x, y, length, angle, depth, id) => {
+        const endX = x + Math.cos(angle) * length;
+        const endY = y + Math.sin(angle) * length;
+        roots.push({ x, y, endX, endY, depth, id });
+        if (depth <= 0) return;
+        const spread = .28 + hash(id * 7.3) * .22;
+        const nextLength = length * (.62 + hash(id * 3.9) * .08);
+        growRoot(endX, endY, nextLength, angle - spread, depth - 1, id * 2 + 1);
+        growRoot(endX, endY, nextLength * .94, angle + spread, depth - 1, id * 2 + 2);
+      };
+      growRoot(8, 105, 51, .78, 4, 5);
+      growRoot(8, 105, 58, 1.52, 4, 9);
+      growRoot(8, 105, 53, 2.34, 4, 13);
+
+      roots.forEach((root) => {
+        const start = toScreen(root.x, root.y);
+        const end = toScreen(root.endX, root.endY);
+        this.line([start, end], .055 + root.depth * .022, .35 + root.depth * .12, .72);
+        const particleCount = this.mobile ? 9 : 16;
+        for (let i = particleCount; i > 0; i--) {
+          const u = hash(i * 5.8 + root.id * 2.1);
+          const jitter = (hash(i * 9.4 + root.id) - .5) * (2 + root.depth);
+          const dx = root.endX - root.x;
+          const dy = root.endY - root.y;
+          const length = Math.max(.001, Math.hypot(dx, dy));
+          const point = toScreen(
+            root.x + dx * u - dy / length * jitter,
+            root.y + dy * u + dx / length * jitter
+          );
+          const light = this.shimmer(i + root.id * 19, t, 5);
+          this.point(
+            point[0],
+            point[1],
+            (.38 + light * .52) * this.dpr,
+            .035 + light * .17,
+            light,
+            .72
+          );
+        }
+        if (hash(root.id * 1.7) > .5) {
+          const progress = (hash(root.id * 4.3) + t * .11) % 1;
+          const point = toScreen(
+            root.endX + (root.x - root.endX) * progress,
+            root.endY + (root.y - root.endY) * progress
+          );
+          this.point(point[0], point[1], 1.45 * this.dpr, .58, .92, .78);
+        }
+      });
+
+      const branches = [];
+      const leaves = [];
+      const growBranch = (x, y, length, angle, depth, id) => {
+        const elevation = clamp((105 - y) / 280);
+        const sway = Math.sin(t * 1.3 + id * .21) * elevation * 4.2;
+        const endX = x + Math.cos(angle) * length + sway;
+        const endY = y + Math.sin(angle) * length;
+        branches.push({ x, y, endX, endY, angle, depth, id });
+        if (depth <= 0) {
+          leaves.push({ x: endX, y: endY, angle, id });
+          return;
+        }
+        const spread = .34 + hash(id * 4.9) * .21;
+        const lean = (hash(id * 7.1) - .5) * .14;
+        const nextLength = length * (.68 + hash(id * 2.7) * .055);
+        growBranch(endX, endY, nextLength, angle - spread + lean, depth - 1, id * 2 + 1);
+        growBranch(endX, endY, nextLength * .96, angle + spread + lean, depth - 1, id * 2 + 2);
+        if (depth === 4 && hash(id * 11.2) > .48) {
+          growBranch(endX, endY, nextLength * .72, angle + lean * .35, depth - 2, id * 3 + 7);
+        }
+      };
+      growBranch(8, 108, 86, -Math.PI * .5, 6, 3);
+
+      branches.forEach((branch) => {
+        const start = toScreen(branch.x, branch.y);
+        const end = toScreen(branch.endX, branch.endY);
+        this.line(
+          [start, end],
+          .075 + branch.depth * .026,
+          .32 + branch.depth * .17,
           .68
         );
-        this.point(p[0], p[1], pulse % 5 === 0 ? 2.15 : .95, pulse % 5 === 0 ? .82 : .42, .85);
+        const particleCount = this.mobile ? 8 + branch.depth * 2 : 13 + branch.depth * 3;
+        for (let i = particleCount; i > 0; i--) {
+          const u = hash(i * 5.13 + branch.id * 3.7);
+          const dx = branch.endX - branch.x;
+          const dy = branch.endY - branch.y;
+          const length = Math.max(.001, Math.hypot(dx, dy));
+          const jitter = (hash(i * 11.7 + branch.id) - .5) * (2.2 + branch.depth * .35);
+          const point = toScreen(
+            branch.x + dx * u - dy / length * jitter,
+            branch.y + dy * u + dx / length * jitter
+          );
+          const light = this.shimmer(i + branch.id * 29, t, 6);
+          this.point(
+            point[0],
+            point[1],
+            (.4 + light * .58) * this.dpr,
+            .045 + light * (.15 + branch.depth * .018),
+            light,
+            .68
+          );
+        }
+        if (hash(branch.id * 2.4) > .66) {
+          const progress = (hash(branch.id * 3.8) + t * .13) % 1;
+          const point = toScreen(
+            branch.x + (branch.endX - branch.x) * progress,
+            branch.y + (branch.endY - branch.y) * progress
+          );
+          this.point(point[0], point[1], 1.55 * this.dpr, .64, .96, .82);
+        }
+      });
+
+      leaves.forEach((leaf, leafIndex) => {
+        const particleCount = this.mobile ? 22 : 38;
+        const longX = Math.cos(leaf.angle);
+        const longY = Math.sin(leaf.angle);
+        const shortX = -longY;
+        const shortY = longX;
+        for (let i = particleCount; i > 0; i--) {
+          const longitudinal = (hash(i * 5.8 + leaf.id) - .5) * 28;
+          const envelope = Math.sin(clamp((longitudinal / 28 + .5)) * Math.PI);
+          const lateral = (hash(i * 13.4 + leafIndex) - .5) * 12 * envelope;
+          const point = toScreen(
+            leaf.x + longX * longitudinal + shortX * lateral,
+            leaf.y + longY * longitudinal + shortY * lateral
+          );
+          const light = this.shimmer(i + leafIndex * 41, t, 5.5);
+          this.point(
+            point[0],
+            point[1],
+            (.4 + light * .62) * this.dpr,
+            .045 + light * .24,
+            light,
+            .86
+          );
+        }
+      });
+
+      const groundPath = [];
+      for (let step = 0; step <= 100; step++) {
+        const x = -230 + step / 100 * 460;
+        groundPath.push(toScreen(x, 109 + Math.sin(x * .018) * 4));
       }
+      this.line(groundPath, .12, .48, .78);
     }
 
     industrial(t) {
-      const blades = 11;
-      const ribbons = this.mobile ? 7 : 12;
-      const particles = this.mobile ? 2400 : 4550;
-      const yaw = .28 + t * .09;
-      const pitch = .73;
+      const scale = Math.min(this.width, this.height) / 520;
+      const toScreen = (x, y) => [
+        this.width * .5 + x * scale,
+        this.height * .5 + y * scale
+      ];
+      const shoulder = [-132, 64];
+      const linkA = 145;
+      const linkB = 138;
+      const phase = t * .92;
+      const target = [
+        56 + Math.cos(phase) * 55,
+        -24 + Math.sin(phase) * 45
+      ];
+      const dx = target[0] - shoulder[0];
+      const dy = target[1] - shoulder[1];
+      const distanceSquared = dx * dx + dy * dy;
+      const elbowCos = clamp(
+        (distanceSquared - linkA * linkA - linkB * linkB) / (2 * linkA * linkB),
+        -1,
+        1
+      );
+      const elbowAngle = Math.acos(elbowCos);
+      const shoulderAngle = Math.atan2(dy, dx) -
+        Math.atan2(linkB * Math.sin(elbowAngle), linkA + linkB * elbowCos);
+      const elbow = [
+        shoulder[0] + Math.cos(shoulderAngle) * linkA,
+        shoulder[1] + Math.sin(shoulderAngle) * linkA
+      ];
+      const wrist = target;
 
-      for (let blade = 0; blade < blades; blade++) {
-        for (let ribbon = 0; ribbon < ribbons; ribbon++) {
-          const offset = ribbon / (ribbons - 1) - .5;
-          const path = [];
-          for (let step = 0; step <= 58; step++) {
-            const u = step / 58;
-            const angle = blade / blades * TAU + t * .16 + .18 + 1.14 * Math.pow(u, 1.48) + offset * .15;
-            const radius = 28 + 190 * u + offset * (14 + 30 * Math.sin(u * Math.PI));
-            const z = offset * 32 * Math.sin(u * Math.PI) + 8 * Math.sin(u * TAU + blade);
-            path.push(this.project(Math.cos(angle) * radius, Math.sin(angle) * radius, z, yaw, pitch));
-          }
-          this.line(path, .025 + .085 * (1 - Math.abs(offset)), .3, ribbon === Math.floor(ribbons / 2) ? .2 : 0);
+      const trajectory = [];
+      for (let step = 0; step <= 120; step++) {
+        const angle = step / 120 * TAU;
+        trajectory.push(toScreen(
+          56 + Math.cos(angle) * 55,
+          -24 + Math.sin(angle) * 45
+        ));
+      }
+      this.line(trajectory, .11, .42);
+      for (let trail = 1; trail <= 30; trail++) {
+        const angle = phase - trail * .045;
+        const fade = (1 - trail / 31) ** 2;
+        const point = toScreen(
+          56 + Math.cos(angle) * 55,
+          -24 + Math.sin(angle) * 45
+        );
+        this.point(point[0], point[1], (.42 + fade * .65) * this.dpr, fade * .28, fade, .55);
+      }
+
+      const baseCount = this.mobile ? 760 : 2100;
+      for (let i = baseCount; i > 0; i--) {
+        const u = hash(i * 5.1);
+        const v = hash(i * 11.3 + 4);
+        const taper = 1 - u * .28;
+        const x = -178 + v * 94 * taper + u * 10;
+        const y = 102 + u * 86;
+        const point = toScreen(x, y);
+        const light = this.shimmer(i, t, 6);
+        const edge = Math.min(v, 1 - v, u, 1 - u) < .06;
+        this.point(
+          point[0],
+          point[1],
+          (.42 + light * .48 + (edge ? .2 : 0)) * this.dpr,
+          .075 + light * .22 + (edge ? .18 : 0),
+          light,
+          edge ? .3 : 0
+        );
+      }
+
+      const drawLink = (start, end, width, count, seed) => {
+        const vx = end[0] - start[0];
+        const vy = end[1] - start[1];
+        const length = Math.max(.001, Math.hypot(vx, vy));
+        const nx = -vy / length;
+        const ny = vx / length;
+        for (let i = count; i > 0; i--) {
+          const u = hash(i * 7.13 + seed);
+          const across = hash(i * 13.4 + seed * 2.1) * 2 - 1;
+          const taper = .82 + .18 * Math.sin(u * Math.PI);
+          const x = start[0] + vx * u + nx * across * width * taper;
+          const y = start[1] + vy * u + ny * across * width * taper;
+          const point = toScreen(x, y);
+          const light = this.shimmer(i + seed * 100, t, 8);
+          const edge = Math.pow(Math.abs(across), 7);
+          this.point(
+            point[0],
+            point[1],
+            (.42 + light * .52 + edge * .18) * this.dpr,
+            .07 + light * .27 + edge * .19,
+            light,
+            edge * .38
+          );
         }
-      }
 
-      for (let i = 0; i < particles; i++) {
-        const blade = Math.floor(hash(i * 3.71) * blades);
-        const u = Math.pow(hash(i * 7.33 + 2), .8);
-        const offset = hash(i * 13.17 + 7) - .5;
-        const angle = blade / blades * TAU + t * .16 + .18 + 1.14 * Math.pow(u, 1.48) + offset * .15;
-        const radius = 28 + 190 * u + offset * (14 + 30 * Math.sin(u * Math.PI));
-        const z = offset * 32 * Math.sin(u * Math.PI) + 8 * Math.sin(u * TAU + blade);
-        const p = this.project(Math.cos(angle) * radius, Math.sin(angle) * radius, z, yaw, pitch);
-        const leading = Math.abs(offset) > .43;
-        const glint = hash(i * 29.8 + Math.floor(t * 5)) > .992;
-        this.point(p[0], p[1], glint ? 1.4 : .5, glint ? .68 : leading ? .16 : .09, glint ? .86 : leading ? .22 : 0);
-      }
+        const outline = [
+          toScreen(start[0] + nx * width, start[1] + ny * width),
+          toScreen(end[0] + nx * width * .82, end[1] + ny * width * .82),
+          toScreen(end[0] - nx * width * .82, end[1] - ny * width * .82),
+          toScreen(start[0] - nx * width, start[1] - ny * width),
+          toScreen(start[0] + nx * width, start[1] + ny * width)
+        ];
+        this.line(outline, .16, .48);
+      };
 
-      const hubPoints = this.mobile ? 260 : 460;
-      for (let i = 0; i < hubPoints; i++) {
-        const angle = hash(i * 6.2) * TAU + t * .16;
-        const radius = 8 + Math.sqrt(hash(i * 4.2 + 3)) * 31;
-        const z = (hash(i * 9.8 + 6) - .5) * 26;
-        const p = this.project(Math.cos(angle) * radius, Math.sin(angle) * radius, z, yaw, pitch);
-        this.point(p[0], p[1], i % 71 === 0 ? 1.45 : .54, i % 71 === 0 ? .68 : .16, i % 71 === 0 ? .86 : .12);
+      drawLink(shoulder, elbow, 24, this.mobile ? 1450 : 3900, 17);
+      drawLink(elbow, wrist, 19, this.mobile ? 1300 : 3500, 31);
+
+      [shoulder, elbow, wrist].forEach((joint, jointIndex) => {
+        const radius = jointIndex === 0 ? 25 : jointIndex === 1 ? 21 : 14;
+        const jointCount = this.mobile ? 150 : 380;
+        for (let i = jointCount; i > 0; i--) {
+          const angle = hash(i * 7.7 + jointIndex * 4) * TAU;
+          const radial = Math.sqrt(hash(i * 3.2 + 8)) * radius;
+          const point = toScreen(
+            joint[0] + Math.cos(angle) * radial,
+            joint[1] + Math.sin(angle) * radial
+          );
+          const light = this.shimmer(i + jointIndex * 400, t, 7);
+          const edge = radial / radius > .82;
+          this.point(
+            point[0],
+            point[1],
+            (.46 + light * .55 + (edge ? .18 : 0)) * this.dpr,
+            .1 + light * .31 + (edge ? .16 : 0),
+            light,
+            edge ? .42 : 0
+          );
+        }
+      });
+
+      const toolAngle = Math.atan2(wrist[1] - elbow[1], wrist[0] - elbow[0]);
+      const tx = Math.cos(toolAngle);
+      const ty = Math.sin(toolAngle);
+      const nx = -ty;
+      const ny = tx;
+      const toolBase = [wrist[0] + tx * 8, wrist[1] + ty * 8];
+      const toolTip = [wrist[0] + tx * 42, wrist[1] + ty * 42];
+      this.line([toScreen(...toolBase), toScreen(...toolTip)], .48, .95, .7);
+      this.line([
+        toScreen(toolTip[0] + nx * 11, toolTip[1] + ny * 11),
+        toScreen(toolTip[0] + tx * 17 + nx * 15, toolTip[1] + ty * 17 + ny * 15)
+      ], .4, .82, .7);
+      this.line([
+        toScreen(toolTip[0] - nx * 11, toolTip[1] - ny * 11),
+        toScreen(toolTip[0] + tx * 17 - nx * 15, toolTip[1] + ty * 17 - ny * 15)
+      ], .4, .82, .7);
+
+      for (let pulse = 0; pulse < 18; pulse++) {
+        const progress = (pulse / 18 + t * .18) % 1;
+        let x;
+        let y;
+        if (progress < .52) {
+          const u = progress / .52;
+          x = shoulder[0] + (elbow[0] - shoulder[0]) * u;
+          y = shoulder[1] + (elbow[1] - shoulder[1]) * u;
+        } else {
+          const u = (progress - .52) / .48;
+          x = elbow[0] + (wrist[0] - elbow[0]) * u;
+          y = elbow[1] + (wrist[1] - elbow[1]) * u;
+        }
+        const point = toScreen(x, y);
+        this.point(point[0], point[1], (pulse % 6 === 0 ? 1.7 : .82) * this.dpr, pulse % 6 === 0 ? .72 : .34, .9, .75);
       }
     }
 
     smallBusiness(t) {
-      const loops = [
-        { x: -92, y: -45, rx: 118, ry: 83, phase: .2 },
-        { x: 78, y: -38, rx: 105, ry: 75, phase: 2.3 },
-        { x: 0, y: 92, rx: 138, ry: 72, phase: 4.1 }
+      const scale = Math.min(this.width, this.height) / 520;
+      const toScreen = (x, y) => [
+        this.width * .5 + x * scale,
+        this.height * .5 + y * scale
       ];
-      const ribbons = this.mobile ? 8 : 13;
-      const particles = this.mobile ? 2000 : 3700;
+      const cycle = (t * .22) % 1;
+      const ringMotion = (moment, strength) => {
+        const elapsed = cycle - moment;
+        if (elapsed < 0) return 0;
+        return strength * Math.exp(-elapsed * 14) *
+          Math.sin(elapsed * TAU * 11);
+      };
+      const firstRing = ringMotion(.11, .5);
+      const secondRing = ringMotion(.62, .34);
+      const swing = firstRing + secondRing;
+      const ringEnergy =
+        (cycle >= .11 ? Math.exp(-(cycle - .11) * 14) : 0) +
+        (cycle >= .62 ? .68 * Math.exp(-(cycle - .62) * 14) : 0);
+      const anchor = [0, -248];
+      const pivot = [0, -202];
+      const armLength = 118;
+      const bellCenter = [
+        pivot[0] + Math.sin(swing) * armLength,
+        pivot[1] + Math.cos(swing) * armLength
+      ];
+      const rotateBell = (x, y) => [
+        bellCenter[0] + x * Math.cos(swing) - y * Math.sin(swing),
+        bellCenter[1] + x * Math.sin(swing) + y * Math.cos(swing)
+      ];
 
-      loops.forEach((loop, loopIndex) => {
-        for (let ribbon = 0; ribbon < ribbons; ribbon++) {
-          const offset = ribbon / (ribbons - 1) - .5;
-          const path = [];
-          for (let step = 0; step <= 92; step++) {
-            const u = step / 92 * TAU;
-            const cadence = 1 + .1 * Math.sin(u * 5 + t * 2 + loopIndex);
-            const x = loop.x + Math.cos(u + loop.phase) * (loop.rx + offset * 32) * cadence;
-            const y = loop.y + Math.sin(u + loop.phase) * (loop.ry + offset * 24) +
-              9 * Math.sin(u * 3 - t + loopIndex);
-            path.push([x, y]);
-            if ((step + ribbon) % 10 === 0) this.point(x, y, .62, .145, loopIndex === 1 ? .52 : 0);
-          }
-          this.line(path, .02 + .065 * (1 - Math.abs(offset)), .3);
-        }
-      });
-
-      for (let i = 0; i < particles; i++) {
-        const loopIndex = Math.floor(hash(i * 3.91) * loops.length);
-        const loop = loops[loopIndex];
-        const u = hash(i * 7.13 + 2) * TAU + t * (.07 + hash(i * 11.8) * .04);
-        const offset = hash(i * 19.4 + 8) - .5;
-        const cadence = 1 + .1 * Math.sin(u * 5 + t * 2 + loopIndex);
-        const x = loop.x + Math.cos(u + loop.phase) * (loop.rx + offset * 36) * cadence;
-        const y = loop.y + Math.sin(u + loop.phase) * (loop.ry + offset * 28) +
-          9 * Math.sin(u * 3 - t + loopIndex);
-        const glint = hash(i * 31.3 + Math.floor(t * 4)) > .992;
-        this.point(x, y, glint ? 1.42 : .58, glint ? .68 : .13 + .045 * (1 - Math.abs(offset)), glint ? .88 : loopIndex === 1 ? .16 : .025);
+      this.line([toScreen(...anchor), toScreen(...pivot)], .34, .88, .6);
+      this.line([toScreen(...pivot), toScreen(...bellCenter)], .4, 1.05, .72);
+      for (let link = 0; link < 180; link++) {
+        const u = hash(link * 5.7);
+        const y = anchor[1] + u * (pivot[1] - anchor[1]);
+        const x = Math.sin(u * TAU * 7) * 2.2;
+        const point = toScreen(x, y);
+        const light = this.shimmer(link + 7200, t, 6);
+        this.point(
+          point[0],
+          point[1],
+          (.42 + light * .5) * this.dpr,
+          .08 + light * .25,
+          light,
+          .7
+        );
       }
 
-      const transfers = [
-        [[-198, -66], [-115, -16], [-60, 48], [0, 24]],
-        [[0, 24], [52, -6], [126, -22], [178, -72]],
-        [[-108, 125], [-58, 95], [42, 91], [113, 124]]
-      ];
-      transfers.forEach((route, index) => {
-        this.curve(route[0], route[1], route[2], route[3], .2, .58, index === 1 ? .65 : 0);
-        for (let pulse = 0; pulse < 7; pulse++) {
-          const u = (t * .38 + pulse / 7 + index * .13) % 1;
-          const omt = 1 - u;
-          const x = omt ** 3 * route[0][0] + 3 * omt ** 2 * u * route[1][0] + 3 * omt * u ** 2 * route[2][0] + u ** 3 * route[3][0];
-          const y = omt ** 3 * route[0][1] + 3 * omt ** 2 * u * route[1][1] + 3 * omt * u ** 2 * route[2][1] + u ** 3 * route[3][1];
-          this.point(x, y, pulse === 0 ? 1.8 : .76, pulse === 0 ? .7 : .32, pulse === 0 ? .82 : 0);
+      const bellOutline = [
+        [-20, -44], [-37, -32], [-49, -12], [-60, 16],
+        [-76, 47], [-97, 68], [-111, 78], [111, 78],
+        [97, 68], [76, 47], [60, 16], [49, -12],
+        [37, -32], [20, -44], [-20, -44]
+      ].map(point => toScreen(...rotateBell(...point)));
+      this.line(bellOutline, .5, 1.08, .9);
+
+      const bellCount = this.mobile ? 2100 : 4400;
+      for (let i = bellCount; i > 0; i--) {
+        const v = hash(i * 5.7);
+        const width = 22 + v * 68 + Math.sin(v * Math.PI) * 20 +
+          (v > .86 ? (v - .86) / .14 * 18 : 0);
+        const across = hash(i * 11.3 + 2) * 2 - 1;
+        const local = rotateBell(
+          across * width,
+          -44 + v * 122
+        );
+        const point = toScreen(...local);
+        const light = this.shimmer(i + 9000, t, 7);
+        const edge = Math.abs(across) > .9 || v < .035 || v > .955;
+        this.point(
+          point[0],
+          point[1],
+          (.42 + light * .62 + (edge ? .2 : 0)) * this.dpr,
+          .055 + light * .24 + (edge ? .22 : 0),
+          light,
+          .88
+        );
+      }
+
+      [.28, .5, .72, .9].forEach((v, index) => {
+        const width = 22 + v * 68 + Math.sin(v * Math.PI) * 20 +
+          (v > .86 ? (v - .86) / .14 * 18 : 0);
+        const contour = [];
+        for (let step = 0; step <= 42; step++) {
+          const across = -1 + step / 21;
+          const curve = (1 - across * across) * (5 + index * 1.2);
+          contour.push(toScreen(...rotateBell(
+            across * width,
+            -44 + v * 122 + curve
+          )));
         }
+        this.line(contour, .08 + index * .025, .42, .7);
       });
+
+      const clapperPivot = rotateBell(0, 8);
+      const clapperLag = -swing * .72 +
+        ringEnergy * Math.sin(cycle * TAU * 13) * .11;
+      const clapperAngle = swing + clapperLag;
+      const clapperEnd = [
+        clapperPivot[0] + Math.sin(clapperAngle) * 88,
+        clapperPivot[1] + Math.cos(clapperAngle) * 88
+      ];
+      this.line(
+        [toScreen(...clapperPivot), toScreen(...clapperEnd)],
+        .42,
+        .94,
+        .84
+      );
+      const clapperCount = this.mobile ? 210 : 380;
+      for (let i = clapperCount; i > 0; i--) {
+        const angle = hash(i * 7.7) * TAU;
+        const radius = Math.sqrt(hash(i * 13.2 + 4)) * 11;
+        const point = toScreen(
+          clapperEnd[0] + Math.cos(angle) * radius,
+          clapperEnd[1] + Math.sin(angle) * radius
+        );
+        const light = this.shimmer(i + 14500, t, 8);
+        this.point(
+          point[0],
+          point[1],
+          (.44 + light * .6) * this.dpr,
+          .1 + light * .32,
+          light,
+          .95
+        );
+      }
+    }
+
+    smallBusinessDoorStudy(t) {
+      const scale = Math.min(this.width, this.height) / 520;
+      const toScreen = (x, y) => [
+        this.width * .5 + x * scale,
+        this.height * .5 + y * scale
+      ];
+      const cycle = (t * .18) % 1;
+      const ease = value => value * value * (3 - 2 * value);
+      let open = 0;
+      if (cycle >= .15 && cycle < .34) open = ease((cycle - .15) / .19);
+      else if (cycle >= .34 && cycle < .66) open = 1;
+      else if (cycle >= .66 && cycle < .85) open = 1 - ease((cycle - .66) / .19);
+      const doorAngle = open * 1.18;
+      const hingeX = -102;
+      const doorTop = -137;
+      const doorWidth = 194;
+      const doorHeight = 278;
+      const doorPoint = (u, v) => {
+        const depth = u * doorWidth * Math.sin(doorAngle);
+        return [
+          this.width * .5 + (hingeX + u * doorWidth * Math.cos(doorAngle) + depth * .31) * scale,
+          this.height * .5 + (doorTop + v * doorHeight - depth * .055) * scale,
+          depth
+        ];
+      };
+
+      const frameLines = [
+        [toScreen(-122, 158), toScreen(-122, -169), toScreen(116, -169), toScreen(116, 158)],
+        [toScreen(-132, 158), toScreen(130, 158)],
+        [toScreen(-112, -147), toScreen(104, -147)]
+      ];
+      frameLines.forEach((line, index) => this.line(line, index ? .16 : .28, index ? .58 : .86, .42));
+
+      const frameParticles = this.mobile ? 800 : 2050;
+      for (let i = frameParticles; i > 0; i--) {
+        const side = Math.floor(hash(i * 3.7) * 3);
+        const u = hash(i * 8.9 + 4);
+        let x;
+        let y;
+        if (side === 0) {
+          x = -122 + (hash(i * 13.7) - .5) * 13;
+          y = 158 - u * 327;
+        } else if (side === 1) {
+          x = 116 + (hash(i * 13.7) - .5) * 13;
+          y = 158 - u * 327;
+        } else {
+          x = -122 + u * 238;
+          y = -169 + (hash(i * 13.7) - .5) * 13;
+        }
+        const point = toScreen(x, y);
+        const light = this.shimmer(i + 4100, t, 5);
+        this.point(point[0], point[1], (.4 + light * .5) * this.dpr, .045 + light * .2, light, .42);
+      }
+
+      const doorCount = this.mobile ? 1900 : 4700;
+      for (let i = doorCount; i > 0; i--) {
+        const u = hash(i * 5.13);
+        const v = hash(i * 11.7 + 4);
+        const edge = Math.min(u, 1 - u, v, 1 - v) < .035;
+        const panel = (
+          (v > .12 && v < .47 && u > .12 && u < .88) ||
+          (v > .54 && v < .88 && u > .12 && u < .88)
+        );
+        const p = doorPoint(u, v);
+        const light = this.shimmer(i + 6500, t, 7);
+        this.point(
+          p[0],
+          p[1],
+          (.4 + light * .56 + (edge ? .18 : 0)) * this.dpr,
+          .045 + light * .18 + (edge ? .21 : 0) + (panel ? .035 : 0),
+          light,
+          panel ? .26 : 0
+        );
+      }
+
+      const doorOutline = [
+        doorPoint(0, 0),
+        doorPoint(1, 0),
+        doorPoint(1, 1),
+        doorPoint(0, 1),
+        doorPoint(0, 0)
+      ];
+      this.line(doorOutline, .31, .82, .35);
+      [[.12, .12, .88, .12], [.88, .12, .88, .47], [.88, .47, .12, .47],
+        [.12, .47, .12, .12], [.12, .54, .88, .54], [.88, .54, .88, .88],
+        [.88, .88, .12, .88], [.12, .88, .12, .54]].forEach((line) => {
+        this.line([doorPoint(line[0], line[1]), doorPoint(line[2], line[3])], .1, .42);
+      });
+
+      const handle = doorPoint(.83, .52);
+      this.point(handle[0], handle[1], 3.1 * this.dpr, .86, 1, .9);
+      for (let i = this.mobile ? 70 : 120; i > 0; i--) {
+        const angle = hash(i * 7.7) * TAU;
+        const radius = 2 + hash(i * 13.2) * 8;
+        this.point(
+          handle[0] + Math.cos(angle) * radius * this.dpr,
+          handle[1] + Math.sin(angle) * radius * this.dpr,
+          (.4 + hash(i * 2.7) * .5) * this.dpr,
+          .12 + hash(i * 9.1) * .32,
+          .9,
+          .8
+        );
+      }
+
+      const ringMotion = (moment, strength) => {
+        const elapsed = cycle - moment;
+        if (elapsed < 0) return 0;
+        return strength * Math.exp(-elapsed * 15) * Math.sin(elapsed * TAU * 13);
+      };
+      const openingRing = ringMotion(.212, .48);
+      const closingRing = ringMotion(.788, .3);
+      const swing = openingRing + closingRing;
+      const ringEnergy =
+        (cycle >= .212 ? Math.exp(-(cycle - .212) * 15) : 0) +
+        (cycle >= .788 ? .62 * Math.exp(-(cycle - .788) * 15) : 0);
+      const pivot = [124, -190];
+      const bellCenter = [
+        pivot[0] + Math.sin(swing) * 28,
+        pivot[1] + Math.cos(swing) * 28
+      ];
+      this.line([toScreen(98, -169), toScreen(...pivot)], .24, .62, .55);
+      this.line([toScreen(...pivot), toScreen(...bellCenter)], .3, .75, .8);
+      const rotateBell = (x, y) => [
+        bellCenter[0] + x * Math.cos(swing) - y * Math.sin(swing),
+        bellCenter[1] + x * Math.sin(swing) + y * Math.cos(swing)
+      ];
+      const bellShape = [
+        [-11, -8], [-17, 4], [-20, 17], [-23, 20],
+        [23, 20], [20, 17], [17, 4], [11, -8], [-11, -8]
+      ].map(point => toScreen(...rotateBell(...point)));
+      this.line(bellShape, .42, .92, .9);
+      const bellCount = this.mobile ? 360 : 900;
+      for (let i = bellCount; i > 0; i--) {
+        const v = hash(i * 5.7);
+        const width = 10 + v * 13;
+        const local = rotateBell(
+          (hash(i * 11.3 + 2) - .5) * width * 2,
+          -7 + v * 27
+        );
+        const point = toScreen(...local);
+        const light = this.shimmer(i + 9000, t, 8);
+        this.point(point[0], point[1], (.42 + light * .64) * this.dpr, .065 + light * .28, light, .9);
+      }
+      const clapper = rotateBell(0, 27);
+      const clapperPoint = toScreen(...clapper);
+      this.point(clapperPoint[0], clapperPoint[1], 3 * this.dpr, .82, 1, .92);
+
+      if (ringEnergy > .025) {
+        for (const side of [-1, 1]) {
+          for (let ring = 0; ring < 2; ring++) {
+            const wave = [];
+            for (let step = 0; step <= 18; step++) {
+              const u = step / 18;
+              const y = bellCenter[1] - 23 + u * 46;
+              const x = bellCenter[0] + side *
+                (31 + ring * 10 + Math.sin(u * Math.PI) * 6);
+              wave.push(toScreen(x, y));
+            }
+            this.line(
+              wave,
+              Math.min(.34, ringEnergy * (.28 - ring * .08)),
+              .76,
+              .82
+            );
+          }
+        }
+      }
     }
   }
 

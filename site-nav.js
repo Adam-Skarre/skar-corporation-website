@@ -2,12 +2,33 @@
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  const route = location.pathname.replace(/^\/|\/$/g, '').toLowerCase();
+  const fileRoot = location.protocol === 'file:' ? new URL('../', location.href) : null;
+  const logicalPath = fileRoot && location.pathname.includes('/site/')
+    ? location.pathname.split('/site/').pop()
+    : location.pathname;
+  const route = logicalPath
+    .replace(/index\.html$/i, '')
+    .replace(/^\/|\/$/g, '')
+    .toLowerCase();
   const routeRoot = route.split('/')[0];
   const firmActive = ['about', 'careers'].includes(route);
   const workActive = ['solutions', 'industries', 'services', 'technology', 'engineering', 'modeling-data-analysis', 'artificial-intelligence', 'design-manufacturing', 'supply-chain', 'energy-infrastructure', 'industrial-technology', 'small-business'].includes(routeRoot);
   const insightsActive = ['insights', 'research', 'market-views', 'way-through', 'visualization', 'notes-in-form', 'news'].includes(route) || route.startsWith('report-');
   const mobileQuery = window.matchMedia('(max-width: 900px)');
+
+  function localizeMarkup(container) {
+    if (!fileRoot) return;
+    container.querySelectorAll('[href^="/"],[src^="/"]').forEach((element) => {
+      const attribute = element.hasAttribute('href') ? 'href' : 'src';
+      const value = element.getAttribute(attribute);
+      let localPath = value.replace(/^\//, '');
+      if (attribute === 'href') {
+        if (!localPath) localPath = 'index.html';
+        else if (localPath.endsWith('/')) localPath += 'index.html';
+      }
+      element.setAttribute(attribute, new URL(localPath, fileRoot).href);
+    });
+  }
 
   const groups = [
     {
@@ -42,7 +63,7 @@
           links: [
             ['Overview', '/industries/'],
             ['Design & Manufacturing', '/design-manufacturing/'],
-            ['Supply Chain', '/supply-chain/'],
+            ['Supply Chain', '/supply-chain/', 'nav-sublink'],
             ['Energy & Infrastructure', '/energy-infrastructure/'],
             ['Industrial & Technology', '/industrial-technology/'],
             ['Small Businesses', '/small-business/']
@@ -79,7 +100,7 @@
     return `
       <div class="nav-link-column">
         <strong>${column.label}</strong>
-        ${column.links.map(([label, href]) => `<a href="${href}">${label}</a>`).join('')}
+        ${column.links.map(([label, href, itemClass]) => `<a${itemClass ? ` class="${itemClass}"` : ''} href="${href}">${itemClass ? '<span aria-hidden="true">↳</span>' : ''}${label}</a>`).join('')}
       </div>
     `;
   }
@@ -127,6 +148,7 @@
     </nav>
     <a class="header-cta" href="/contact/"${route === 'contact' ? ' aria-current="page"' : ''}>Contact</a>
   `;
+  localizeMarkup(header);
 
   const mobileLayer = document.createElement('div');
   mobileLayer.className = 'mobile-nav-layer';
@@ -145,12 +167,13 @@
         <nav class="mobile-nav-content" aria-label="Mobile navigation">
           ${groups.map(mobileGroupMarkup).join('')}
           <a class="mobile-nav-contact" href="/contact/"${route === 'contact' ? ' aria-current="page"' : ''}>
-            <span>Contact</span><span aria-hidden="true">↗</span>
+            <span class="mobile-nav-contact-label">Contact</span>
           </a>
         </nav>
       </div>
     </div>
   `;
+  localizeMarkup(mobileLayer);
   document.body.appendChild(mobileLayer);
 
   const footer = document.querySelector('.footer');
@@ -165,6 +188,7 @@
       </div>
       <div class="copyright">© 2026 Skar Corporation. All rights reserved.</div>
     `;
+    localizeMarkup(footer);
   }
 
   const desktopGroups = [...header.querySelectorAll('.nav-group')];
