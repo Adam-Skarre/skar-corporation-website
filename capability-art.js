@@ -423,31 +423,181 @@
     }
 
     ai(t) {
-      const count = this.mobile ? 10500 : 20000;
-      const stride = this.mobile ? 2 : 1;
-      const fit = Math.min(this.width, this.height) / 400 * .92;
-      const phase = t * 10;
-      const pointSize = Math.max(.54, this.dpr * .4);
+      const scale = Math.min(this.width, this.height) / 520;
+      const phase = t * 1.8;
+      const toScreen = (x, y) => [
+        this.width * .5 + x * scale,
+        this.height * .5 + y * scale
+      ];
+      const wrapAngle = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
+      const quadratic = (start, control, end, u) => {
+        const v = 1 - u;
+        return [
+          v * v * start[0] + 2 * v * u * control[0] + u * u * end[0],
+          v * v * start[1] + 2 * v * u * control[1] + u * u * end[1]
+        ];
+      };
 
-      for (let i = count; i > 0; i -= stride) {
-        const alternating = (i % 2) * 3;
-        const k = 9 * Math.cos(i / 61);
-        const e = i / 652 - 13;
-        const d = Math.hypot(k, e) ** 2 / 89 + 1;
-        const q = 79 - e / 2 * Math.sin(k) + k / d *
-          (6 + 5 * Math.sin(Math.sin(d * d + e / 9 - phase + alternating)));
-        const c = d / 1.9 + Math.cos(phase - d * 3 + alternating) / 11 - phase / 16 + alternating;
-        const x = this.width * .5 + q * Math.sin(c) * fit;
-        const y = this.height * .5 + (q + 40) * Math.cos(c) * fit;
-        const light = this.shimmer(i, t, 18);
-        this.point(
-          x,
-          y,
-          pointSize * (.88 + light * .7),
-          .12 + light * .52,
-          light,
-          i % 17 === 0 ? .35 : 0
+      const inputCount = this.mobile ? 1900 : 3700;
+      const activeAngle = phase * .72;
+      for (let i = inputCount; i > 0; i--) {
+        const angle = hash(i * 5.71) * TAU;
+        const radius = Math.sqrt(hash(i * 11.43 + 7)) * 126;
+        const depth = (hash(i * 17.81 + 3) - .5) * 80;
+        const drift = Math.sin(t * .72 + i * .037) * 5;
+        const x = -132 + Math.cos(angle) * radius * .7 + depth * .16 + drift;
+        const y = Math.sin(angle) * radius + Math.cos(t * .54 + i * .029) * 4;
+        const selection = Math.pow(
+          clamp(1 - Math.abs(wrapAngle(angle - activeAngle)) / .62),
+          4
         );
+        const light = this.shimmer(i, t, 6.5);
+        const point = toScreen(x, y);
+        this.point(
+          point[0],
+          point[1],
+          (.35 + light * .5 + selection * .35) * this.dpr,
+          .035 + light * .1 + selection * (.2 + light * .34),
+          light,
+          selection * .55
+        );
+      }
+
+      const core = [20, 0];
+      const anchors = Array.from({ length: 7 }, (_, index) => {
+        const angle = index / 7 * TAU + .18;
+        return [
+          -132 + Math.cos(angle) * 91,
+          Math.sin(angle) * 124
+        ];
+      });
+      anchors.forEach((anchor, index) => {
+        const strength = .14 + .86 *
+          Math.pow(.5 + .5 * Math.cos(activeAngle - index / 7 * TAU - .18), 8);
+        const control = [
+          -48 + Math.sin(index * 1.7) * 14,
+          anchor[1] * .28
+        ];
+        const path = [];
+        for (let step = 0; step <= 48; step++) {
+          path.push(toScreen(...quadratic(anchor, control, core, step / 48)));
+        }
+        this.line(path, .035 + strength * .16, .38 + strength * .3, strength * .45);
+
+        for (let signal = 0; signal < 5; signal++) {
+          const u = (t * (.52 + strength * .28) + signal / 5 + index * .071) % 1;
+          const point = toScreen(...quadratic(anchor, control, core, u));
+          const fade = Math.sin(u * Math.PI) * strength;
+          this.point(
+            point[0],
+            point[1],
+            (.65 + fade * 1.15) * this.dpr,
+            .08 + fade * .72,
+            .96,
+            .72
+          );
+        }
+      });
+
+      const yaw = phase * .42;
+      const pitch = .34 + Math.sin(t * .43) * .08;
+      const projectCore = (x, y, z) => {
+        const cosYaw = Math.cos(yaw);
+        const sinYaw = Math.sin(yaw);
+        const x1 = x * cosYaw + z * sinYaw;
+        const z1 = -x * sinYaw + z * cosYaw;
+        const cosPitch = Math.cos(pitch);
+        const sinPitch = Math.sin(pitch);
+        const y1 = y * cosPitch - z1 * sinPitch;
+        const z2 = y * sinPitch + z1 * cosPitch;
+        const perspective = 4.2 / (4.7 - z2 * .008);
+        return toScreen(
+          core[0] + x1 * perspective,
+          core[1] + y1 * perspective
+        );
+      };
+
+      const coreCount = this.mobile ? 2100 : 4100;
+      for (let i = coreCount; i > 0; i--) {
+        const vertical = hash(i * 7.17) * 2 - 1;
+        const theta = hash(i * 13.61 + 4) * TAU;
+        const radial = Math.sqrt(1 - vertical * vertical);
+        const radius = 62 + Math.sin(i * .031 + phase) * 5;
+        const point = projectCore(
+          Math.cos(theta) * radial * radius,
+          vertical * radius,
+          Math.sin(theta) * radial * radius
+        );
+        const light = this.shimmer(i + 4300, t, 8);
+        const pulse = .5 + .5 * Math.sin(theta * 3 - phase * 2.4);
+        this.point(
+          point[0],
+          point[1],
+          (.4 + light * .58 + pulse * .18) * this.dpr,
+          .055 + light * .23 + pulse * .1,
+          light,
+          .48 + pulse * .22
+        );
+      }
+
+      ['x', 'y', 'z'].forEach((axis, axisIndex) => {
+        const path = [];
+        for (let step = 0; step <= 80; step++) {
+          const angle = step / 80 * TAU + axisIndex * .47;
+          const radius = 67 + axisIndex * 4;
+          const point = axis === 'x'
+            ? [0, Math.cos(angle) * radius, Math.sin(angle) * radius]
+            : axis === 'y'
+              ? [Math.cos(angle) * radius, 0, Math.sin(angle) * radius]
+              : [Math.cos(angle) * radius, Math.sin(angle) * radius, 0];
+          path.push(projectCore(...point));
+        }
+        this.line(path, .08 + axisIndex * .025, .42, .52);
+      });
+
+      const outputPath = [];
+      for (let step = 0; step <= 90; step++) {
+        const u = step / 90;
+        outputPath.push(toScreen(
+          78 + u * 145,
+          Math.sin(u * TAU * 1.18 + phase * .18) * 18 * (1 - u) - u * 24
+        ));
+      }
+      this.line(outputPath, .48, 1.02, .88);
+
+      const outputCount = this.mobile ? 1200 : 2400;
+      for (let i = outputCount; i > 0; i--) {
+        const u = (hash(i * 4.71) + t * .18) % 1;
+        const width = (1 - u) * 24 + 2;
+        const baseX = 78 + u * 145;
+        const baseY = Math.sin(u * TAU * 1.18 + phase * .18) * 18 * (1 - u) - u * 24;
+        const point = toScreen(
+          baseX + (hash(i * 9.13 + 2) - .5) * width * .35,
+          baseY + (hash(i * 15.37 + 8) - .5) * width
+        );
+        const light = this.shimmer(i + 8900, t, 9);
+        this.point(
+          point[0],
+          point[1],
+          (.4 + light * .68) * this.dpr,
+          .06 + light * .3 + u * .08,
+          light,
+          .72 + u * .18
+        );
+      }
+
+      const endpoint = toScreen(223, -24);
+      for (let ring = 0; ring < 3; ring++) {
+        const radius = 6 + ring * 8 + (phase % 1) * 4;
+        const path = [];
+        for (let step = 0; step <= 44; step++) {
+          const angle = step / 44 * TAU;
+          path.push([
+            endpoint[0] + Math.cos(angle) * radius * scale,
+            endpoint[1] + Math.sin(angle) * radius * scale
+          ]);
+        }
+        this.line(path, .26 - ring * .065, .5, .9);
       }
     }
 
