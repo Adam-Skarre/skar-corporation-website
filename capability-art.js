@@ -150,156 +150,206 @@
 
     engineering(t) {
       const scale = Math.min(this.width, this.height) / 520;
-      const yaw = .48 + Math.sin(t * .22) * .07;
-      const pitch = .29 + Math.cos(t * .18) * .055;
-      const cycle = (t * .085) % 1;
+      const yaw = 1.39 + Math.sin(t * .18) * .025;
+      const pitch = .11 + Math.cos(t * .15) * .018;
+      const cycle = reducedMotion ? .56 : (t * .2) % 1;
       const smooth = value => {
         const bounded = clamp(value);
         return bounded * bounded * (3 - 2 * bounded);
       };
-      const seated = (arrivalStart, arrivalEnd, departureStart, departureEnd) => {
-        const arrival = smooth((cycle - arrivalStart) / (arrivalEnd - arrivalStart));
-        const departure = smooth((cycle - departureStart) / (departureEnd - departureStart));
+      const seated = (arrivalDelay, departureDelay) => {
+        const arrivalStart = .06 + arrivalDelay;
+        const arrival = smooth((cycle - arrivalStart) / .22);
+        const departureStart = .71 + departureDelay;
+        const departure = smooth((cycle - departureStart) / .19);
         return arrival * (1 - departure);
       };
-      const frontHousingSeat = seated(.07, .17, .96, .995);
-      const frontStatorSeat = seated(.15, .25, .92, .975);
-      const rotorSeat = seated(.23, .35, .88, .94);
-      const rearStatorSeat = seated(.31, .41, .84, .9);
-      const rearHousingSeat = seated(.39, .49, .78, .86);
-      const assemblyComplete = Math.min(
-        frontHousingSeat,
-        frontStatorSeat,
-        rotorSeat,
-        rearStatorSeat,
-        rearHousingSeat
-      );
-      const operatingTurns = cycle <= .5
-        ? 0
-        : cycle >= .78
-          ? 3
-          : 3 * smooth((cycle - .5) / .28);
-      const rotorAngle = TAU * (cycle + operatingTurns);
-      const project = (x, y, z) => this.project(x, y, z, yaw, pitch, scale);
-      const ringPoint = (axis, center, radius, angle) => {
-        if (axis === 'x') return project(center, Math.cos(angle) * radius, Math.sin(angle) * radius);
-        if (axis === 'y') return project(Math.cos(angle) * radius, center, Math.sin(angle) * radius);
-        return project(Math.cos(angle) * radius, Math.sin(angle) * radius, center);
+
+      const rearRingSeat = seated(0, .14);
+      const shaftSeat = seated(.025, .115);
+      const hubSeat = seated(.055, .09);
+      const frontRingSeat = seated(.165, 0);
+      const assemblyComplete = Math.min(rearRingSeat, shaftSeat, hubSeat, frontRingSeat);
+
+      let turns = 0;
+      if (cycle >= .34 && cycle < .45) {
+        turns = .18 * smooth((cycle - .34) / .11);
+      } else if (cycle >= .45 && cycle < .71) {
+        turns = .18 + (cycle - .45) / .26 * 4.65;
+      } else if (cycle >= .71) {
+        turns = 4.83 + .42 * smooth((cycle - .71) / .16);
+      }
+      const rotorAngle = turns * TAU;
+      const dimension = Math.min(this.width, this.height);
+      const project = (x, y, z, seat = 1, offsetX = 0, offsetY = 0) => {
+        const point = this.project(x, y, z, yaw, pitch, scale);
+        return [
+          point[0] + offsetX * dimension * (1 - seat),
+          point[1] + offsetY * dimension * (1 - seat),
+          point[2]
+        ];
       };
-      const drawRing = (axis, center, radius, alpha, width, warmth = 0) => {
+
+      const ringPoint = (center, radius, angle, seat, offsetX, offsetY) => project(
+        center,
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+        seat,
+        offsetX,
+        offsetY
+      );
+      const drawRing = (center, radius, seat, offsetX, offsetY, alpha, width, warmth = 0) => {
         const path = [];
         for (let step = 0; step <= 128; step++) {
-          path.push(ringPoint(axis, center, radius, step / 128 * TAU));
+          path.push(ringPoint(center, radius, step / 128 * TAU, seat, offsetX, offsetY));
         }
         this.line(path, alpha, width, warmth);
-        const particles = this.mobile ? 130 : 230;
+        const particles = this.mobile ? 115 : 210;
         for (let i = particles; i > 0; i--) {
           const angle = hash(i * 7.3 + center * .17 + radius) * TAU;
-          const p = ringPoint(axis, center, radius + (hash(i * 13.9) - .5) * 4.5, angle);
+          const p = ringPoint(
+            center,
+            radius + (hash(i * 13.9) - .5) * 4.5,
+            angle,
+            seat,
+            offsetX,
+            offsetY
+          );
           const light = this.shimmer(i + Math.round(radius * 11), t, 7);
-          this.point(p[0], p[1], (.38 + light * .56) * this.dpr, .045 + light * .2, light, warmth);
+          this.point(p[0], p[1], (.38 + light * .58) * this.dpr, .055 + light * .23, light, warmth);
         }
       };
 
-      const frontHousing = -208 + frontHousingSeat * 120;
-      const frontStator = -154 + frontStatorSeat * 112;
-      const rotorCenter = -105 + rotorSeat * 105;
-      const rearStator = 162 - rearStatorSeat * 120;
-      const rearHousing = 220 - rearHousingSeat * 132;
+      drawRing(25, 145, rearRingSeat, .27, .16, .17, .72, .25);
+      drawRing(25, 132, rearRingSeat, .27, .16, .08, .42);
+      for (let brace = 0; brace < 10; brace++) {
+        const angle = brace / 10 * TAU + .08;
+        const inner = ringPoint(25, 116, angle, rearRingSeat, .27, .16);
+        const outer = ringPoint(25, 142, angle + .025, rearRingSeat, .27, .16);
+        this.line([inner, outer], .095, .46, .18);
+      }
 
-      this.line([project(-215, 0, 0), project(215, 0, 0)], .23, .88, .42);
-      drawRing('x', frontHousing, 143, .2, .72, .3);
-      drawRing('x', frontHousing + 8, 132, .09, .42);
-      drawRing('x', frontStator, 119, .13, .52, .2);
-      drawRing('x', rearStator, 119, .13, .52, .2);
-      drawRing('x', rearHousing - 8, 132, .09, .42);
-      drawRing('x', rearHousing, 143, .2, .72, .3);
-      drawRing('x', rotorCenter, 31, .28, .8, .72);
+      const shaftStart = project(-120, 0, 0, shaftSeat, -.05, .28);
+      const shaftEnd = project(118, 0, 0, shaftSeat, -.05, .28);
+      this.line([shaftStart, shaftEnd], .25, .95, .55);
+      const shaftParticles = this.mobile ? 190 : 330;
+      for (let i = shaftParticles; i > 0; i--) {
+        const x = -118 + hash(i * 3.8) * 236;
+        const angle = hash(i * 8.7) * TAU;
+        const radius = 5 + hash(i * 13.1) * 8;
+        const p = project(
+          x,
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius,
+          shaftSeat,
+          -.05,
+          .28
+        );
+        const light = this.shimmer(i + 800, t, 7);
+        this.point(p[0], p[1], (.4 + light * .5) * this.dpr, .05 + light * .2, light, .5);
+      }
 
-      [frontStator, rearStator].forEach((x, sideIndex) => {
-        for (let vane = 0; vane < 16; vane++) {
-          const angle = vane / 16 * TAU + sideIndex * .11;
-          const inner = project(x, Math.cos(angle) * 73, Math.sin(angle) * 73);
-          const outer = project(x, Math.cos(angle + .11) * 117, Math.sin(angle + .11) * 117);
-          this.line([inner, outer], .1, .48, sideIndex ? .12 : .28);
-        }
-      });
-
+      const bladeSeats = [];
       for (let blade = 0; blade < 12; blade++) {
-        const angle = blade / 12 * TAU + rotorAngle;
+        const bladeSeat = seated(.065 + blade * .008, .025 + (11 - blade) * .004);
+        bladeSeats.push(bladeSeat);
+        const angle = blade / 12 * TAU + rotorAngle + (1 - bladeSeat) * (blade % 2 ? -.18 : .18);
+        const radialShift = (1 - bladeSeat) * 102;
+        const depthShift = (1 - bladeSeat) * (blade % 2 ? -34 : 34);
         const vertices = [
-          [rotorCenter, Math.cos(angle) * 30, Math.sin(angle) * 30],
-          [rotorCenter, Math.cos(angle + .11) * 109, Math.sin(angle + .11) * 109],
-          [rotorCenter, Math.cos(angle + .34) * 96, Math.sin(angle + .34) * 96],
-          [rotorCenter, Math.cos(angle + .2) * 36, Math.sin(angle + .2) * 36]
+          [depthShift, Math.cos(angle) * (31 + radialShift), Math.sin(angle) * (31 + radialShift)],
+          [depthShift, Math.cos(angle + .09) * (111 + radialShift), Math.sin(angle + .09) * (111 + radialShift)],
+          [depthShift, Math.cos(angle + .33) * (95 + radialShift), Math.sin(angle + .33) * (95 + radialShift)],
+          [depthShift, Math.cos(angle + .2) * (38 + radialShift), Math.sin(angle + .2) * (38 + radialShift)]
         ];
         const outline = vertices.map(point => project(...point));
         outline.push(outline[0]);
-        this.line(outline, .17, .58, .58);
-        const bladeParticles = this.mobile ? 90 : 165;
+        this.line(outline, .14 + bladeSeat * .07, .58, .62);
+        const bladeParticles = this.mobile ? 82 : 145;
         for (let i = bladeParticles; i > 0; i--) {
           const u = Math.sqrt(hash(i * 4.7 + blade * 17));
           const v = hash(i * 11.9 + blade * 7);
-          const radial = 31 + u * 78;
+          const radial = 31 + u * 78 + radialShift;
           const sweep = angle + .1 + u * .22 + (v - .5) * .12;
           const p = project(
-            rotorCenter + (hash(i * 19.1 + blade) - .5) * 5,
+            depthShift + (hash(i * 19.1 + blade) - .5) * 5,
             Math.cos(sweep) * radial,
             Math.sin(sweep) * radial
           );
           const light = this.shimmer(i + blade * 180, t, 9);
-          this.point(p[0], p[1], (.4 + light * .62) * this.dpr, .055 + light * .25, light, .62);
-        }
-      }
-
-      const hubCount = this.mobile ? 750 : 1350;
-      for (let i = hubCount; i > 0; i--) {
-        const u = hash(i * 5.1);
-        const angle = hash(i * 11.7 + 4) * TAU;
-        const x = rotorCenter + (u - .5) * 116;
-        const radius = 12 + Math.sin(u * Math.PI) * 22 * hash(i * 17.4);
-        const p = project(x, Math.cos(angle) * radius, Math.sin(angle) * radius);
-        const light = this.shimmer(i + 4200, t, 8);
-        this.point(p[0], p[1], (.4 + light * .56) * this.dpr, .05 + light * .22, light, .46);
-      }
-
-      for (let pulse = 0; pulse < 28; pulse++) {
-        const progress = (pulse / 28 + t * .13) % 1;
-        const x = -205 + progress * 410;
-        const radius = 6 + Math.sin(progress * Math.PI) * 11;
-        const angle = rotorAngle * .35 + pulse * 1.7;
-        const p = project(x, Math.cos(angle) * radius, Math.sin(angle) * radius);
-        this.point(
-          p[0],
-          p[1],
-          (pulse % 7 === 0 ? 1.7 : .75) * this.dpr,
-          (pulse % 7 === 0 ? .72 : .3) * assemblyComplete,
-          .94,
-          .78
-        );
-      }
-
-      [
-        [-88, .17],
-        [-42, .25],
-        [0, .35],
-        [42, .41],
-        [88, .49]
-      ].forEach(([center, moment], index) => {
-        const elapsed = cycle - moment;
-        if (elapsed < 0 || elapsed > .045) return;
-        const fade = 1 - elapsed / .045;
-        for (let point = 0; point < 22; point++) {
-          const angle = point / 22 * TAU;
-          const radius = 10 + elapsed * 420;
-          const p = ringPoint('x', center, radius, angle);
           this.point(
             p[0],
             p[1],
-            (point % 5 === 0 ? 1.45 : .7) * this.dpr,
-            fade * (point % 5 === 0 ? .66 : .24),
+            (.4 + light * .64) * this.dpr,
+            .06 + light * (.2 + bladeSeat * .08),
+            light,
+            .68
+          );
+        }
+      }
+
+      drawRing(0, 34, hubSeat, 0, -.28, .26, .82, .8);
+      const hubCount = this.mobile ? 620 : 1120;
+      for (let i = hubCount; i > 0; i--) {
+        const radial = Math.sqrt(hash(i * 5.1)) * 33;
+        const angle = hash(i * 11.7 + 4) * TAU;
+        const x = (hash(i * 17.4) - .5) * 38;
+        const p = project(
+          x,
+          Math.cos(angle) * radial,
+          Math.sin(angle) * radial,
+          hubSeat,
+          0,
+          -.28
+        );
+        const light = this.shimmer(i + 4200, t, 8);
+        this.point(p[0], p[1], (.42 + light * .6) * this.dpr, .06 + light * .26, light, .56);
+      }
+
+      drawRing(-25, 145, frontRingSeat, -.28, -.14, .22, .82, .34);
+      drawRing(-25, 132, frontRingSeat, -.28, -.14, .1, .48);
+      for (let brace = 0; brace < 10; brace++) {
+        const angle = brace / 10 * TAU - .04;
+        const inner = ringPoint(-25, 117, angle, frontRingSeat, -.28, -.14);
+        const outer = ringPoint(-25, 142, angle - .025, frontRingSeat, -.28, -.14);
+        this.line([inner, outer], .11, .5, .3);
+      }
+
+      const bladeAssembly = Math.min(...bladeSeats);
+      const operating = Math.min(assemblyComplete, bladeAssembly);
+      if (operating > .95 && cycle > .43 && cycle < .8) {
+        for (let pulse = 0; pulse < 36; pulse++) {
+          const angle = pulse / 36 * TAU + rotorAngle * .15;
+          const radius = 151 + 5 * Math.sin(t * 7 + pulse * .7);
+          const p = ringPoint(0, radius, angle, 1, 0, 0);
+          const light = this.shimmer(pulse + 6800, t, 10);
+          this.point(
+            p[0],
+            p[1],
+            (pulse % 6 === 0 ? 1.45 : .65) * this.dpr,
+            .08 + light * .28,
+            light,
+            .76
+          );
+        }
+      }
+
+      const seatMoments = [.28, .305, .33, .355, .38, .405, .43];
+      seatMoments.forEach((moment, index) => {
+        const elapsed = cycle - moment;
+        if (elapsed < 0 || elapsed > .04) return;
+        const fade = 1 - elapsed / .04;
+        for (let particle = 0; particle < 28; particle++) {
+          const angle = particle / 28 * TAU;
+          const radius = 20 + elapsed * 560;
+          const p = ringPoint(0, radius, angle, 1, 0, 0);
+          this.point(
+            p[0],
+            p[1],
+            (particle % 7 === 0 ? 1.5 : .7) * this.dpr,
+            fade * (particle % 7 === 0 ? .58 : .2),
             .96,
-            index === 2 ? .8 : .5
+            index > 3 ? .8 : .5
           );
         }
       });
@@ -423,31 +473,181 @@
     }
 
     ai(t) {
-      const count = this.mobile ? 10500 : 20000;
-      const stride = this.mobile ? 2 : 1;
-      const fit = Math.min(this.width, this.height) / 400 * .92;
-      const phase = t * 10;
-      const pointSize = Math.max(.54, this.dpr * .4);
+      const scale = Math.min(this.width, this.height) / 520;
+      const phase = t * 1.8;
+      const toScreen = (x, y) => [
+        this.width * .5 + x * scale,
+        this.height * .5 + y * scale
+      ];
+      const wrapAngle = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
+      const quadratic = (start, control, end, u) => {
+        const v = 1 - u;
+        return [
+          v * v * start[0] + 2 * v * u * control[0] + u * u * end[0],
+          v * v * start[1] + 2 * v * u * control[1] + u * u * end[1]
+        ];
+      };
 
-      for (let i = count; i > 0; i -= stride) {
-        const alternating = (i % 2) * 3;
-        const k = 9 * Math.cos(i / 61);
-        const e = i / 652 - 13;
-        const d = Math.hypot(k, e) ** 2 / 89 + 1;
-        const q = 79 - e / 2 * Math.sin(k) + k / d *
-          (6 + 5 * Math.sin(Math.sin(d * d + e / 9 - phase + alternating)));
-        const c = d / 1.9 + Math.cos(phase - d * 3 + alternating) / 11 - phase / 16 + alternating;
-        const x = this.width * .5 + q * Math.sin(c) * fit;
-        const y = this.height * .5 + (q + 40) * Math.cos(c) * fit;
-        const light = this.shimmer(i, t, 18);
-        this.point(
-          x,
-          y,
-          pointSize * (.88 + light * .7),
-          .12 + light * .52,
-          light,
-          i % 17 === 0 ? .35 : 0
+      const inputCount = this.mobile ? 1900 : 3700;
+      const activeAngle = phase * .72;
+      for (let i = inputCount; i > 0; i--) {
+        const angle = hash(i * 5.71) * TAU;
+        const radius = Math.sqrt(hash(i * 11.43 + 7)) * 126;
+        const depth = (hash(i * 17.81 + 3) - .5) * 80;
+        const drift = Math.sin(t * .72 + i * .037) * 5;
+        const x = -132 + Math.cos(angle) * radius * .7 + depth * .16 + drift;
+        const y = Math.sin(angle) * radius + Math.cos(t * .54 + i * .029) * 4;
+        const selection = Math.pow(
+          clamp(1 - Math.abs(wrapAngle(angle - activeAngle)) / .62),
+          4
         );
+        const light = this.shimmer(i, t, 6.5);
+        const point = toScreen(x, y);
+        this.point(
+          point[0],
+          point[1],
+          (.35 + light * .5 + selection * .35) * this.dpr,
+          .035 + light * .1 + selection * (.2 + light * .34),
+          light,
+          selection * .55
+        );
+      }
+
+      const core = [20, 0];
+      const anchors = Array.from({ length: 7 }, (_, index) => {
+        const angle = index / 7 * TAU + .18;
+        return [
+          -132 + Math.cos(angle) * 91,
+          Math.sin(angle) * 124
+        ];
+      });
+      anchors.forEach((anchor, index) => {
+        const strength = .14 + .86 *
+          Math.pow(.5 + .5 * Math.cos(activeAngle - index / 7 * TAU - .18), 8);
+        const control = [
+          -48 + Math.sin(index * 1.7) * 14,
+          anchor[1] * .28
+        ];
+        const path = [];
+        for (let step = 0; step <= 48; step++) {
+          path.push(toScreen(...quadratic(anchor, control, core, step / 48)));
+        }
+        this.line(path, .035 + strength * .16, .38 + strength * .3, strength * .45);
+
+        for (let signal = 0; signal < 5; signal++) {
+          const u = (t * (.52 + strength * .28) + signal / 5 + index * .071) % 1;
+          const point = toScreen(...quadratic(anchor, control, core, u));
+          const fade = Math.sin(u * Math.PI) * strength;
+          this.point(
+            point[0],
+            point[1],
+            (.65 + fade * 1.15) * this.dpr,
+            .08 + fade * .72,
+            .96,
+            .72
+          );
+        }
+      });
+
+      const yaw = phase * .42;
+      const pitch = .34 + Math.sin(t * .43) * .08;
+      const projectCore = (x, y, z) => {
+        const cosYaw = Math.cos(yaw);
+        const sinYaw = Math.sin(yaw);
+        const x1 = x * cosYaw + z * sinYaw;
+        const z1 = -x * sinYaw + z * cosYaw;
+        const cosPitch = Math.cos(pitch);
+        const sinPitch = Math.sin(pitch);
+        const y1 = y * cosPitch - z1 * sinPitch;
+        const z2 = y * sinPitch + z1 * cosPitch;
+        const perspective = 4.2 / (4.7 - z2 * .008);
+        return toScreen(
+          core[0] + x1 * perspective,
+          core[1] + y1 * perspective
+        );
+      };
+
+      const coreCount = this.mobile ? 2100 : 4100;
+      for (let i = coreCount; i > 0; i--) {
+        const vertical = hash(i * 7.17) * 2 - 1;
+        const theta = hash(i * 13.61 + 4) * TAU;
+        const radial = Math.sqrt(1 - vertical * vertical);
+        const radius = 62 + Math.sin(i * .031 + phase) * 5;
+        const point = projectCore(
+          Math.cos(theta) * radial * radius,
+          vertical * radius,
+          Math.sin(theta) * radial * radius
+        );
+        const light = this.shimmer(i + 4300, t, 8);
+        const pulse = .5 + .5 * Math.sin(theta * 3 - phase * 2.4);
+        this.point(
+          point[0],
+          point[1],
+          (.4 + light * .58 + pulse * .18) * this.dpr,
+          .055 + light * .23 + pulse * .1,
+          light,
+          .48 + pulse * .22
+        );
+      }
+
+      ['x', 'y', 'z'].forEach((axis, axisIndex) => {
+        const path = [];
+        for (let step = 0; step <= 80; step++) {
+          const angle = step / 80 * TAU + axisIndex * .47;
+          const radius = 67 + axisIndex * 4;
+          const point = axis === 'x'
+            ? [0, Math.cos(angle) * radius, Math.sin(angle) * radius]
+            : axis === 'y'
+              ? [Math.cos(angle) * radius, 0, Math.sin(angle) * radius]
+              : [Math.cos(angle) * radius, Math.sin(angle) * radius, 0];
+          path.push(projectCore(...point));
+        }
+        this.line(path, .08 + axisIndex * .025, .42, .52);
+      });
+
+      const outputPath = [];
+      for (let step = 0; step <= 90; step++) {
+        const u = step / 90;
+        outputPath.push(toScreen(
+          78 + u * 145,
+          Math.sin(u * TAU * 1.18 + phase * .18) * 18 * (1 - u) - u * 24
+        ));
+      }
+      this.line(outputPath, .48, 1.02, .88);
+
+      const outputCount = this.mobile ? 1200 : 2400;
+      for (let i = outputCount; i > 0; i--) {
+        const u = (hash(i * 4.71) + t * .18) % 1;
+        const width = (1 - u) * 24 + 2;
+        const baseX = 78 + u * 145;
+        const baseY = Math.sin(u * TAU * 1.18 + phase * .18) * 18 * (1 - u) - u * 24;
+        const point = toScreen(
+          baseX + (hash(i * 9.13 + 2) - .5) * width * .35,
+          baseY + (hash(i * 15.37 + 8) - .5) * width
+        );
+        const light = this.shimmer(i + 8900, t, 9);
+        this.point(
+          point[0],
+          point[1],
+          (.4 + light * .68) * this.dpr,
+          .06 + light * .3 + u * .08,
+          light,
+          .72 + u * .18
+        );
+      }
+
+      const endpoint = toScreen(223, -24);
+      for (let ring = 0; ring < 3; ring++) {
+        const radius = 6 + ring * 8 + (phase % 1) * 4;
+        const path = [];
+        for (let step = 0; step <= 44; step++) {
+          const angle = step / 44 * TAU;
+          path.push([
+            endpoint[0] + Math.cos(angle) * radius * scale,
+            endpoint[1] + Math.sin(angle) * radius * scale
+          ]);
+        }
+        this.line(path, .26 - ring * .065, .5, .9);
       }
     }
 
