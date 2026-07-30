@@ -180,14 +180,17 @@
   if (footer) {
     footer.innerHTML = `
       <div class="footer-grid">
-        <div class="footer-identity"><a class="brand" href="/" aria-label="SKAR Corporation home"><img class="brand-wordmark" src="/assets/skar-wordmark.png" alt="SKAR Corporation"></a></div>
+        <div class="footer-identity">
+          <a class="brand" href="/" aria-label="SKAR Corporation home"><img class="brand-wordmark" src="/assets/skar-wordmark.png" alt="SKAR Corporation"></a>
+          <p>Knowledge. Vision. Engineering.</p>
+        </div>
         <div class="footer-section"><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
         <div class="footer-section"><h4>Expertise</h4><a href="/solutions/">Solutions</a><a href="/industries/">Industries</a></div>
         <div class="footer-section footer-insights"><h4>Insights</h4><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/visualization/">Visualization</a><a href="/news/">News</a></div>
         <div class="footer-section footer-contact"><h4>Contact</h4><a href="/contact/">Start a conversation <span aria-hidden="true">↗</span></a></div>
       </div>
       <div class="footer-bottom">
-        <div class="copyright">© 2026 Skar Corporation. All rights reserved.</div>
+        <div class="copyright">© 2026 SKAR Corporation. All rights reserved.</div>
         <div class="footer-follow" aria-label="Follow SKAR">
           <span>Follow SKAR</span>
           <a href="https://x.com/Skarcorporation" target="_blank" rel="noopener noreferrer" aria-label="Follow SKAR on X"><b class="footer-social-x" aria-hidden="true">X</b></a>
