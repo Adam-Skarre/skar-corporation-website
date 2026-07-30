@@ -1,0 +1,352 @@
+(() => {
+  "use strict";
+
+  const series = {
+    rates: {
+      kicker: "CAPITAL PRICING",
+      title: "10-year Treasury yield",
+      unit: "%",
+      digits: 2,
+      source: "https://fred.stlouisfed.org/series/DGS10",
+      signal: "Long-duration capital remains expensive relative to the pre-2022 environment.",
+      decision: "Re-test hurdle rates, phasing, financing sensitivity, and the value of preserving options before committing capital.",
+      values: [
+        ["2026-06-03",4.49],["2026-06-04",4.47],["2026-06-05",4.55],["2026-06-08",4.56],
+        ["2026-06-09",4.53],["2026-06-10",4.55],["2026-06-11",4.45],["2026-06-12",4.48],
+        ["2026-06-15",4.47],["2026-06-16",4.43],["2026-06-17",4.49],["2026-06-18",4.46],
+        ["2026-06-22",4.51],["2026-06-23",4.50],["2026-06-24",4.41],["2026-06-25",4.40],
+        ["2026-06-26",4.38],["2026-06-29",4.38],["2026-06-30",4.44],["2026-07-01",4.48],
+        ["2026-07-02",4.49],["2026-07-06",4.48],["2026-07-07",4.55],["2026-07-08",4.56],
+        ["2026-07-09",4.54],["2026-07-10",4.56],["2026-07-13",4.62],["2026-07-14",4.58],
+        ["2026-07-15",4.55],["2026-07-16",4.57],["2026-07-17",4.55],["2026-07-20",4.60],
+        ["2026-07-21",4.63],["2026-07-22",4.67],["2026-07-23",4.71],["2026-07-24",4.69],
+        ["2026-07-27",4.65],["2026-07-28",4.61]
+      ]
+    },
+    conditions: {
+      kicker: "FINANCIAL CONDITIONS",
+      title: "Chicago Fed NFCI",
+      unit: "",
+      digits: 3,
+      source: "https://fred.stlouisfed.org/series/NFCI",
+      signal: "The index remains below zero, indicating financial conditions looser than their historical average, while direction still matters.",
+      decision: "Do not treat available capital as durable capacity. Stress-test liquidity, refinancing windows, covenants, and supplier exposure under a tighter regime.",
+      values: [
+        ["2026-01-02",-0.545],["2026-01-09",-0.556],["2026-01-16",-0.562],["2026-01-23",-0.564],
+        ["2026-01-30",-0.560],["2026-02-06",-0.552],["2026-02-13",-0.539],["2026-02-20",-0.522],
+        ["2026-02-27",-0.503],["2026-03-06",-0.484],["2026-03-13",-0.468],["2026-03-20",-0.458],
+        ["2026-03-27",-0.454],["2026-04-03",-0.459],["2026-04-10",-0.469],["2026-04-17",-0.480],
+        ["2026-04-24",-0.489],["2026-05-01",-0.496],["2026-05-08",-0.500],["2026-05-15",-0.499],
+        ["2026-05-22",-0.498],["2026-05-29",-0.495],["2026-06-05",-0.495],["2026-06-12",-0.497],
+        ["2026-06-19",-0.502],["2026-06-26",-0.510],["2026-07-03",-0.522],["2026-07-10",-0.534],
+        ["2026-07-17",-0.544],["2026-07-24",-0.554]
+      ]
+    },
+    output: {
+      kicker: "OPERATING CAPACITY",
+      title: "U.S. industrial production",
+      unit: "",
+      digits: 1,
+      source: "https://fred.stlouisfed.org/series/INDPRO",
+      signal: "Aggregate industrial output has moved higher, but the index cannot reveal which plant, process, labor, or supplier constraints will govern delivery.",
+      decision: "Connect demand forecasts to usable capacity, yield, maintenance, cycle time, and workforce constraints before translating growth into commitments.",
+      values: [
+        ["2024-11-01",99.2925],["2024-12-01",100.3273],["2025-01-01",100.0647],["2025-02-01",101.0993],
+        ["2025-03-01",101.0404],["2025-04-01",101.1279],["2025-05-01",100.9655],["2025-06-01",101.4785],
+        ["2025-07-01",101.8940],["2025-08-01",101.6247],["2025-09-01",101.6680],["2025-10-01",101.2195],
+        ["2025-11-01",101.0344],["2025-12-01",101.4941],["2026-01-01",101.0388],["2026-02-01",101.9263],
+        ["2026-03-01",101.6172],["2026-04-01",102.4196],["2026-05-01",102.5606],["2026-06-01",102.6395]
+      ]
+    },
+    buildout: {
+      kicker: "PHYSICAL INVESTMENT",
+      title: "Manufacturing construction",
+      unit: "B",
+      divisor: 1000,
+      digits: 1,
+      source: "https://fred.stlouisfed.org/series/TLMFGCONS",
+      signal: "Manufacturing construction remains elevated in absolute terms, while the recent path shows how quickly a major investment cycle can decelerate.",
+      decision: "Distinguish announced capacity from installed, qualified, staffed, and economically productive capacity; then model timing and bottleneck migration.",
+      values: [
+        ["2024-10-01",246526],["2024-11-01",250089],["2024-12-01",242048],["2025-01-01",237485],
+        ["2025-02-01",237155],["2025-03-01",227339],["2025-04-01",227640],["2025-05-01",223805],
+        ["2025-06-01",219564],["2025-07-01",215594],["2025-08-01",211142],["2025-09-01",205019],
+        ["2025-10-01",202687],["2025-11-01",195150],["2025-12-01",181798],["2026-01-01",184187],
+        ["2026-02-01",181879],["2026-03-01",179814],["2026-04-01",177206],["2026-05-01",174764]
+      ]
+    }
+  };
+
+  const formatDate = (value, compact = false) => {
+    const date = new Date(`${value}T12:00:00`);
+    return new Intl.DateTimeFormat("en-US", compact
+      ? { month: "short", day: "numeric" }
+      : { day: "2-digit", month: "short", year: "numeric" }).format(date);
+  };
+
+  const formatValue = (config, value) => {
+    const adjusted = config.divisor ? value / config.divisor : value;
+    return `${adjusted.toFixed(config.digits)}${config.unit}`;
+  };
+
+  class MarketMonitor {
+    constructor(root) {
+      this.root = root;
+      this.canvas = root.querySelector("[data-market-chart]");
+      this.ctx = this.canvas.getContext("2d");
+      this.tooltip = root.querySelector("[data-market-tooltip]");
+      this.active = "rates";
+      this.pointer = null;
+      this.onResize = () => this.draw();
+      if ("ResizeObserver" in window) {
+        this.resizeObserver = new ResizeObserver(this.onResize);
+        this.resizeObserver.observe(this.canvas);
+      } else {
+        window.addEventListener("resize", this.onResize, { passive: true });
+      }
+      this.tabs = [...root.querySelectorAll("[data-series]")];
+      this.tabs.forEach((button, index) => {
+        button.addEventListener("click", () => this.select(button.dataset.series, button));
+        button.addEventListener("keydown", event => {
+          if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+          event.preventDefault();
+          let nextIndex = index;
+          if (event.key === "ArrowLeft") nextIndex = (index - 1 + this.tabs.length) % this.tabs.length;
+          if (event.key === "ArrowRight") nextIndex = (index + 1) % this.tabs.length;
+          if (event.key === "Home") nextIndex = 0;
+          if (event.key === "End") nextIndex = this.tabs.length - 1;
+          const next = this.tabs[nextIndex];
+          this.select(next.dataset.series, next);
+          next.focus();
+        });
+      });
+      this.canvas.addEventListener("pointermove", event => this.onPointer(event));
+      this.canvas.addEventListener("pointerleave", () => {
+        this.pointer = null;
+        this.tooltip.hidden = true;
+        this.draw();
+      });
+      this.select("rates", root.querySelector('[data-series="rates"]'));
+    }
+
+    select(key, button) {
+      this.active = key;
+      this.pointer = null;
+      this.tooltip.hidden = true;
+      this.tabs.forEach(item => {
+        const selected = item === button;
+        item.classList.toggle("active", selected);
+        item.setAttribute("aria-selected", selected ? "true" : "false");
+        item.tabIndex = selected ? 0 : -1;
+      });
+      const config = series[key];
+      const last = config.values[config.values.length - 1];
+      const panel = this.root.querySelector("[role=tabpanel]");
+      panel.setAttribute("aria-labelledby", button.id);
+      this.root.querySelector("[data-market-kicker]").textContent = config.kicker;
+      this.root.querySelector("[data-market-title]").textContent = config.title;
+      this.root.querySelector("[data-market-value]").textContent = formatValue(config, last[1]);
+      this.root.querySelector("[data-market-date]").textContent = formatDate(last[0]);
+      this.root.querySelector("[data-market-start]").textContent = formatDate(config.values[0][0], true);
+      this.root.querySelector("[data-market-end]").textContent = formatDate(last[0], true);
+      this.root.querySelector("[data-market-signal]").textContent = config.signal;
+      this.root.querySelector("[data-market-decision]").textContent = config.decision;
+      this.root.querySelector("[data-market-source]").href = config.source;
+      this.canvas.setAttribute("aria-label", `${config.title}, ${formatValue(config, last[1])} on ${formatDate(last[0])}`);
+      this.draw();
+    }
+
+    size() {
+      const rect = this.canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.floor(rect.width));
+      const height = Math.max(1, Math.floor(rect.height));
+      if (this.canvas.width !== width * dpr || this.canvas.height !== height * dpr) {
+        this.canvas.width = width * dpr;
+        this.canvas.height = height * dpr;
+      }
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { width, height };
+    }
+
+    geometry() {
+      const { width, height } = this.size();
+      const padding = { left: 28, right: 28, top: 32, bottom: 28 };
+      const values = series[this.active].values.map(item => item[1]);
+      const minValue = Math.min(...values);
+      const maxValue = Math.max(...values);
+      const spread = Math.max(maxValue - minValue, Math.abs(maxValue) * 0.02, 0.05);
+      const low = minValue - spread * 0.18;
+      const high = maxValue + spread * 0.18;
+      const points = values.map((value, index) => ({
+        x: padding.left + (index / Math.max(1, values.length - 1)) * (width - padding.left - padding.right),
+        y: padding.top + ((high - value) / (high - low)) * (height - padding.top - padding.bottom),
+        value,
+        index
+      }));
+      return { width, height, padding, points };
+    }
+
+    draw() {
+      const { width, height, padding, points } = this.geometry();
+      const ctx = this.ctx;
+      ctx.clearRect(0, 0, width, height);
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i += 1) {
+        const y = padding.top + (i / 4) * (height - padding.top - padding.bottom);
+        ctx.strokeStyle = "rgba(120,166,211,.13)";
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+      }
+      const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
+      gradient.addColorStop(0, "rgba(92,164,246,.34)");
+      gradient.addColorStop(1, "rgba(39,108,183,0)");
+      ctx.beginPath();
+      points.forEach((point, index) => {
+        if (index === 0) ctx.moveTo(point.x, point.y);
+        else {
+          const previous = points[index - 1];
+          const mid = (previous.x + point.x) / 2;
+          ctx.bezierCurveTo(mid, previous.y, mid, point.y, point.x, point.y);
+        }
+      });
+      ctx.lineTo(points[points.length - 1].x, height - padding.bottom);
+      ctx.lineTo(points[0].x, height - padding.bottom);
+      ctx.closePath();
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      ctx.beginPath();
+      points.forEach((point, index) => {
+        if (index === 0) ctx.moveTo(point.x, point.y);
+        else {
+          const previous = points[index - 1];
+          const mid = (previous.x + point.x) / 2;
+          ctx.bezierCurveTo(mid, previous.y, mid, point.y, point.x, point.y);
+        }
+      });
+      ctx.strokeStyle = "#83b9f6";
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = "rgba(90,166,247,.45)";
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      const target = this.pointer || points[points.length - 1];
+      ctx.fillStyle = "#d7eaff";
+      ctx.strokeStyle = "#3d82d2";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(target.x, target.y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    onPointer(event) {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const geometry = this.geometry();
+      const point = geometry.points.reduce((best, current) =>
+        Math.abs(current.x - x) < Math.abs(best.x - x) ? current : best);
+      this.pointer = point;
+      this.draw();
+      const config = series[this.active];
+      const value = config.values[point.index];
+      this.tooltip.innerHTML = `<strong>${formatDate(value[0])}</strong><span>${config.title}<b>${formatValue(config, value[1])}</b></span>`;
+      this.tooltip.hidden = false;
+      const tipWidth = 224;
+      this.tooltip.style.left = `${Math.min(Math.max(point.x - tipWidth / 2, 8), rect.width - tipWidth - 8)}px`;
+      this.tooltip.style.top = `${Math.max(point.y - 76, 8)}px`;
+    }
+  }
+
+  const agenticSteps = {
+    observe: ["01 · OBSERVE", "More information enters the decision loop.", "Agents can continuously absorb prices, documents, news, constraints, and portfolio state. The advantage is coverage; the risk is common dependence on the same data and infrastructure."],
+    interpret: ["02 · INTERPRET", "Models convert shared evidence into competing views.", "Different objectives, prompts, memory, and risk constraints can produce different conclusions. Model diversity matters only when the underlying reasoning and dependencies remain observable."],
+    allocate: ["03 · ALLOCATE", "Recommendations become portfolio consequences.", "A forecast is no longer isolated analysis once it changes position size, timing, liquidity, or exposure. Limits must be expressed in the same system that makes the recommendation."],
+    act: ["04 · ACT", "Speed compresses the time available for intervention.", "When agents move from advice to execution, escalation, throttling, rollback, and human authority must be designed before market conditions become unstable."],
+    govern: ["05 · GOVERN", "Control must surround the entire loop.", "Effective governance connects data provenance, model behavior, permissions, monitoring, and post-decision evidence—not only a human approval at the final step."]
+  };
+
+  class AgenticSystem {
+    constructor(root) {
+      this.root = root;
+      this.canvas = root.querySelector("[data-agentic-canvas]");
+      this.ctx = this.canvas.getContext("2d");
+      this.nodes = [...root.querySelectorAll("[data-agentic-node]")];
+      this.activeIndex = 0;
+      this.phase = 0;
+      this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      this.nodes.forEach((node, index) => node.addEventListener("click", () => this.select(index)));
+      this.onResize = () => this.draw();
+      if ("ResizeObserver" in window) {
+        this.resizeObserver = new ResizeObserver(this.onResize);
+        this.resizeObserver.observe(this.canvas);
+      } else {
+        window.addEventListener("resize", this.onResize, { passive: true });
+      }
+      this.select(0);
+      if (!this.reducedMotion) this.animate();
+      else this.draw();
+    }
+
+    select(index) {
+      this.activeIndex = index;
+      this.nodes.forEach((node, nodeIndex) => node.classList.toggle("active", nodeIndex === index));
+      const step = agenticSteps[this.nodes[index].dataset.agenticNode];
+      this.root.querySelector("[data-agentic-step]").textContent = step[0];
+      this.root.querySelector("[data-agentic-title]").textContent = step[1];
+      this.root.querySelector("[data-agentic-copy]").textContent = step[2];
+      this.draw();
+    }
+
+    draw() {
+      const rect = this.canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.floor(rect.width));
+      const height = Math.max(1, Math.floor(rect.height));
+      if (this.canvas.width !== width * dpr || this.canvas.height !== height * dpr) {
+        this.canvas.width = width * dpr;
+        this.canvas.height = height * dpr;
+      }
+      const ctx = this.ctx;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+      const center = { x: width / 2, y: height / 2 };
+      const positions = this.nodes.map(node => {
+        const nodeRect = node.getBoundingClientRect();
+        return {
+          x: nodeRect.left - rect.left + nodeRect.width / 2,
+          y: nodeRect.top - rect.top + nodeRect.height / 2
+        };
+      });
+      positions.forEach((position, index) => {
+        ctx.beginPath();
+        ctx.moveTo(center.x, center.y);
+        const bend = index % 2 === 0 ? 22 : -22;
+        ctx.quadraticCurveTo((center.x + position.x) / 2 + bend, (center.y + position.y) / 2 - bend, position.x, position.y);
+        ctx.strokeStyle = index === this.activeIndex ? "rgba(126,188,255,.72)" : "rgba(91,139,185,.2)";
+        ctx.lineWidth = index === this.activeIndex ? 1.6 : 1;
+        ctx.stroke();
+        const progress = (this.phase + index * 0.17) % 1;
+        const x = center.x + (position.x - center.x) * progress;
+        const y = center.y + (position.y - center.y) * progress;
+        ctx.fillStyle = index === this.activeIndex ? "#b9dcff" : "rgba(101,157,211,.35)";
+        ctx.beginPath();
+        ctx.arc(x, y, index === this.activeIndex ? 3.2 : 2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    animate() {
+      this.phase = (this.phase + 0.0024) % 1;
+      this.draw();
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  document.querySelectorAll("[data-market-monitor]").forEach(root => new MarketMonitor(root));
+  document.querySelectorAll("[data-agentic-system]").forEach(root => new AgenticSystem(root));
+})();

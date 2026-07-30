@@ -474,12 +474,12 @@
 
     ai(t) {
       const scale = Math.min(this.width, this.height) / 520;
-      const phase = t * 1.8;
+      const phase = t * 1.35;
       const toScreen = (x, y) => [
         this.width * .5 + x * scale,
         this.height * .5 + y * scale
       ];
-      const wrapAngle = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
+      const mix = (start, end, amount) => start + (end - start) * amount;
       const quadratic = (start, control, end, u) => {
         const v = 1 - u;
         return [
@@ -487,167 +487,214 @@
           v * v * start[1] + 2 * v * u * control[1] + u * u * end[1]
         ];
       };
+      const layerSpecs = [
+        { x: -205, count: 9, spread: 150 },
+        { x: -116, count: 12, spread: 176 },
+        { x: -27, count: 14, spread: 188 },
+        { x: 62, count: 12, spread: 176 },
+        { x: 148, count: 7, spread: 132 }
+      ];
+      const inferencePosition = (phase * .115) % 1;
+      const circularDistance = (a, b) => {
+        const distance = Math.abs(a - b) % 1;
+        return Math.min(distance, 1 - distance);
+      };
+      const layerFocus = index =>
+        Math.pow(clamp(1 - circularDistance(inferencePosition, index / layerSpecs.length) * 5), 2);
+      const nodePosition = (layerIndex, nodeIndex) => {
+        const spec = layerSpecs[layerIndex];
+        const normalized = spec.count === 1 ? .5 : nodeIndex / (spec.count - 1);
+        return [
+          spec.x + Math.sin(phase * .24 + nodeIndex * .63 + layerIndex) * 2.4,
+          (normalized - .5) * spec.spread +
+            Math.sin(phase * .31 + nodeIndex * .79 + layerIndex * 1.7) * 3.2
+        ];
+      };
 
-      const inputCount = this.mobile ? 1900 : 3700;
-      const activeAngle = phase * .72;
-      for (let i = inputCount; i > 0; i--) {
-        const angle = hash(i * 5.71) * TAU;
-        const radius = Math.sqrt(hash(i * 11.43 + 7)) * 126;
-        const depth = (hash(i * 17.81 + 3) - .5) * 80;
-        const drift = Math.sin(t * .72 + i * .037) * 5;
-        const x = -132 + Math.cos(angle) * radius * .7 + depth * .16 + drift;
-        const y = Math.sin(angle) * radius + Math.cos(t * .54 + i * .029) * 4;
-        const selection = Math.pow(
-          clamp(1 - Math.abs(wrapAngle(angle - activeAngle)) / .62),
-          4
-        );
-        const light = this.shimmer(i, t, 6.5);
-        const point = toScreen(x, y);
+      // Token-like observations arrive as small feature vectors.
+      for (let token = 0; token < layerSpecs[0].count; token++) {
+        const destination = nodePosition(0, token);
+        const progress = (phase * .18 + token * .127) % 1;
+        const start = [-252, destination[1] + (hash(token * 7.1) - .5) * 22];
+        const path = [toScreen(...start), toScreen(...destination)];
+        this.line(path, .045 + Math.sin(progress * Math.PI) * .07, .44);
+        const signal = [
+          mix(start[0], destination[0], progress),
+          mix(start[1], destination[1], progress)
+        ];
+        const signalPoint = toScreen(...signal);
         this.point(
-          point[0],
-          point[1],
-          (.35 + light * .5 + selection * .35) * this.dpr,
-          .035 + light * .1 + selection * (.2 + light * .34),
-          light,
-          selection * .55
+          signalPoint[0],
+          signalPoint[1],
+          (1 + Math.sin(progress * Math.PI) * .8) * this.dpr,
+          .28 + Math.sin(progress * Math.PI) * .52,
+          .95,
+          .25
         );
+        for (let feature = 0; feature < 5; feature++) {
+          const point = toScreen(
+            start[0] - feature * 4.2,
+            start[1] + (feature - 2) * 2.3
+          );
+          this.point(point[0], point[1], .72 * this.dpr, .12 + feature * .025, .72);
+        }
       }
 
-      const core = [20, 0];
-      const anchors = Array.from({ length: 7 }, (_, index) => {
-        const angle = index / 7 * TAU + .18;
-        return [
-          -132 + Math.cos(angle) * 91,
-          Math.sin(angle) * 124
-        ];
-      });
-      anchors.forEach((anchor, index) => {
-        const strength = .14 + .86 *
-          Math.pow(.5 + .5 * Math.cos(activeAngle - index / 7 * TAU - .18), 8);
-        const control = [
-          -48 + Math.sin(index * 1.7) * 14,
-          anchor[1] * .28
-        ];
-        const path = [];
-        for (let step = 0; step <= 48; step++) {
-          path.push(toScreen(...quadratic(anchor, control, core, step / 48)));
-        }
-        this.line(path, .035 + strength * .16, .38 + strength * .3, strength * .45);
+      // Weighted connections form the feed-forward inference path.
+      for (let layer = 0; layer < layerSpecs.length - 1; layer++) {
+        const sourceSpec = layerSpecs[layer];
+        const targetSpec = layerSpecs[layer + 1];
+        for (let target = 0; target < targetSpec.count; target++) {
+          for (let branch = 0; branch < 3; branch++) {
+            const source = Math.floor(
+              hash((layer + 1) * 911 + target * 37 + branch * 101) * sourceSpec.count
+            );
+            const from = nodePosition(layer, source);
+            const to = nodePosition(layer + 1, target);
+            const weight = .24 + hash(layer * 73 + target * 19 + branch * 29) * .76;
+            const focus = Math.max(layerFocus(layer), layerFocus(layer + 1));
+            this.line(
+              [toScreen(...from), toScreen(...to)],
+              .025 + weight * .055 + focus * weight * .12,
+              .34 + weight * .28,
+              weight * .22
+            );
 
-        for (let signal = 0; signal < 5; signal++) {
-          const u = (t * (.52 + strength * .28) + signal / 5 + index * .071) % 1;
-          const point = toScreen(...quadratic(anchor, control, core, u));
-          const fade = Math.sin(u * Math.PI) * strength;
+            if ((target + branch) % 3 === 0) {
+              const u = (phase * (.12 + weight * .035) + hash(target * 61 + branch * 17 + layer)) % 1;
+              const pulse = [
+                mix(from[0], to[0], u),
+                mix(from[1], to[1], u)
+              ];
+              const screenPulse = toScreen(...pulse);
+              const envelope = Math.sin(u * Math.PI);
+              this.point(
+                screenPulse[0],
+                screenPulse[1],
+                (.7 + envelope * 1.15) * this.dpr,
+                .12 + envelope * (.28 + focus * .46),
+                .98,
+                .55 + weight * .35
+              );
+            }
+          }
+        }
+      }
+
+      // Three attention heads continually reweight relationships within the latent field.
+      [1, 2, 3].forEach((layer, headIndex) => {
+        const spec = layerSpecs[layer];
+        const headPhase = (phase * .09 + headIndex * .31) % 1;
+        const headCenter = Math.round(headPhase * (spec.count - 1));
+        for (let offset = -2; offset <= 2; offset++) {
+          const startIndex = (headCenter + offset + spec.count) % spec.count;
+          const endIndex = (startIndex * (headIndex + 2) + 3 + headIndex) % spec.count;
+          const start = nodePosition(layer, startIndex);
+          const end = nodePosition(layer, endIndex);
+          const control = [
+            spec.x + (headIndex - 1) * 13,
+            (start[1] + end[1]) * .5 + (offset % 2 ? 28 : -28)
+          ];
+          const path = [];
+          for (let step = 0; step <= 28; step++) {
+            path.push(toScreen(...quadratic(start, control, end, step / 28)));
+          }
+          const emphasis = offset === 0 ? 1 : .36;
+          this.line(path, .035 + emphasis * .11, .38 + emphasis * .22, .38 + headIndex * .12);
+          if (offset === 0) {
+            const u = (phase * .2 + headIndex * .23) % 1;
+            const marker = toScreen(...quadratic(start, control, end, u));
+            this.point(marker[0], marker[1], 1.45 * this.dpr, .66, .98, .8);
+          }
+        }
+      });
+
+      // Latent layers are rendered as stable tensor planes with changing activations.
+      layerSpecs.forEach((spec, layer) => {
+        const focus = layerFocus(layer);
+        const frame = [
+          toScreen(spec.x - 15, -spec.spread * .57),
+          toScreen(spec.x + 15, -spec.spread * .5),
+          toScreen(spec.x + 15, spec.spread * .5),
+          toScreen(spec.x - 15, spec.spread * .57),
+          toScreen(spec.x - 15, -spec.spread * .57)
+        ];
+        this.line(frame, .055 + focus * .18, .5 + focus * .35, .18 + focus * .5);
+
+        for (let node = 0; node < spec.count; node++) {
+          const position = nodePosition(layer, node);
+          const activation = clamp(
+            .5 + .5 * Math.sin(phase * .62 - layer * 1.27 + node * .73)
+          );
+          const selected = Math.pow(activation, 5);
+          const screen = toScreen(...position);
+
+          for (let dimension = -2; dimension <= 2; dimension++) {
+            const featurePoint = toScreen(
+              position[0] + dimension * 3.2,
+              position[1] + Math.sin(dimension * 1.7 + node) * 2
+            );
+            const light = this.shimmer(node * 13 + dimension + layer * 200, t, 7);
+            this.point(
+              featurePoint[0],
+              featurePoint[1],
+              (.42 + light * .42 + selected * .35) * this.dpr,
+              .08 + light * .12 + selected * (.25 + focus * .25),
+              light,
+              focus * .52
+            );
+          }
+
           this.point(
-            point[0],
-            point[1],
-            (.65 + fade * 1.15) * this.dpr,
-            .08 + fade * .72,
-            .96,
-            .72
+            screen[0],
+            screen[1],
+            (.9 + selected * 1.45 + focus * .45) * this.dpr,
+            .18 + selected * .5 + focus * .18,
+            .98,
+            .42 + focus * .42
           );
         }
       });
 
-      const yaw = phase * .42;
-      const pitch = .34 + Math.sin(t * .43) * .08;
-      const projectCore = (x, y, z) => {
-        const cosYaw = Math.cos(yaw);
-        const sinYaw = Math.sin(yaw);
-        const x1 = x * cosYaw + z * sinYaw;
-        const z1 = -x * sinYaw + z * cosYaw;
-        const cosPitch = Math.cos(pitch);
-        const sinPitch = Math.sin(pitch);
-        const y1 = y * cosPitch - z1 * sinPitch;
-        const z2 = y * sinPitch + z1 * cosPitch;
-        const perspective = 4.2 / (4.7 - z2 * .008);
-        return toScreen(
-          core[0] + x1 * perspective,
-          core[1] + y1 * perspective
-        );
-      };
-
-      const coreCount = this.mobile ? 2100 : 4100;
-      for (let i = coreCount; i > 0; i--) {
-        const vertical = hash(i * 7.17) * 2 - 1;
-        const theta = hash(i * 13.61 + 4) * TAU;
-        const radial = Math.sqrt(1 - vertical * vertical);
-        const radius = 62 + Math.sin(i * .031 + phase) * 5;
-        const point = projectCore(
-          Math.cos(theta) * radial * radius,
-          vertical * radius,
-          Math.sin(theta) * radial * radius
-        );
-        const light = this.shimmer(i + 4300, t, 8);
-        const pulse = .5 + .5 * Math.sin(theta * 3 - phase * 2.4);
+      // The final representation resolves into a changing confidence distribution.
+      const outputAnchor = [222, 0];
+      const outputNodes = [-70, -35, 0, 35, 70];
+      const dominant = Math.floor((phase * .045) % outputNodes.length);
+      outputNodes.forEach((y, index) => {
+        const sourceIndex = Math.round(index / (outputNodes.length - 1) * (layerSpecs[4].count - 1));
+        const source = nodePosition(4, sourceIndex);
+        const confidence = index === dominant
+          ? .76 + Math.sin(phase * .28) * .08
+          : .08 + hash(index * 31 + dominant * 7) * .12;
+        const end = [outputAnchor[0] - confidence * 24, y];
+        const path = [toScreen(...source), toScreen(...end)];
+        this.line(path, .04 + confidence * .34, .48 + confidence * .7, confidence);
+        const barStart = toScreen(outputAnchor[0] - 3, y);
+        const barEnd = toScreen(outputAnchor[0] - 3 - confidence * 48, y);
+        this.line([barStart, barEnd], .12 + confidence * .68, 1.1 + confidence * 1.6, confidence);
+        const endpoint = toScreen(...end);
         this.point(
-          point[0],
-          point[1],
-          (.4 + light * .58 + pulse * .18) * this.dpr,
-          .055 + light * .23 + pulse * .1,
-          light,
-          .48 + pulse * .22
+          endpoint[0],
+          endpoint[1],
+          (1 + confidence * 1.8) * this.dpr,
+          .22 + confidence * .68,
+          .98,
+          confidence
         );
-      }
-
-      ['x', 'y', 'z'].forEach((axis, axisIndex) => {
-        const path = [];
-        for (let step = 0; step <= 80; step++) {
-          const angle = step / 80 * TAU + axisIndex * .47;
-          const radius = 67 + axisIndex * 4;
-          const point = axis === 'x'
-            ? [0, Math.cos(angle) * radius, Math.sin(angle) * radius]
-            : axis === 'y'
-              ? [Math.cos(angle) * radius, 0, Math.sin(angle) * radius]
-              : [Math.cos(angle) * radius, Math.sin(angle) * radius, 0];
-          path.push(projectCore(...point));
-        }
-        this.line(path, .08 + axisIndex * .025, .42, .52);
       });
 
-      const outputPath = [];
-      for (let step = 0; step <= 90; step++) {
-        const u = step / 90;
-        outputPath.push(toScreen(
-          78 + u * 145,
-          Math.sin(u * TAU * 1.18 + phase * .18) * 18 * (1 - u) - u * 24
-        ));
-      }
-      this.line(outputPath, .48, 1.02, .88);
-
-      const outputCount = this.mobile ? 1200 : 2400;
-      for (let i = outputCount; i > 0; i--) {
-        const u = (hash(i * 4.71) + t * .18) % 1;
-        const width = (1 - u) * 24 + 2;
-        const baseX = 78 + u * 145;
-        const baseY = Math.sin(u * TAU * 1.18 + phase * .18) * 18 * (1 - u) - u * 24;
-        const point = toScreen(
-          baseX + (hash(i * 9.13 + 2) - .5) * width * .35,
-          baseY + (hash(i * 15.37 + 8) - .5) * width
-        );
-        const light = this.shimmer(i + 8900, t, 9);
-        this.point(
-          point[0],
-          point[1],
-          (.4 + light * .68) * this.dpr,
-          .06 + light * .3 + u * .08,
-          light,
-          .72 + u * .18
-        );
-      }
-
-      const endpoint = toScreen(223, -24);
+      const decision = toScreen(outputAnchor[0] - 3 - (.76 + Math.sin(phase * .28) * .08) * 48, outputNodes[dominant]);
       for (let ring = 0; ring < 3; ring++) {
-        const radius = 6 + ring * 8 + (phase % 1) * 4;
+        const radius = (7 + ring * 8 + (phase % 1) * 3) * scale;
         const path = [];
-        for (let step = 0; step <= 44; step++) {
-          const angle = step / 44 * TAU;
+        for (let step = 0; step <= 42; step++) {
+          const angle = step / 42 * TAU;
           path.push([
-            endpoint[0] + Math.cos(angle) * radius * scale,
-            endpoint[1] + Math.sin(angle) * radius * scale
+            decision[0] + Math.cos(angle) * radius,
+            decision[1] + Math.sin(angle) * radius
           ]);
         }
-        this.line(path, .26 - ring * .065, .5, .9);
+        this.line(path, .23 - ring * .055, .48, .9);
       }
     }
 
