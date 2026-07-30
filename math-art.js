@@ -50,6 +50,7 @@
         else if (this.kind === 'research') this.drawResearch(t);
         else if (this.kind === 'market') this.drawMarket(t);
         else if (this.kind === 'terrain') this.drawTerrain(t);
+        else if (this.kind === 'field') this.drawField(t);
         else if (this.kind === 'wings') this.drawWings(t);
         else if (this.kind === 'piece') this.drawPiece(t);
         else this.drawFlow(t);
@@ -564,6 +565,120 @@
           ctx.fillRect(px - halo / 2, py - halo / 2, halo, halo);
         }
       }
+
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    drawField(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .53;
+      const rows = this.mobile ? 24 : 38;
+      const columns = this.mobile ? 38 : 62;
+      const scaleX = w * .36;
+      const scaleY = h * .16;
+      const scaleZ = h * .22;
+      const phase = t * 2.8;
+
+      const response = (x, y) => {
+        const wave =
+          .24 * Math.sin(x * 2.2 - phase) * Math.cos(y * 1.7 + phase * .58) +
+          .12 * Math.sin((x + y) * 3.1 + phase * .74);
+        const centerA = {
+          x: -.55 + .2 * Math.sin(phase * .43),
+          y: -.22 + .16 * Math.cos(phase * .37)
+        };
+        const centerB = {
+          x: .52 + .16 * Math.cos(phase * .31),
+          y: .3 + .14 * Math.sin(phase * .47)
+        };
+        const peak = .78 * Math.exp(
+          -((x - centerA.x) ** 2 * 1.7 + (y - centerA.y) ** 2 * 2.1)
+        );
+        const basin = .58 * Math.exp(
+          -((x - centerB.x) ** 2 * 2.2 + (y - centerB.y) ** 2 * 1.8)
+        );
+        return wave + peak - basin;
+      };
+
+      const project = (x, y, z) => [
+        cx + (x - y) * scaleX * .56,
+        cy + (x + y) * scaleY - z * scaleZ
+      ];
+
+      this.glow(cx, cy, Math.min(w, h) * .58);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // Continuous mesh lines reveal the changing response surface.
+      for (let row = 0; row <= rows; row++) {
+        const y = -1.15 + row / rows * 2.3;
+        ctx.beginPath();
+        for (let column = 0; column <= columns; column++) {
+          const x = -1.45 + column / columns * 2.9;
+          const point = project(x, y, response(x, y));
+          if (column === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        }
+        const depth = row / rows;
+        const shimmer = .5 + .5 * Math.sin(row * .38 - phase * 2.1);
+        ctx.strokeStyle = `rgba(${113 + shimmer * 45},${180 + shimmer * 38},${219 + shimmer * 23},${.055 + depth * .09 + shimmer * .07})`;
+        ctx.lineWidth = Math.max(.45, this.dpr * (.38 + depth * .18));
+        ctx.stroke();
+      }
+
+      for (let column = 0; column <= columns; column += 2) {
+        const x = -1.45 + column / columns * 2.9;
+        ctx.beginPath();
+        for (let row = 0; row <= rows; row++) {
+          const y = -1.15 + row / rows * 2.3;
+          const point = project(x, y, response(x, y));
+          if (row === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        }
+        const shimmer = .5 + .5 * Math.sin(column * .29 + phase * 1.6);
+        ctx.strokeStyle = `rgba(139,199,229,${.035 + shimmer * .055})`;
+        ctx.lineWidth = Math.max(.4, this.dpr * .34);
+        ctx.stroke();
+      }
+
+      // Sampled observations make the surface read as computed data.
+      const samples = this.mobile ? 760 : 1500;
+      for (let i = 0; i < samples; i++) {
+        const x = ((i * .61803398875) % 1) * 2.9 - 1.45;
+        const y = ((i * .75487766625) % 1) * 2.3 - 1.15;
+        const z = response(x, y);
+        const point = project(x, y, z);
+        const high = Math.max(0, Math.min(1, (z + .12) / .9));
+        const pulse = .5 + .5 * Math.sin(i * .17 - phase * 3.2);
+        const red = Math.round(117 + high * 98);
+        const green = Math.round(186 + high * 42);
+        const blue = Math.round(224 - high * 42);
+        ctx.fillStyle = `rgba(${red},${green},${blue},${.08 + high * .25 + pulse * .09})`;
+        const size = (.38 + high * .82 + pulse * .22) * this.dpr;
+        ctx.fillRect(point[0], point[1], size, size);
+      }
+
+      // A moving probe follows the field's dominant peak.
+      const probeX = -.55 + .2 * Math.sin(phase * .43);
+      const probeY = -.22 + .16 * Math.cos(phase * .37);
+      const probe = project(probeX, probeY, response(probeX, probeY));
+      const haloRadius = 14 * this.dpr;
+      const halo = ctx.createRadialGradient(
+        probe[0], probe[1], 0,
+        probe[0], probe[1], haloRadius
+      );
+      halo.addColorStop(0, 'rgba(238,247,213,.88)');
+      halo.addColorStop(.18, 'rgba(161,224,229,.58)');
+      halo.addColorStop(1, 'rgba(81,171,217,0)');
+      ctx.fillStyle = halo;
+      ctx.fillRect(
+        probe[0] - haloRadius,
+        probe[1] - haloRadius,
+        haloRadius * 2,
+        haloRadius * 2
+      );
 
       ctx.globalCompositeOperation = 'source-over';
     }
