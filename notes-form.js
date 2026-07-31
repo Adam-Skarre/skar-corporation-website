@@ -10,6 +10,8 @@
       this.visible = true;
       this.start = performance.now();
       this.last = 0;
+      this.transportParticles = null;
+      this.transportFrame = 0;
       this.resize = this.resize.bind(this);
       this.frame = this.frame.bind(this);
       this.resize();
@@ -29,6 +31,7 @@
       this.width = this.canvas.width;
       this.height = this.canvas.height;
       this.dpr = dpr;
+      if (this.kind === 'transport') this.transportParticles = null;
     }
 
     frame(now) {
@@ -45,6 +48,8 @@
         else if (this.kind === 'migration') this.drawMigration(t);
         else if (this.kind === 'medusa') this.drawMedusa(t);
         else if (this.kind === 'infinite') this.drawInfinite(t);
+        else if (this.kind === 'transport') this.drawTransport(t);
+        else if (this.kind === 'torus-knot') this.drawTorusKnot(t);
       }
       requestAnimationFrame(this.frame);
     }
@@ -425,6 +430,227 @@
         ctx.fillStyle = `rgba(225,239,241,${.12 + front * .52})`;
         const d = (.5 + front * .9) * this.dpr;
         ctx.fillRect(px, py, d, d);
+      }
+      this.finish();
+    }
+
+    hash(n) {
+      const value = Math.sin(n * 127.1 + 311.7) * 43758.5453123;
+      return value - Math.floor(value);
+    }
+
+    resetTransportParticle(particle, index, initial = false) {
+      const seed = index + particle.generation * 1973;
+      particle.x = this.hash(seed * 3 + 1) * 2.2 - 1.1;
+      particle.y = this.hash(seed * 3 + 2) * 1.9 - .95;
+      particle.px = particle.x;
+      particle.py = particle.y;
+      particle.life = 170 + Math.floor(this.hash(seed * 7 + 11) * 230);
+      particle.age = initial ? Math.floor(this.hash(seed * 5 + 7) * particle.life) : 0;
+      particle.phase = this.hash(seed * 11 + 13) * TAU;
+      particle.bright = this.hash(seed * 13 + 17) > .962;
+    }
+
+    transportVelocity(x, y, t) {
+      const a = 2.2 * x + t * 1.15;
+      const b = 1.7 * y - t * .72;
+      const c = 3.1 * x - 2.6 * y + t * .46;
+      return {
+        x: .935 * Math.sin(a) * Math.cos(b) - .572 * Math.cos(c),
+        y: -1.21 * Math.cos(a) * Math.sin(b) - .682 * Math.cos(c)
+      };
+    }
+
+    drawTransport(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .5;
+      const count = this.mobile ? 920 : 1780;
+      if (!this.transportParticles || this.transportParticles.length !== count) {
+        this.transportParticles = Array.from({ length: count }, (_, index) => {
+          const particle = { generation: 0 };
+          this.resetTransportParticle(particle, index, true);
+          return particle;
+        });
+      }
+
+      this.transportFrame += 1;
+      this.prepare(cx, cy, Math.min(w, h) * .58);
+      const fieldScaleX = w * .43;
+      const fieldScaleY = h * .43;
+      const dt = reducedMotion ? 0 : .011;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(w * .045, h * .055, w * .91, h * .89);
+      ctx.clip();
+
+      for (let i = 0; i < count; i++) {
+        const particle = this.transportParticles[i];
+        particle.px = particle.x;
+        particle.py = particle.y;
+        const velocity = this.transportVelocity(particle.x, particle.y, t);
+        const thermal = reducedMotion ? 0 : .0028;
+        const noiseX = Math.sin(particle.phase + this.transportFrame * .71 + i * .013);
+        const noiseY = Math.cos(particle.phase * 1.7 + this.transportFrame * .59 + i * .017);
+        particle.x += velocity.x * dt + noiseX * thermal;
+        particle.y += velocity.y * dt + noiseY * thermal;
+        if (!reducedMotion) particle.age += 1;
+
+        if (
+          particle.age > particle.life ||
+          particle.x < -1.18 || particle.x > 1.18 ||
+          particle.y < -1.06 || particle.y > 1.06
+        ) {
+          particle.generation += 1;
+          this.resetTransportParticle(particle, i);
+        }
+
+        const x0 = cx + particle.px * fieldScaleX;
+        const y0 = cy + particle.py * fieldScaleY;
+        const x1 = cx + particle.x * fieldScaleX;
+        const y1 = cy + particle.y * fieldScaleY;
+        const speed = Math.min(1, Math.hypot(velocity.x, velocity.y) / 1.7);
+        const maturity = Math.min(1, particle.age / 28);
+        const remaining = Math.min(1, (particle.life - particle.age) / 32);
+        const alpha = maturity * remaining * (.12 + speed * .38);
+
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.strokeStyle = particle.bright
+          ? `rgba(230,242,225,${Math.min(.82, alpha * 1.8)})`
+          : `rgba(${128 + speed * 72},${184 + speed * 45},${211 + speed * 28},${alpha})`;
+        ctx.lineWidth = (particle.bright ? 1.15 : .48 + speed * .42) * this.dpr;
+        ctx.stroke();
+
+        if (particle.bright) {
+          ctx.fillStyle = `rgba(235,246,231,${Math.min(.9, alpha * 2.1)})`;
+          const size = (1.1 + speed * .9) * this.dpr;
+          ctx.fillRect(x1 - size * .5, y1 - size * .5, size, size);
+        }
+      }
+
+      ctx.globalAlpha = .16;
+      ctx.lineWidth = Math.max(.5, this.dpr * .42);
+      for (let row = 0; row < 8; row++) {
+        ctx.beginPath();
+        for (let column = 0; column <= 54; column++) {
+          const x = -1.05 + column / 54 * 2.1;
+          const y = -.78 + row / 7 * 1.56;
+          const velocity = this.transportVelocity(x, y, t);
+          const px = cx + x * fieldScaleX;
+          const py = cy + y * fieldScaleY;
+          if (column === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px + velocity.x * 5 * this.dpr, py + velocity.y * 5 * this.dpr);
+        }
+        ctx.strokeStyle = 'rgba(107,166,196,.18)';
+        ctx.stroke();
+      }
+      ctx.restore();
+      this.finish();
+    }
+
+    drawTorusKnot(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .5;
+      const scale = Math.min(w, h) * .195;
+      const p = 3;
+      const q = 8;
+      const majorRadius = 1.7;
+      const minorRadius = .74;
+      const yaw = .52 + t * .42;
+      const pitch = -.62 + Math.sin(t * .73) * .09;
+      const roll = -.18 + Math.sin(t * .41) * .12;
+      const cosYaw = Math.cos(yaw), sinYaw = Math.sin(yaw);
+      const cosPitch = Math.cos(pitch), sinPitch = Math.sin(pitch);
+      const cosRoll = Math.cos(roll), sinRoll = Math.sin(roll);
+      const steps = this.mobile ? 420 : 680;
+      const ribbons = this.mobile ? 8 : 13;
+      this.prepare(cx, cy, Math.min(w, h) * .58);
+
+      const rotate = (x, y, z) => {
+        const x1 = x * cosYaw - z * sinYaw;
+        const z1 = x * sinYaw + z * cosYaw;
+        const y2 = y * cosPitch - z1 * sinPitch;
+        const z2 = y * sinPitch + z1 * cosPitch;
+        return {
+          x: x1 * cosRoll - y2 * sinRoll,
+          y: x1 * sinRoll + y2 * cosRoll,
+          z: z2
+        };
+      };
+
+      const points = [];
+      for (let strip = 0; strip < ribbons; strip++) {
+        const ribbonOffset = (strip / (ribbons - 1) - .5) * .36;
+        for (let i = 0; i < steps; i++) {
+          const phase = i / steps * TAU;
+          const cp = Math.cos(p * phase);
+          const sp = Math.sin(p * phase);
+          const cq = Math.cos(q * phase);
+          const sq = Math.sin(q * phase);
+          const radius = majorRadius + minorRadius * cq;
+          const centerX = radius * cp;
+          const centerY = radius * sp;
+          const centerZ = minorRadius * sq;
+          const normalX = cq * cp;
+          const normalY = cq * sp;
+          const normalZ = sq;
+          const binormalX = -sp;
+          const binormalY = cp;
+          const binormalZ = 0;
+          const twist = phase * 5 + t * .8;
+          const nx = normalX * Math.cos(twist) + binormalX * Math.sin(twist);
+          const ny = normalY * Math.cos(twist) + binormalY * Math.sin(twist);
+          const nz = normalZ * Math.cos(twist) + binormalZ * Math.sin(twist);
+          const corrugation = 1 + .13 * Math.sin(phase * 24 - t * 3.2 + strip * .4);
+          const rotated = rotate(
+            centerX + nx * ribbonOffset * corrugation,
+            centerY + ny * ribbonOffset * corrugation,
+            centerZ + nz * ribbonOffset * corrugation
+          );
+          const perspective = 1 / (1.13 - rotated.z * .105);
+          points.push({
+            x: cx + rotated.x * scale * perspective,
+            y: cy + rotated.y * scale * perspective,
+            z: rotated.z,
+            phase,
+            strip
+          });
+        }
+      }
+
+      points.sort((a, b) => a.z - b.z);
+      for (let i = 0; i < points.length; i++) {
+        const point = points[i];
+        const depth = Math.max(0, Math.min(1, .5 + point.z / 5));
+        const pulse = .5 + .5 * Math.sin(point.phase * 18 - t * 4 + point.strip * .42);
+        const highlight = Math.sin(point.phase * 3 - t * 1.7) > .82;
+        const red = highlight ? 212 + pulse * 31 : 132 + depth * 72;
+        const green = highlight ? 226 + pulse * 22 : 186 + depth * 43;
+        const blue = highlight ? 184 + pulse * 42 : 181 + depth * 51;
+        const alpha = .14 + depth * .42 + (highlight ? .2 : 0);
+        const size = (.46 + depth * .68 + pulse * .18) * this.dpr;
+        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
+        ctx.fillRect(point.x, point.y, size, size);
+      }
+
+      ctx.globalAlpha = .24;
+      ctx.lineWidth = Math.max(.5, this.dpr * .45);
+      for (let strip = 0; strip < ribbons; strip += 3) {
+        ctx.beginPath();
+        const stripPoints = points
+          .filter(point => point.strip === strip)
+          .sort((a, b) => a.phase - b.phase);
+        stripPoints.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.closePath();
+        ctx.strokeStyle = 'rgba(187,222,218,.24)';
+        ctx.stroke();
       }
       this.finish();
     }
