@@ -9,14 +9,14 @@
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <meta property="og:title" content="Insights Overview | SKAR Corporation">
   <meta property="og:description" content="Original research, computational studies, and market perspectives for complex decisions.">
-  <meta property="og:image" content="https://skarcorporation.com/assets/insights-overview-hero-v4.png">
+  <meta property="og:image" content="https://skarcorporation.com/assets/insights-monolith-mountains.png">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/refinement.css?v=20260728-10">
-  <link rel="stylesheet" href="/insights-overview.css?v=20260731-1">
+  <link rel="stylesheet" href="/insights-overview.css?v=20260731-2">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <link rel="shortcut icon" href="/assets/skar-favicon.svg">
-  <script src="/site-nav.js?v=20260728-3" defer></script>
-  <script src="/insights-overview.js?v=20260731-1" defer></script>
+  <script src="/site-nav.js?v=20260731-1" defer></script>
+  <script src="/insights-overview.js?v=20260731-2" defer></script>
 </head>
 <body class="insights-overview-page">
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -25,19 +25,47 @@
   <main>
     <section class="insights-overview-hero" aria-labelledby="insights-overview-title">
       <div class="insights-engraving" aria-hidden="true"></div>
-      <div class="insights-orbit insights-orbit-one" aria-hidden="true"></div>
-      <div class="insights-orbit insights-orbit-two" aria-hidden="true"></div>
       <div class="insights-hero-copy">
         <p class="eyebrow">SKAR Insights</p>
-        <h1 id="insights-overview-title">Examine the system.<br><span>Then decide.</span></h1>
-        <p>Original research, computational studies, and market perspectives that connect evidence to the engineering, operating, and technology decisions leaders are responsible for making.</p>
+        <h1 id="insights-overview-title">Perspective for the<br><span>decisions ahead.</span></h1>
+        <p>Original research, computational studies, and market perspectives for leaders navigating consequential engineering, operating, and technology decisions.</p>
         <div class="insights-hero-actions">
-          <a class="insights-primary-action" href="#current-work">Explore current work <span aria-hidden="true">↓</span></a>
+          <a class="insights-primary-action" href="#insights-directory">Explore insights <span aria-hidden="true">↓</span></a>
           <a class="insights-text-action" href="/research/">Read the research <span aria-hidden="true">↗</span></a>
         </div>
       </div>
       <div class="insights-hero-index" aria-hidden="true">
-        <span>Research</span><span>Simulation</span><span>Markets</span><span>Practice</span>
+        <span>Research</span><span>Simulation</span><span>Markets</span><span>Leadership</span>
+      </div>
+    </section>
+
+    <section class="insights-directory" id="insights-directory" aria-labelledby="insights-directory-title">
+      <div class="insights-directory-heading">
+        <p class="eyebrow">Explore SKAR Insights</p>
+        <h2 id="insights-directory-title">Select an insight.</h2>
+        <p>Move between research, computational methods, market signals, infrastructure questions, and lessons from consequential work.</p>
+      </div>
+      <div class="insights-directory-console">
+        <div class="insights-select-wrap">
+          <label for="insights-topic">Insight focus</label>
+          <select id="insights-topic" data-insights-topic>
+            <option value="all">All insights</option>
+            <option value="research">Independent research</option>
+            <option value="models">Computational models</option>
+            <option value="markets">Markets and strategy</option>
+            <option value="energy">Energy and infrastructure</option>
+            <option value="practice">Leadership and practice</option>
+          </select>
+          <span class="insights-select-icon" aria-hidden="true"></span>
+        </div>
+        <article class="insights-directory-feature" aria-live="polite">
+          <div>
+            <small data-directory-kicker>Featured insight</small>
+            <h3 data-directory-title>The next operating system of industry.</h3>
+            <p data-directory-description>How industrial systems are becoming observable, computational, and increasingly adaptive.</p>
+          </div>
+          <a href="/report-industry-4-0/" data-directory-link>Read the report <span aria-hidden="true">↗</span></a>
+        </article>
       </div>
     </section>
 
@@ -102,13 +130,13 @@
 
     <section class="insights-current" id="current-work" aria-labelledby="current-work-title">
       <div class="insights-current-heading">
-        <p class="eyebrow">Current work</p>
-        <h2 id="current-work-title">Ideas made inspectable.</h2>
-        <p>Each body of work is built for a different kind of inquiry. Together, they show how SKAR moves between theory, external conditions, and decisions in practice.</p>
+        <p class="eyebrow">Featured insights</p>
+        <h2 id="current-work-title">Current thinking from SKAR.</h2>
+        <p>Research, computational studies, market interpretation, and practical perspectives—organized around the decisions they are built to inform.</p>
       </div>
 
       <div class="insights-work-grid">
-        <a class="insights-work-card insights-work-feature" href="/visualization/">
+        <a class="insights-work-card insights-work-feature" href="/visualization/" data-insight-topic="models">
           <div class="insights-work-art insights-art-simulation" aria-hidden="true"><span></span><i></i><b></b></div>
           <div class="insights-work-copy">
             <small>Computational visualization</small>
@@ -118,7 +146,7 @@
           </div>
         </a>
 
-        <a class="insights-work-card insights-work-report" href="/report-industry-4-0/">
+        <a class="insights-work-card insights-work-report" href="/report-industry-4-0/" data-insight-topic="research">
           <div class="insights-work-copy">
             <small>Industry 4.0 · Independent research</small>
             <h3>The next operating system of industry.</h3>
@@ -128,7 +156,7 @@
           <div class="insights-report-trace" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
         </a>
 
-        <a class="insights-work-card insights-work-market" href="/market-views/">
+        <a class="insights-work-card insights-work-market" href="/market-views/" data-insight-topic="markets">
           <div class="insights-market-field" aria-hidden="true">
             <span style="--h:42%"></span><span style="--h:68%"></span><span style="--h:51%"></span><span style="--h:84%"></span><span style="--h:63%"></span><span style="--h:91%"></span><span style="--h:73%"></span>
           </div>
@@ -140,7 +168,7 @@
           </div>
         </a>
 
-        <a class="insights-work-card insights-work-way" href="/way-through/">
+        <a class="insights-work-card insights-work-way" href="/way-through/" data-insight-topic="practice">
           <div class="insights-way-line" aria-hidden="true"><span></span></div>
           <div class="insights-work-copy">
             <small>The SKAR Way · Original series</small>
@@ -150,7 +178,7 @@
           </div>
         </a>
 
-        <a class="insights-work-card insights-work-energy" href="/report-data-center-demand/">
+        <a class="insights-work-card insights-work-energy" href="/report-data-center-demand/" data-insight-topic="energy research">
           <div class="insights-work-copy">
             <small>Energy &amp; infrastructure · Independent research</small>
             <h3>Planning for load growth.</h3>
