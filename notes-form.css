@@ -2,8 +2,8 @@
 .form-hero:before{content:"";position:absolute;z-index:-1;inset:0;background:repeating-linear-gradient(90deg,transparent 0 79px,rgba(126,180,214,.035) 80px),repeating-linear-gradient(0deg,transparent 0 79px,rgba(126,180,214,.025) 80px)}
 .form-hero-copy{position:relative;z-index:2;max-width:690px}
 .form-hero .eyebrow{color:#8db8ef}
-.form-hero h1{margin:24px 0 30px;font-size:clamp(72px,8.5vw,132px);font-weight:640;line-height:.8;letter-spacing:-.07em}
-.form-hero h1 span{display:block}.form-hero h1 .blue-type{color:transparent}
+.form-hero h1{margin:24px 0 30px;font-size:clamp(72px,8.5vw,132px);font-weight:640;line-height:.94;letter-spacing:-.07em}
+.form-hero h1 span{display:block}.form-hero h1 .blue-type{color:transparent;margin-top:.06em}
 .form-hero-copy>p:not(.eyebrow){max-width:620px;color:#c4d1dc;font-size:18px;line-height:1.7}
 .form-hero-art{position:relative;height:560px;min-width:0}
 .form-canvas{display:block;width:100%;height:100%;background:transparent}
@@ -48,13 +48,13 @@
 .form-study-copy small{color:#79a8e9;font-size:9px;font-weight:800;letter-spacing:.14em}.form-study-copy h3{margin:17px 0 14px;font-size:34px;letter-spacing:-.035em}.form-study-copy p{margin:0;color:#afbfcc;font-size:15px;line-height:1.7}
 .form-study-equation{margin-top:auto;padding-top:24px;border-top:1px solid rgba(143,183,219,.15);color:#78a7c8;font:500 11px/1.5 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:.035em}
 @media(max-width:900px){.form-hero{grid-template-columns:1fr;padding:76px 7vw 38px}.form-hero h1{font-size:76px}.form-hero-art{height:430px}.form-thesis-grid,.form-library-intro,.decision-products-head{grid-template-columns:1fr}.form-uses,.decision-product-grid{grid-template-columns:1fr}.form-uses article,.form-uses article:first-child{min-height:0;padding:28px 0;border-right:0;border-bottom:1px solid #d9e0e5}.decision-product-grid article,.decision-product-grid article:first-child{min-height:0;padding:30px 0;border-left:0;border-top:1px solid #c6d1da}.decision-product-grid article:first-child{border-top:0}.decision-product-grid span{margin-bottom:24px}.convergence{grid-template-columns:1fr}.convergence-copy{padding:76px 7vw 56px;border-right:0;border-bottom:1px solid rgba(126,175,213,.14)}.convergence-visual{height:570px}.form-studies{grid-template-columns:1fr}}
-@media(max-width:600px){.form-hero{min-height:700px;padding:62px max(22px,env(safe-area-inset-right)) 18px max(22px,env(safe-area-inset-left))}.form-hero h1{font-size:clamp(57px,17vw,72px);line-height:.83}.form-hero-copy>p:not(.eyebrow){font-size:16px}.form-index{display:none}.form-hero-art{height:330px;margin-top:8px}.form-thesis,.form-library{padding:72px 22px}.form-thesis h2,.form-library h2{font-size:44px}.form-thesis-copy>p{font-size:16px}.form-uses{margin-top:50px}.convergence-copy{padding:66px 22px 48px}.convergence h2{font-size:58px}.convergence h3{font-size:27px}.convergence-copy p{font-size:15px}.convergence-visual{height:390px}.form-library-intro{gap:26px;margin-bottom:40px}.form-study-visual{height:310px}.form-study-copy{padding:27px 24px 32px}.form-study-copy h3{font-size:30px}}
+@media(max-width:600px){.form-hero{min-height:700px;padding:62px max(22px,env(safe-area-inset-right)) 18px max(22px,env(safe-area-inset-left))}.form-hero h1{font-size:clamp(57px,17vw,72px);line-height:.94}.form-hero-copy>p:not(.eyebrow){font-size:16px}.form-index{display:none}.form-hero-art{height:330px;margin-top:8px}.form-thesis,.form-library{padding:72px 22px}.form-thesis h2,.form-library h2{font-size:44px}.form-thesis-copy>p{font-size:16px}.form-uses{margin-top:50px}.convergence-copy{padding:66px 22px 48px}.convergence h2{font-size:58px}.convergence h3{font-size:27px}.convergence-copy p{font-size:15px}.convergence-visual{height:390px}.form-library-intro{gap:26px;margin-bottom:40px}.form-study-visual{height:310px}.form-study-copy{padding:27px 24px 32px}.form-study-copy h3{font-size:30px}}
 @media(prefers-reduced-motion:reduce){.form-canvas{opacity:.8}}
 
 /* Visualization: intentional phone composition rather than a stacked desktop layout. */
 @media(max-width:600px){
   .form-hero{display:block;min-height:0;padding-top:54px;padding-bottom:42px}
-  .form-hero h1{max-width:100%;margin:20px 0 24px;font-size:clamp(48px,14.3vw,58px);line-height:.88;letter-spacing:-.065em}
+  .form-hero h1{max-width:100%;margin:20px 0 24px;font-size:clamp(48px,14.3vw,58px);line-height:.94;letter-spacing:-.065em}
   .form-hero-copy>p:not(.eyebrow){max-width:100%;font-size:15px;line-height:1.65}
   .form-hero-art{width:calc(100% + 20px);height:292px;margin:24px -10px 0}
 
