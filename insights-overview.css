@@ -4,7 +4,7 @@
 .insights-overview-page .eyebrow{color:#316bd0;letter-spacing:.2em}
 
 .insights-overview-hero{position:relative;isolation:isolate;min-height:calc(100svh - 84px);display:grid;place-items:center;padding:100px 8vw 110px;background:var(--insights-ivory);border-bottom:9px solid #0b3b85;overflow:hidden}
-.insights-engraving{position:absolute;z-index:-3;inset:0;background:url('/assets/insights-overview-hero-v3.png') center/cover no-repeat;transform:scale(1.015);animation:insightsBreathe 18s ease-in-out infinite alternate}
+.insights-engraving{position:absolute;z-index:-3;inset:0;background:url('/assets/insights-overview-hero-v4.png') center/cover no-repeat;transform:scale(1.015);animation:insightsBreathe 18s ease-in-out infinite alternate}
 .insights-overview-hero:before{content:"";position:absolute;z-index:-2;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(247,240,230,.06) 0 31%,rgba(247,240,230,.25) 60%,rgba(7,41,91,.08) 100%);pointer-events:none}
 .insights-overview-hero:after{content:"";position:absolute;z-index:-1;inset:16px;border:1px solid rgba(10,50,117,.26);pointer-events:none}
 .insights-hero-copy{width:min(760px,67vw);text-align:center;margin-top:-4vh;position:relative;z-index:2}
