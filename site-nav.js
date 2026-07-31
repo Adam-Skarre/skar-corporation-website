@@ -12,7 +12,7 @@
     .toLowerCase();
   const routeRoot = route.split('/')[0];
   const firmActive = ['about', 'careers'].includes(route);
-  const workActive = ['solutions', 'industries', 'services', 'technology', 'engineering', 'modeling-data-analysis', 'artificial-intelligence', 'design-manufacturing', 'supply-chain', 'energy-infrastructure', 'industrial-technology', 'small-business'].includes(routeRoot);
+  const workActive = ['solutions', 'industries', 'services', 'technology', 'engineering', 'modeling-data-analysis', 'artificial-intelligence', 'web-design', 'design-manufacturing', 'supply-chain', 'energy-infrastructure', 'industrial-technology', 'software', 'small-business'].includes(routeRoot);
   const insightsActive = ['insights', 'research', 'market-views', 'way-through', 'visualization', 'notes-in-form', 'news'].includes(route) || route.startsWith('report-');
   const mobileQuery = window.matchMedia('(max-width: 900px)');
 
@@ -55,7 +55,8 @@
             ['Overview', '/solutions/'],
             ['Engineering', '/engineering/'],
             ['Modeling & Data Analysis', '/modeling-data-analysis/'],
-            ['Artificial Intelligence', '/artificial-intelligence/']
+            ['Artificial Intelligence', '/artificial-intelligence/'],
+            ['Web Design', '/web-design/']
           ]
         },
         {
@@ -66,6 +67,7 @@
             ['Supply Chain', '/supply-chain/', 'nav-sublink'],
             ['Energy & Infrastructure', '/energy-infrastructure/'],
             ['Industrial & Technology', '/industrial-technology/'],
+            ['Software', '/software/'],
             ['Small Businesses', '/small-business/']
           ]
         }
