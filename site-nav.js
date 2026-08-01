@@ -11,9 +11,9 @@
     .replace(/^\/|\/$/g, '')
     .toLowerCase();
   const routeRoot = route.split('/')[0];
-  const firmActive = ['about', 'careers'].includes(route);
+  const firmActive = ['about', 'careers', 'news'].includes(route);
   const workActive = ['solutions', 'industries', 'services', 'technology', 'engineering', 'modeling-data-analysis', 'artificial-intelligence', 'web-design', 'design-manufacturing', 'supply-chain', 'energy-infrastructure', 'industrial-technology', 'software', 'small-business'].includes(routeRoot);
-  const insightsActive = ['insights', 'research', 'market-views', 'way-through', 'visualization', 'notes-in-form', 'news'].includes(route) || route.startsWith('report-');
+  const insightsActive = ['insights', 'research', 'market-views', 'way-through', 'visualization', 'notes-in-form'].includes(route) || route.startsWith('report-');
   const mobileQuery = window.matchMedia('(max-width: 900px)');
 
   function localizeMarkup(container) {
@@ -39,7 +39,8 @@
           label: 'The Firm',
           links: [
             ['About', '/about/'],
-            ['Careers', '/careers/']
+            ['Careers', '/careers/'],
+            ['News', '/news/']
           ]
         }
       ]
@@ -83,8 +84,7 @@
             ['The Way Through', '/way-through/'],
             ['Research', '/research/'],
             ['Market Views', '/market-views/'],
-            ['Visualization', '/visualization/'],
-            ['News', '/news/']
+            ['Visualization', '/visualization/']
           ]
         }
       ]
