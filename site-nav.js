@@ -67,7 +67,6 @@
             ['Supply Chain', '/supply-chain/', 'nav-sublink'],
             ['Energy & Infrastructure', '/energy-infrastructure/'],
             ['Industrial & Technology', '/industrial-technology/'],
-            ['Software', '/software/'],
             ['Small Businesses', '/small-business/']
           ]
         }
