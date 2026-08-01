@@ -265,9 +265,22 @@
 
   document.querySelectorAll('canvas[data-digital-art]').forEach((canvas) => new DigitalField(canvas));
 
-  if (reduceMotion) {
-    document.querySelectorAll('.turtle-video').forEach((video) => {
-      video.addEventListener('loadeddata', () => video.pause(), { once: true });
+  document.querySelectorAll('.turtle-video').forEach((video) => {
+    const playLoop = () => {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.loop = true;
+      video.playsInline = true;
+      const playback = video.play();
+      if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+    };
+
+    if (video.readyState >= 2) playLoop();
+    else video.addEventListener('loadeddata', playLoop, { once: true });
+
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      playLoop();
     });
-  }
+  });
 })();
