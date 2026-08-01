@@ -10,10 +10,10 @@
   <meta name="theme-color" content="#071b2e">
   <link rel="stylesheet" href="../site.css">
   <link rel="stylesheet" href="../refinement.css?v=20260731-1">
-  <link rel="stylesheet" href="../digital-experience.css?v=20260731-1">
+  <link rel="stylesheet" href="../digital-experience.css?v=20260731-2">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
   <script src="../site-nav.js?v=20260731-1" defer></script>
-  <script src="../digital-experience.js?v=20260731-1" defer></script>
+  <script src="../digital-experience.js?v=20260731-2" defer></script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Service","name":"Web Design and UI Systems","provider":{"@type":"Organization","name":"SKAR Corporation","url":"https://skarcorporation.com/"},"serviceType":["Web design","User interface design","Interaction design","Front-end development"],"url":"https://skarcorporation.com/web-design/"}
   </script>
@@ -56,47 +56,49 @@
       </div>
     </section>
 
-    <section class="turtle-feature" id="featured-interaction" aria-labelledby="turtle-title">
-      <div class="turtle-feature-head">
-        <div><p class="eyebrow">Featured interaction · spatial UI</p><h2 id="turtle-title">A living object<br>inside the interface.</h2></div>
-        <p>Motion, refraction, and depth turn a familiar subject into a memorable digital moment. The experience remains quiet enough to support the page while giving the interface a physical presence.</p>
+    <section class="motion-library" id="featured-interaction" aria-labelledby="motion-library-title" data-motion-gallery data-motion-theme="turtle">
+      <div class="motion-library-head">
+        <div>
+          <p class="eyebrow">UI motion library</p>
+          <h2 id="motion-library-title">Four ways motion can shape an interface.</h2>
+        </div>
+        <p>Each study gives motion a specific role: expressing material, creating atmosphere, signaling transition, or establishing scale. Select a direction to see how the visual system changes.</p>
       </div>
-      <div class="turtle-stage" data-pointer-light>
-        <div class="turtle-color-field" aria-hidden="true"></div>
-        <video class="turtle-video" autoplay muted loop playsinline preload="auto" aria-label="A turtle swimming inside a translucent ice cube">
+
+      <div class="motion-stage" id="motion-stage-panel" data-pointer-light role="tabpanel" aria-labelledby="motion-tab-turtle" tabindex="0">
+        <div class="motion-color-field" aria-hidden="true"></div>
+        <video class="motion-video" autoplay muted loop playsinline preload="metadata" aria-label="A turtle swimming inside a translucent ice cube">
           <source src="../assets/turtle-ice-interface.mp4" type="video/mp4">
         </video>
-        <div class="turtle-stage-ui" aria-hidden="true">
-          <span>UI MOTION STUDY / 01</span>
-          <span>LIGHT · MATERIAL · BEHAVIOR</span>
+        <div class="motion-stage-shade" aria-hidden="true"></div>
+        <div class="motion-stage-meta" aria-live="polite">
+          <span data-motion-index>UI MOTION STUDY / 01</span>
+          <div>
+            <p data-motion-discipline>Material · refraction · depth</p>
+            <h3 data-motion-title>Refraction in motion</h3>
+            <p data-motion-description>Translucency and controlled movement create a tactile focal point without adding interface clutter.</p>
+          </div>
         </div>
+        <span class="motion-status" aria-hidden="true">Soundless loop</span>
       </div>
-      <div class="turtle-details">
-        <article><small>Material</small><strong>Translucency and refraction create depth without interface clutter.</strong></article>
-        <article><small>Behavior</small><strong>Continuous, soundless motion holds attention without demanding it.</strong></article>
-        <article><small>Context</small><strong>Pastel color fields make the object vivid across desktop and mobile displays.</strong></article>
-      </div>
-    </section>
 
-    <section class="interaction-gallery" aria-labelledby="interaction-gallery-title">
-      <div class="interaction-gallery-head">
-        <p class="eyebrow">Selected interaction systems</p>
-        <h2 id="interaction-gallery-title">Motion with a job to do.</h2>
-        <p>Each study explores a different interface responsibility: directing attention, explaining relationships, or making system behavior visible.</p>
-      </div>
-      <div class="interaction-gallery-grid">
-        <article class="interaction-card interaction-card-wide">
-          <div class="interaction-art interaction-art-flow"><canvas data-digital-art="flow" aria-hidden="true"></canvas></div>
-          <div><small>Attention architecture</small><h3>Guide the eye through change.</h3><p>Continuous fields make transitions legible and direct attention toward the next meaningful state.</p></div>
-        </article>
-        <article class="interaction-card">
-          <div class="interaction-art interaction-art-lattice"><canvas data-digital-art="lattice" aria-hidden="true"></canvas></div>
-          <div><small>Connected information</small><h3>Reveal relationships.</h3><p>Responsive geometry shows how elements influence one another without turning the page into a diagram.</p></div>
-        </article>
-        <article class="interaction-card interaction-card-warm">
-          <div class="interaction-art interaction-art-signal"><canvas data-digital-art="signal" aria-hidden="true"></canvas></div>
-          <div><small>Interface feedback</small><h3>Make state feel immediate.</h3><p>Light, color, and motion acknowledge input and make system response unmistakable.</p></div>
-        </article>
+      <div class="motion-selector" role="tablist" aria-label="Choose a UI motion study">
+        <button class="motion-option is-active" id="motion-tab-turtle" type="button" role="tab" aria-selected="true" aria-controls="motion-stage-panel" tabindex="0"
+          data-motion-key="turtle" data-motion-index="UI MOTION STUDY / 01" data-motion-title="Refraction in motion" data-motion-discipline="Material · refraction · depth" data-motion-description="Translucency and controlled movement create a tactile focal point without adding interface clutter." data-motion-src="../assets/turtle-ice-interface.mp4" data-motion-label="A turtle swimming inside a translucent ice cube">
+          <span>01</span><strong>Refraction</strong><small>Material depth</small>
+        </button>
+        <button class="motion-option" id="motion-tab-reef" type="button" role="tab" aria-selected="false" aria-controls="motion-stage-panel" tabindex="-1"
+          data-motion-key="reef" data-motion-index="UI MOTION STUDY / 02" data-motion-title="Reef passage" data-motion-discipline="Atmosphere · navigation · life" data-motion-description="Organic movement and saturated color turn a content transition into an immersive passage through space." data-motion-src="../assets/ui-motion-clownfish-coral.mp4" data-motion-label="A clownfish swimming through a vibrant coral environment">
+          <span>02</span><strong>Reef passage</strong><small>Spatial atmosphere</small>
+        </button>
+        <button class="motion-option" id="motion-tab-blossom" type="button" role="tab" aria-selected="false" aria-controls="motion-stage-panel" tabindex="-1"
+          data-motion-key="blossom" data-motion-index="UI MOTION STUDY / 03" data-motion-title="Seasonal signal" data-motion-discipline="Ambient · transition · rhythm" data-motion-description="Wind, branches, and drifting petals create a restrained visual cue for change, arrival, or renewal." data-motion-src="../assets/ui-motion-cherry-blossom.mp4" data-motion-label="Cherry blossom branches swaying as petals drift through the air">
+          <span>03</span><strong>Seasonal signal</strong><small>Ambient transition</small>
+        </button>
+        <button class="motion-option" id="motion-tab-iceberg" type="button" role="tab" aria-selected="false" aria-controls="motion-stage-panel" tabindex="-1"
+          data-motion-key="iceberg" data-motion-index="UI MOTION STUDY / 04" data-motion-title="Glacial scale" data-motion-discipline="Pacing · composition · scale" data-motion-description="Slow drift and open blue space establish magnitude and calm, giving editorial content room to feel consequential." data-motion-src="../assets/ui-motion-iceberg-ocean.mp4" data-motion-label="An iceberg drifting slowly through a deep blue ocean">
+          <span>04</span><strong>Glacial scale</strong><small>Cinematic pacing</small>
+        </button>
       </div>
     </section>
 

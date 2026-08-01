@@ -263,11 +263,86 @@
     }
   }
 
-  document.querySelectorAll('canvas[data-digital-art]').forEach((canvas) => new DigitalField(canvas));
+  class MotionGallery {
+    constructor(root) {
+      this.root = root;
+      this.stage = root.querySelector('.motion-stage');
+      this.video = root.querySelector('.motion-video');
+      this.source = this.video ? this.video.querySelector('source') : null;
+      this.buttons = Array.from(root.querySelectorAll('.motion-option'));
+      this.fields = {
+        index: root.querySelector('[data-motion-index]'),
+        discipline: root.querySelector('[data-motion-discipline]'),
+        title: root.querySelector('[data-motion-title]'),
+        description: root.querySelector('[data-motion-description]')
+      };
 
-  if (reduceMotion) {
-    document.querySelectorAll('.turtle-video').forEach((video) => {
-      video.addEventListener('loadeddata', () => video.pause(), { once: true });
-    });
+      if (!this.stage || !this.video || !this.source || !this.buttons.length) return;
+
+      this.video.addEventListener('loadstart', () => this.stage.classList.add('is-loading'));
+      this.video.addEventListener('loadeddata', () => {
+        this.stage.classList.remove('is-loading');
+        if (reduceMotion) {
+          this.video.pause();
+          this.video.currentTime = 0;
+        } else {
+          this.video.play().catch(() => {});
+        }
+      });
+
+      this.buttons.forEach((button, index) => {
+        button.addEventListener('click', () => this.select(button));
+        button.addEventListener('keydown', (event) => this.onKeydown(event, index));
+      });
+
+      if (reduceMotion && this.video.readyState >= 2) {
+        this.video.pause();
+        this.video.currentTime = 0;
+      }
+    }
+
+    select(button) {
+      this.buttons.forEach((candidate) => {
+        const active = candidate === button;
+        candidate.classList.toggle('is-active', active);
+        candidate.setAttribute('aria-selected', String(active));
+        candidate.tabIndex = active ? 0 : -1;
+      });
+
+      this.root.dataset.motionTheme = button.dataset.motionKey;
+      this.stage.setAttribute('aria-labelledby', button.id);
+      this.fields.index.textContent = button.dataset.motionIndex;
+      this.fields.discipline.textContent = button.dataset.motionDiscipline;
+      this.fields.title.textContent = button.dataset.motionTitle;
+      this.fields.description.textContent = button.dataset.motionDescription;
+      this.video.setAttribute('aria-label', button.dataset.motionLabel);
+
+      const nextSource = button.dataset.motionSrc;
+      if (this.source.getAttribute('src') !== nextSource) {
+        this.stage.classList.add('is-loading');
+        this.video.pause();
+        this.source.setAttribute('src', nextSource);
+        this.video.load();
+      } else if (!reduceMotion) {
+        this.video.play().catch(() => {});
+      }
+    }
+
+    onKeydown(event, currentIndex) {
+      let nextIndex = currentIndex;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex += 1;
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex -= 1;
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = this.buttons.length - 1;
+      else return;
+
+      event.preventDefault();
+      const button = this.buttons[(nextIndex + this.buttons.length) % this.buttons.length];
+      button.focus();
+      this.select(button);
+    }
   }
+
+  document.querySelectorAll('canvas[data-digital-art]').forEach((canvas) => new DigitalField(canvas));
+  document.querySelectorAll('[data-motion-gallery]').forEach((gallery) => new MotionGallery(gallery));
 })();
