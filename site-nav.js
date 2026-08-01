@@ -80,6 +80,7 @@
         {
           label: 'Insights',
           links: [
+            ['Overview', '/insights/'],
             ['The Way Through', '/way-through/'],
             ['Research', '/research/'],
             ['Market Views', '/market-views/'],

@@ -1,4 +1,69 @@
 (() => {
+  const directoryTopics = {
+    all: {
+      kicker: 'Featured insight · Industry 4.0',
+      title: 'The next operating system of industry.',
+      description: 'How industrial systems are becoming observable, computational, and increasingly adaptive.',
+      href: '/report-industry-4-0/',
+      linkText: 'Read the report'
+    },
+    research: {
+      kicker: 'Independent research',
+      title: 'The next operating system of industry.',
+      description: 'A detailed examination of connected operations, digital twins, intelligent automation, and the transition now reshaping industrial work.',
+      href: '/report-industry-4-0/',
+      linkText: 'Read the report'
+    },
+    models: {
+      kicker: 'Computational models',
+      title: 'Make governing behavior visible.',
+      description: 'Nonlinear dynamics, parametric geometry, simulation, and uncertainty expressed as evolving mathematical systems.',
+      href: '/visualization/',
+      linkText: 'Explore the studies'
+    },
+    markets: {
+      kicker: 'Markets and strategy',
+      title: 'Translate external change into internal choices.',
+      description: 'Signals in capital, technology, energy, and industrial capacity interpreted through the decisions they affect.',
+      href: '/market-views/',
+      linkText: 'Open Market Views'
+    },
+    energy: {
+      kicker: 'Energy and infrastructure',
+      title: 'Planning for load growth.',
+      description: 'A scenario-based decision framework for rapidly rising data-center electricity demand and long-horizon infrastructure commitments.',
+      href: '/report-data-center-demand/',
+      linkText: 'Read the analysis'
+    },
+    practice: {
+      kicker: 'Leadership and practice',
+      title: 'The Way Through.',
+      description: 'Conversations and practical lessons from people who navigate difficult decisions, real constraints, and consequential work.',
+      href: '/way-through/',
+      linkText: 'Discover the series'
+    }
+  };
+
+  const topicSelect = document.querySelector('[data-insights-topic]');
+  const directoryFeature = document.querySelector('.insights-directory-feature');
+  if (topicSelect && directoryFeature) {
+    const kicker = directoryFeature.querySelector('[data-directory-kicker]');
+    const title = directoryFeature.querySelector('[data-directory-title]');
+    const description = directoryFeature.querySelector('[data-directory-description]');
+    const link = directoryFeature.querySelector('[data-directory-link]');
+
+    topicSelect.addEventListener('change', () => {
+      const topic = directoryTopics[topicSelect.value] || directoryTopics.all;
+      kicker.textContent = topic.kicker;
+      title.textContent = topic.title;
+      description.textContent = topic.description;
+      link.firstChild.textContent = `${topic.linkText} `;
+      link.href = topic.href;
+      directoryFeature.classList.remove('is-changing');
+      requestAnimationFrame(() => directoryFeature.classList.add('is-changing'));
+    });
+  }
+
   const consoleElement = document.querySelector('[data-insights-console]');
   if (!consoleElement) return;
 
