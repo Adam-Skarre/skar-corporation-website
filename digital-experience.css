@@ -12,7 +12,7 @@
 .digital-page .eyebrow{color:#8fbdff}
 .digital-hero{position:relative;isolation:isolate;min-height:780px;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(420px,.98fr);align-items:center;overflow:hidden;padding:clamp(90px,10vw,150px) max(6vw,48px);background:linear-gradient(135deg,#051a2d 0%,#071f36 52%,#0a1630 100%)}
 .digital-hero:before{content:"";position:absolute;inset:0;z-index:-3;background:repeating-linear-gradient(90deg,transparent 0 99px,rgba(126,186,255,.045) 100px),repeating-linear-gradient(0deg,transparent 0 99px,rgba(126,186,255,.035) 100px)}
-.digital-hero:after{content:"";position:absolute;z-index:-2;inset:-20%;pointer-events:none;background:radial-gradient(520px circle at var(--pointer-x,75%) var(--pointer-y,48%),rgba(76,183,255,.16),transparent 68%);transition:background-position .15s linear}
+.digital-hero:after{content:"";position:absolute;z-index:-2;left:var(--pointer-x,75%);top:var(--pointer-y,48%);width:min(520px,70vw);aspect-ratio:1;pointer-events:none;background:radial-gradient(circle,rgba(76,183,255,.16),transparent 68%);transform:translate(-50%,-50%)}
 .digital-hero-copy{position:relative;z-index:3;max-width:840px}
 .digital-hero h1{margin:24px 0 30px;font-size:clamp(68px,7.4vw,126px);line-height:.86;letter-spacing:-.072em;color:#fff}
 .digital-hero h1 span{display:inline;color:transparent;background:linear-gradient(100deg,#73abff 8%,#76f4e7 48%,#cf8cff 90%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 22px rgba(84,170,255,.2))}
@@ -32,10 +32,7 @@
 .web-design-hero{background:linear-gradient(132deg,#06192b 0%,#071c35 41%,#170f35 100%)}
 .web-hero-stage{position:relative;z-index:2;width:min(48vw,760px);height:min(48vw,760px);justify-self:end;filter:drop-shadow(0 30px 80px rgba(19,92,176,.3))}
 .web-hero-stage canvas{position:absolute;inset:0;width:100%;height:100%}
-.web-hero-orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(125,211,255,.2);border-radius:50%;transform:translate(-50%,-50%) rotate(28deg);animation:webOrbit 14s linear infinite}
-.web-hero-orbit-a{width:82%;height:52%}.web-hero-orbit-b{width:62%;height:88%;animation-duration:19s;animation-direction:reverse}
 .web-hero-coordinate{position:absolute;right:8%;bottom:8%;font-size:9px;font-weight:800;letter-spacing:.2em;color:#8fb2d4}
-@keyframes webOrbit{to{transform:translate(-50%,-50%) rotate(388deg)}}
 .web-principles{padding:110px 8vw 120px;background:var(--digital-cream);color:#132538;display:grid;grid-template-columns:.9fr 1.1fr;column-gap:8vw}
 .web-principles-lead h2,.interaction-gallery h2,.turtle-feature h2,.web-engagement h2,.software-thesis h2,.software-decisions h2,.software-evidence h2{margin:16px 0 0;font-size:clamp(48px,5.4vw,88px);line-height:.94;letter-spacing:-.06em}
 .web-principles-copy{display:flex;align-items:flex-end;padding-bottom:8px}
@@ -118,7 +115,7 @@
   .web-engagement-list{margin-top:36px}.web-engagement-list article{grid-template-columns:100px 1fr;gap:20px}.digital-cta{padding:58px 24px;align-items:flex-start;flex-direction:column}.digital-cta a{width:100%;justify-content:space-between}
   .software-thesis>p{margin-top:32px;font-size:17px}.software-stack{padding-bottom:82px}.software-layer{grid-template-columns:1fr;gap:10px;padding:27px 0}.software-layer h3{margin:5px 0 6px}.software-layer p{margin:0}.software-decisions-grid{grid-template-columns:1fr}.software-decisions-grid article,.software-decisions-grid article:nth-child(n){grid-column:auto;min-height:260px;padding:28px}.software-decisions-grid h3{margin:44px 0 12px}.software-evidence-rail article{grid-template-columns:1fr;gap:12px}
 }
-@media (prefers-reduced-motion:reduce){.digital-aurora i,.web-hero-orbit,.turtle-color-field{animation:none!important}.digital-button,.software-layer:before{transition:none}}
+@media (prefers-reduced-motion:reduce){.digital-aurora i,.turtle-color-field{animation:none!important}.digital-button,.software-layer:before{transition:none}}
 @media (color-gamut:p3){
   .digital-hero h1 span{background:linear-gradient(100deg,color(display-p3 .39 .65 1),color(display-p3 .31 1 .86),color(display-p3 .78 .42 1));-webkit-background-clip:text;background-clip:text}
   .turtle-stage{background:linear-gradient(125deg,color(display-p3 .58 1 .89),color(display-p3 .76 .78 1),color(display-p3 1 .61 .83))}
