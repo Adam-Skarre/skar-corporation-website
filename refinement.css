@@ -4488,6 +4488,40 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .solutions-process-panel{animation:none}
 }
 
+/* Home problem pathways */
+.problem-pathways{display:grid;grid-template-columns:minmax(300px,31vw) 1fr;min-height:760px;overflow:hidden;border-top:1px solid #d7e0e7;border-bottom:1px solid #d7e0e7;background:#f4f7f9}
+.problem-pathways-image{position:relative;min-height:100%;background:#7890a5 url("/assets/skar-new-york-editorial.jpg") 23% center/cover no-repeat}
+.problem-pathways-image:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,30,51,.02),rgba(7,30,51,.25)),linear-gradient(90deg,transparent 72%,rgba(244,247,249,.18))}
+.problem-pathways-content{min-width:0;padding:clamp(70px,6vw,104px) clamp(34px,4.5vw,82px) clamp(64px,5vw,88px)}
+.problem-pathways-heading{display:grid;grid-template-columns:180px minmax(0,930px);gap:clamp(30px,4vw,74px);align-items:start;margin-bottom:clamp(44px,4vw,68px)}
+.problem-pathways-heading .eyebrow{margin:10px 0 0;color:#3974c9}
+.problem-pathways-heading h2{margin:0;color:#17232e;font-size:clamp(48px,4.6vw,78px);font-weight:440;line-height:1.02;letter-spacing:-.052em}
+.problem-pathways-heading h2 span{color:#3978d4}
+.problem-pathways-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.problem-pathway{min-width:0;min-height:430px;padding:30px 27px 27px;display:flex;flex-direction:column;border:1px solid #d9e2e9;background:rgba(255,255,255,.72);transition:transform .28s cubic-bezier(.2,.75,.25,1),background .28s ease,border-color .28s ease,box-shadow .28s ease}
+.problem-pathway:hover,.problem-pathway:focus-visible{transform:translateY(-8px);border-color:#aac3de;background:#fff;box-shadow:0 24px 50px rgba(19,45,69,.11);outline:none}
+.problem-pathway svg{width:48px;height:48px;overflow:visible;fill:none;stroke:#3683bb;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
+.problem-pathway small{min-height:30px;margin-top:27px;color:#3972b8;font-size:8px;font-weight:850;line-height:1.45;letter-spacing:.16em}
+.problem-pathway h3{margin:24px 0 16px;color:#172936;font-size:clamp(22px,1.55vw,29px);font-weight:560;line-height:1.08;letter-spacing:-.035em}
+.problem-pathway p{margin:0;color:#607180;font-size:14px;line-height:1.62}
+.problem-pathway>span{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:auto;padding-top:30px;color:#246eaa;font-size:11px;font-weight:750}
+.problem-pathway>span b{font-size:17px;font-weight:450;transition:transform .25s ease}.problem-pathway:hover>span b{transform:translateX(4px)}
+@media(max-width:1200px){
+  .problem-pathways{grid-template-columns:minmax(260px,29vw) 1fr}
+  .problem-pathways-heading{grid-template-columns:1fr;gap:16px}.problem-pathways-heading .eyebrow{margin:0}
+  .problem-pathways-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .problem-pathway{min-height:340px}
+}
+@media(max-width:760px){
+  .problem-pathways{grid-template-columns:1fr}
+  .problem-pathways-image{min-height:360px;background-position:24% 48%}
+  .problem-pathways-content{padding:64px 22px 72px}
+  .problem-pathways-heading{margin-bottom:38px}.problem-pathways-heading h2{font-size:clamp(46px,13.5vw,62px)}
+  .problem-pathways-grid{grid-template-columns:1fr;gap:12px}
+  .problem-pathway{min-height:310px;padding:28px 25px 25px}
+}
+@media(prefers-reduced-motion:reduce){.problem-pathway,.problem-pathway>span b{transition:none}}
+
 /* Faint mountain engraving across the global footer */
 .footer{
   position:relative;
