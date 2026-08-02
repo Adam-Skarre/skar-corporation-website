@@ -4487,3 +4487,31 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .solutions-process-tab,.solutions-process-tab:before,.solutions-process-tab:after{transition:none}
   .solutions-process-panel{animation:none}
 }
+
+/* Faint mountain engraving across the global footer */
+.footer{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+.footer::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  background:url("/assets/footer-mountain-sketch.jpg") center bottom/cover no-repeat;
+  opacity:.10;
+  filter:invert(1) grayscale(1) contrast(1.12) brightness(1.08);
+  mix-blend-mode:screen;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.12) 20%,rgba(0,0,0,.72) 52%,#000 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.12) 20%,rgba(0,0,0,.72) 52%,#000 100%);
+}
+.footer>*{position:relative;z-index:1}
+@media(max-width:760px){
+  .footer::before{
+    background-size:auto 62%;
+    background-position:center bottom;
+    opacity:.08;
+  }
+}
