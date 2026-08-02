@@ -56,6 +56,20 @@
 .turtle-details article:not(:first-child){padding-left:42px}.turtle-details article:last-child{border-right:0}
 .turtle-details small{display:block;margin-bottom:20px;color:#82b5ed;font-size:9px;font-weight:800;letter-spacing:.17em;text-transform:uppercase}
 .turtle-details strong{font-size:16px;line-height:1.55;font-weight:540;color:#d7e3ef}
+.ui-motion-library{padding:clamp(84px,10vw,148px) clamp(24px,7vw,116px);background:#f2f5f8;color:#071d31}
+.ui-motion-library-head{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.65fr);gap:clamp(48px,8vw,140px);align-items:end;margin-bottom:clamp(48px,6vw,86px)}
+.ui-motion-library-head h2{font-size:clamp(2.8rem,5.4vw,6.25rem);line-height:.92;letter-spacing:-.065em;margin:15px 0 0}
+.ui-motion-library-head>p{max-width:620px;color:#607286;font-size:clamp(1.05rem,1.35vw,1.35rem);line-height:1.65;margin:0 0 7px}
+.ui-motion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,2.5vw,42px)}
+.ui-motion-card{background:#fff;border:1px solid #cbd7e2;min-width:0;overflow:hidden;transition:transform .4s cubic-bezier(.2,.75,.2,1),box-shadow .4s ease}
+.ui-motion-card:hover{transform:translateY(-5px);box-shadow:0 24px 58px rgba(8,34,58,.12)}
+.ui-motion-media{position:relative;aspect-ratio:16/10;overflow:hidden;background:#081f35}
+.ui-motion-media video{width:100%;height:100%;display:block;object-fit:cover;transition:transform .9s cubic-bezier(.2,.75,.2,1)}
+.ui-motion-card:hover .ui-motion-media video{transform:scale(1.018)}
+.ui-motion-media span{position:absolute;left:22px;top:20px;padding:8px 11px;background:rgba(2,18,33,.72);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(10px);color:#fff;text-transform:uppercase;letter-spacing:.16em;font-size:.66rem;font-weight:800}
+.ui-motion-copy{display:grid;grid-template-columns:minmax(0,.7fr) minmax(220px,1fr);gap:30px;padding:clamp(25px,3vw,42px)}
+.ui-motion-copy h3{font-size:clamp(1.55rem,2vw,2.35rem);letter-spacing:-.045em;line-height:1.02;margin:0}
+.ui-motion-copy p{color:#617286;line-height:1.65;margin:0;font-size:.96rem}
 .interaction-gallery{padding:120px 7vw 140px;background:#eef5fb;color:#10273b}
 .interaction-gallery-head{display:grid;grid-template-columns:.85fr 1.15fr;gap:7vw;align-items:end;margin-bottom:66px}
 .interaction-gallery-head .eyebrow{grid-column:1/-1;color:#5278f4}.interaction-gallery-head h2{max-width:720px}
@@ -102,11 +116,13 @@
 .digital-cta p{margin:0;font-size:clamp(30px,3.5vw,56px);font-weight:690;letter-spacing:-.045em}.digital-cta a{display:inline-flex;gap:30px;min-height:54px;align-items:center;padding:0 22px;border:1px solid rgba(255,255,255,.7);font-size:12px;font-weight:800;white-space:nowrap}
 
 @media (max-width:1050px){
+  .ui-motion-library-head{grid-template-columns:1fr;gap:28px}.ui-motion-copy{grid-template-columns:1fr;gap:14px}
   .digital-hero{grid-template-columns:1fr;min-height:1020px;padding-bottom:510px}.digital-hero-copy{max-width:860px}.web-hero-stage,.software-hero-map{position:absolute;width:min(88vw,680px);height:min(88vw,680px);right:5%;bottom:-7%}
   .web-principles,.turtle-feature-head,.web-engagement,.software-thesis,.software-decisions-head,.software-evidence{grid-template-columns:1fr}.web-principles-copy{margin-top:35px}.interaction-gallery-head{grid-template-columns:1fr}.interaction-gallery-head .eyebrow{grid-column:auto}.interaction-gallery-grid{grid-template-columns:1fr 1fr}.interaction-card-wide{grid-column:1/-1;grid-row:auto;min-height:720px}.interaction-card-wide .interaction-art{min-height:450px}
   .software-layer{grid-template-columns:120px 1fr 1.3fr}.software-layer b{display:none}.software-decisions-grid article,.software-decisions-grid article:nth-child(n){grid-column:span 6}.software-evidence-rail{margin-top:35px}
 }
 @media (max-width:760px){
+  .ui-motion-library{padding:78px 22px}.ui-motion-grid{grid-template-columns:1fr}.ui-motion-library-head h2{font-size:clamp(2.8rem,14vw,4.4rem)}.ui-motion-copy{padding:24px}.ui-motion-media span{left:15px;top:15px}.ui-motion-card:hover{transform:none}
   .digital-hero{min-height:860px;padding:74px 24px 330px;grid-template-columns:1fr}.digital-hero h1{font-size:clamp(54px,16vw,76px);line-height:.89}.digital-hero-copy>p:not(.eyebrow){font-size:17px}.digital-hero-actions{align-items:flex-start;flex-direction:column;gap:22px}.web-hero-stage,.software-hero-map{width:105vw;height:105vw;right:-20vw;bottom:-12vw;opacity:.78}.web-hero-coordinate,.software-map-labels{display:none}
   .web-principles,.turtle-feature,.interaction-gallery,.web-engagement,.software-thesis,.software-stack,.software-decisions,.software-evidence{padding-left:24px;padding-right:24px}.web-principles,.turtle-feature,.interaction-gallery,.web-engagement,.software-thesis,.software-decisions,.software-evidence{padding-top:76px;padding-bottom:82px}.web-principles-lead h2,.interaction-gallery h2,.turtle-feature h2,.web-engagement h2,.software-thesis h2,.software-decisions h2,.software-evidence h2{font-size:clamp(43px,13vw,58px)}
   .web-principles-grid{grid-template-columns:1fr;margin-top:44px}.web-principles-grid article,.web-principles-grid article:not(:first-child){padding:26px 0;border-right:0;border-bottom:1px solid #d4dade;min-height:0}.web-principles-grid h3{margin:24px 0 10px}
@@ -115,7 +131,7 @@
   .web-engagement-list{margin-top:36px}.web-engagement-list article{grid-template-columns:100px 1fr;gap:20px}.digital-cta{padding:58px 24px;align-items:flex-start;flex-direction:column}.digital-cta a{width:100%;justify-content:space-between}
   .software-thesis>p{margin-top:32px;font-size:17px}.software-stack{padding-bottom:82px}.software-layer{grid-template-columns:1fr;gap:10px;padding:27px 0}.software-layer h3{margin:5px 0 6px}.software-layer p{margin:0}.software-decisions-grid{grid-template-columns:1fr}.software-decisions-grid article,.software-decisions-grid article:nth-child(n){grid-column:auto;min-height:260px;padding:28px}.software-decisions-grid h3{margin:44px 0 12px}.software-evidence-rail article{grid-template-columns:1fr;gap:12px}
 }
-@media (prefers-reduced-motion:reduce){.digital-aurora i,.turtle-color-field{animation:none!important}.digital-button,.software-layer:before{transition:none}}
+@media (prefers-reduced-motion:reduce){.digital-aurora i,.turtle-color-field{animation:none!important}.digital-button,.software-layer:before,.ui-motion-card,.ui-motion-media video{transition:none!important}}
 @media (color-gamut:p3){
   .digital-hero h1 span{background:linear-gradient(100deg,color(display-p3 .39 .65 1),color(display-p3 .31 1 .86),color(display-p3 .78 .42 1));-webkit-background-clip:text;background-clip:text}
   .turtle-stage{background:linear-gradient(125deg,color(display-p3 .58 1 .89),color(display-p3 .76 .78 1),color(display-p3 1 .61 .83))}
