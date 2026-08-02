@@ -7,11 +7,48 @@
   const lerp = (a, b, amount) => a + (b - a) * amount;
 
   document.querySelectorAll('[data-pointer-light]').forEach((surface) => {
+    if (reduceMotion) return;
     surface.addEventListener('pointermove', (event) => {
       const bounds = surface.getBoundingClientRect();
       surface.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`);
       surface.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`);
     }, { passive: true });
+  });
+
+  document.querySelectorAll('[data-lumora]').forEach((hero) => {
+    const scenes = Array.from(hero.querySelectorAll('[data-lumora-scene-media]'));
+    const controls = Array.from(hero.querySelectorAll('[data-lumora-scene]'));
+    let activeScene = 0;
+    let timer;
+
+    const showScene = (index) => {
+      activeScene = (index + scenes.length) % scenes.length;
+      scenes.forEach((scene, sceneIndex) => scene.classList.toggle('is-active', sceneIndex === activeScene));
+      controls.forEach((control, controlIndex) => {
+        const isActive = controlIndex === activeScene;
+        control.classList.toggle('is-active', isActive);
+        control.setAttribute('aria-pressed', String(isActive));
+      });
+      const activeMedia = scenes[activeScene];
+      const video = activeMedia instanceof HTMLVideoElement ? activeMedia : activeMedia.querySelector('video');
+      if (!video) return;
+      const playback = video.play();
+      if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+    };
+
+    const startCycle = () => {
+      if (reduceMotion || scenes.length < 2) return;
+      window.clearInterval(timer);
+      timer = window.setInterval(() => showScene(activeScene + 1), 8000);
+    };
+
+    controls.forEach((control, index) => {
+      control.addEventListener('click', () => {
+        showScene(index);
+        startCycle();
+      });
+    });
+    startCycle();
   });
 
   class DigitalField {
@@ -62,13 +99,15 @@
         this.running = entries[0].isIntersecting;
       }, { rootMargin: '160px' });
       this.visibility.observe(this.canvas);
-      this.canvas.addEventListener('pointermove', (event) => {
-        const bounds = this.canvas.getBoundingClientRect();
-        this.pointer.x = clamp((event.clientX - bounds.left) / bounds.width, 0, 1);
-        this.pointer.y = clamp((event.clientY - bounds.top) / bounds.height, 0, 1);
-        this.pointer.active = true;
-      }, { passive: true });
-      this.canvas.addEventListener('pointerleave', () => { this.pointer.active = false; }, { passive: true });
+      if (!reduceMotion) {
+        this.canvas.addEventListener('pointermove', (event) => {
+          const bounds = this.canvas.getBoundingClientRect();
+          this.pointer.x = clamp((event.clientX - bounds.left) / bounds.width, 0, 1);
+          this.pointer.y = clamp((event.clientY - bounds.top) / bounds.height, 0, 1);
+          this.pointer.active = true;
+        }, { passive: true });
+        this.canvas.addEventListener('pointerleave', () => { this.pointer.active = false; }, { passive: true });
+      }
     }
 
     resize() {
@@ -86,9 +125,7 @@
         const elapsed = reduceMotion ? 2.4 : (now - this.start) / 1000;
         this.context.clearRect(0, 0, this.width, this.height);
         if (this.mode === 'interface') this.drawInterface(elapsed);
-        if (this.mode === 'flow') this.drawFlow(elapsed);
         if (this.mode === 'lattice') this.drawLattice(elapsed);
-        if (this.mode === 'signal') this.drawSignal(elapsed);
         if (this.mode === 'software') this.drawSoftware(elapsed);
       }
       requestAnimationFrame(this.frame);
@@ -140,26 +177,103 @@
       ctx.restore();
     }
 
-    drawFlow(t) {
+    drawBloom(t) {
       const ctx = this.context;
-      const bands = 52;
-      const center = this.height * 0.5;
+      const scale = Math.min(this.width, this.height) * 0.5;
+      const centerX = this.width * 0.5;
+      const centerY = this.height * 0.42;
+      const rotation = t * 0.16 + (this.pointer.active ? (this.pointer.x - 0.5) * 0.38 : 0);
+      const tilt = 1.03 + (this.pointer.active ? (this.pointer.y - 0.5) * 0.14 : 0);
+      const cosRotation = Math.cos(rotation);
+      const sinRotation = Math.sin(rotation);
+      const cosTilt = Math.cos(tilt);
+      const sinTilt = Math.sin(tilt);
+      const evolution = (Math.sin(t * 0.32 - Math.PI / 2) + 1) * 0.5;
+      const opening = lerp(0.88, 1, evolution);
+      const droop = lerp(0.075, 0.275, evolution);
+      const focal = scale * 3.9;
+      const foldCount = 10;
+
       ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      for (let band = 0; band < bands; band += 1) {
-        const offset = (band - bands / 2) * 5.5;
-        const color = band < bands * 0.34 ? '112,236,229' : band < bands * 0.68 ? '108,167,255' : '201,116,255';
-        ctx.beginPath();
-        for (let x = -20; x <= this.width + 20; x += 8) {
-          const p = x / this.width;
-          const envelope = Math.sin(Math.PI * clamp(p, 0, 1));
-          const y = center + offset * (0.3 + envelope * 0.8) + Math.sin(p * TAU * 1.75 + t * 0.42 + band * 0.045) * this.height * 0.13 * envelope + Math.cos(p * TAU * 3.4 - t * 0.28) * 18;
-          if (x === -20) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      ctx.strokeStyle = 'rgba(142,80,27,.92)';
+      ctx.lineWidth = Math.max(6, scale * 0.022);
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY + scale * 0.03);
+      ctx.bezierCurveTo(centerX + scale * 0.025, centerY + scale * 0.32, centerX - scale * 0.08, centerY + scale * 0.72, centerX - scale * 0.055, this.height + 20);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(237,151,58,.22)';
+      ctx.lineWidth = Math.max(1.5, scale * 0.004);
+      ctx.stroke();
+
+      const renderedPaths = [];
+      this.bloomPaths.forEach((path) => {
+        for (let fold = 0; fold < foldCount; fold += 1) {
+          const foldAngle = fold / foldCount * TAU;
+          let depthTotal = 0;
+          const points = path.points.map((point) => {
+            const angle = foldAngle + point.lateral * lerp(0.72, 1.05, evolution);
+            const radius = scale * (0.045 + point.reach * 0.75 * opening + point.radialWarp);
+            const worldX = Math.cos(angle) * radius;
+            const worldZ = Math.sin(angle) * radius;
+            const worldY = scale * (-0.065 + droop * Math.pow(point.reach, 1.72) + point.lift * lerp(0.62, 1, evolution));
+            const rotatedX = worldX * cosRotation - worldZ * sinRotation;
+            const rotatedZ = worldX * sinRotation + worldZ * cosRotation;
+            const tiltedY = worldY * cosTilt - rotatedZ * sinTilt;
+            const depth = worldY * sinTilt + rotatedZ * cosTilt;
+            const perspective = focal / (focal + depth);
+            depthTotal += depth;
+            return {
+              x: centerX + rotatedX * perspective,
+              y: centerY + tiltedY * perspective,
+              depth,
+              reach: point.reach,
+              phase: point.phase,
+              perspective
+            };
+          });
+          renderedPaths.push({
+            points,
+            pathIndex: path.pathIndex,
+            fold,
+            depth: depthTotal / points.length
+          });
         }
-        ctx.strokeStyle = `rgba(${color},${0.035 + (1 - Math.abs(band - bands / 2) / (bands / 2)) * 0.075})`;
-        ctx.lineWidth = band % 8 === 0 ? 1.25 : 0.58;
+      });
+      renderedPaths.sort((a, b) => b.depth - a.depth);
+
+      ctx.globalCompositeOperation = 'lighter';
+      renderedPaths.forEach((path) => {
+        const warm = path.pathIndex % 3;
+        ctx.strokeStyle = warm === 0 ? 'rgba(255,73,55,.13)' : warm === 1 ? 'rgba(255,113,75,.115)' : 'rgba(255,159,112,.1)';
+        ctx.lineWidth = path.pathIndex % 5 === 0 ? 0.9 : 0.48;
+        ctx.beginPath();
+        path.points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y); else ctx.lineTo(point.x, point.y);
+        });
         ctx.stroke();
-      }
+
+        for (let index = 2; index < path.points.length; index += 3) {
+          const point = path.points[index];
+          const fringe = clamp((point.reach - 0.68) / 0.32, 0, 1);
+          const shimmer = 0.78 + Math.sin(t * 0.85 + point.phase + path.fold) * 0.14;
+          ctx.fillStyle = fringe > 0.18
+            ? `rgba(${lerp(255,190,fringe)},${lerp(119,188,fringe)},${lerp(82,242,fringe)},${(0.18 + fringe * 0.34) * shimmer})`
+            : `rgba(255,${74 + warm * 20},${54 + warm * 12},${0.2 * shimmer})`;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, (0.48 + fringe * 0.82) * point.perspective, 0, TAU);
+          ctx.fill();
+        }
+      });
+
+      const core = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, scale * 0.12);
+      core.addColorStop(0, 'rgba(255,218,165,.82)');
+      core.addColorStop(0.32, 'rgba(255,101,64,.48)');
+      core.addColorStop(1, 'rgba(194,31,48,0)');
+      ctx.fillStyle = core;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, scale * 0.12, 0, TAU);
+      ctx.fill();
       ctx.restore();
     }
 
@@ -189,30 +303,6 @@
         ctx.fillStyle = index % 6 === 0 ? 'rgba(123,245,225,.8)' : 'rgba(135,174,255,.56)';
         ctx.beginPath(); ctx.arc(point.x, point.y, point.size, 0, TAU); ctx.fill();
       });
-      ctx.restore();
-    }
-
-    drawSignal(t) {
-      const ctx = this.context;
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const glow = ctx.createRadialGradient(this.width * 0.62, this.height * 0.5, 0, this.width * 0.62, this.height * 0.5, this.width * 0.34);
-      glow.addColorStop(0, 'rgba(255,113,184,.18)');
-      glow.addColorStop(0.5, 'rgba(101,145,255,.08)');
-      glow.addColorStop(1, 'rgba(2,17,31,0)');
-      ctx.fillStyle = glow; ctx.fillRect(0, 0, this.width, this.height);
-      for (let line = 0; line < 30; line += 1) {
-        ctx.beginPath();
-        for (let x = -10; x <= this.width + 10; x += 5) {
-          const p = x / this.width;
-          const pulse = Math.exp(-Math.pow((p - ((t * 0.055 + line * 0.027) % 1.4 - 0.2)) * 6, 2));
-          const y = this.height * 0.5 + (line - 15) * 5.2 + Math.sin(p * TAU * 2.15 + line * 0.17 - t * 0.8) * (12 + pulse * 72);
-          if (x === -10) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = line % 3 === 0 ? 'rgba(255,129,192,.14)' : line % 3 === 1 ? 'rgba(113,243,229,.13)' : 'rgba(119,159,255,.12)';
-        ctx.lineWidth = line % 7 === 0 ? 1.35 : 0.65;
-        ctx.stroke();
-      }
       ctx.restore();
     }
 
@@ -264,23 +354,4 @@
   }
 
   document.querySelectorAll('canvas[data-digital-art]').forEach((canvas) => new DigitalField(canvas));
-
-  document.querySelectorAll('.turtle-video').forEach((video) => {
-    const playLoop = () => {
-      video.muted = true;
-      video.defaultMuted = true;
-      video.loop = true;
-      video.playsInline = true;
-      const playback = video.play();
-      if (playback && typeof playback.catch === 'function') playback.catch(() => {});
-    };
-
-    if (video.readyState >= 2) playLoop();
-    else video.addEventListener('loadeddata', playLoop, { once: true });
-
-    video.addEventListener('ended', () => {
-      video.currentTime = 0;
-      playLoop();
-    });
-  });
 })();
