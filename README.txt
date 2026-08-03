@@ -1,4 +1,4 @@
-SKAR CORPORATION WEBSITE
+SKAR TECHNOLOGIES INC. WEBSITE
 
 Open skar.html to view the website locally.
 
