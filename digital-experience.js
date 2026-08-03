@@ -19,36 +19,104 @@
     const scenes = Array.from(hero.querySelectorAll('[data-lumora-scene-media]'));
     const controls = Array.from(hero.querySelectorAll('[data-lumora-scene]'));
     let activeScene = 0;
-    let timer;
+    let transitionToken = 0;
+    let isOnScreen = true;
 
-    const showScene = (index) => {
-      activeScene = (index + scenes.length) % scenes.length;
-      scenes.forEach((scene, sceneIndex) => scene.classList.toggle('is-active', sceneIndex === activeScene));
+    const getVideo = (scene) => scene instanceof HTMLVideoElement ? scene : scene.querySelector('video');
+    const pauseInactiveScenes = () => {
+      scenes.forEach((scene, sceneIndex) => {
+        const video = getVideo(scene);
+        if (video && sceneIndex !== activeScene) video.pause();
+      });
+    };
+
+    const updateControls = (index) => {
       controls.forEach((control, controlIndex) => {
-        const isActive = controlIndex === activeScene;
+        const isActive = controlIndex === index;
         control.classList.toggle('is-active', isActive);
         control.setAttribute('aria-pressed', String(isActive));
       });
-      const activeMedia = scenes[activeScene];
-      const video = activeMedia instanceof HTMLVideoElement ? activeMedia : activeMedia.querySelector('video');
-      if (!video) return;
-      const playback = video.play();
-      if (playback && typeof playback.catch === 'function') playback.catch(() => {});
     };
 
-    const startCycle = () => {
-      if (reduceMotion || scenes.length < 2) return;
-      window.clearInterval(timer);
-      timer = window.setInterval(() => showScene(activeScene + 1), 8000);
+    const commitScene = (index, immediate) => {
+      activeScene = index;
+      hero.classList.toggle('is-switching', !immediate);
+      scenes.forEach((scene, sceneIndex) => scene.classList.toggle('is-active', sceneIndex === activeScene));
+      updateControls(activeScene);
+      window.setTimeout(() => {
+        hero.classList.remove('is-switching');
+        pauseInactiveScenes();
+      }, immediate ? 0 : 650);
+    };
+
+    const showScene = (index, options = {}) => {
+      const targetIndex = (index + scenes.length) % scenes.length;
+      const video = getVideo(scenes[targetIndex]);
+      if (!video) return;
+
+      const token = ++transitionToken;
+      video.preload = 'auto';
+      if (options.restart && video.readyState > 0) {
+        try { video.currentTime = 0; } catch (error) {}
+      }
+
+      let revealed = false;
+      const reveal = () => {
+        if (revealed || token !== transitionToken) return;
+        revealed = true;
+        commitScene(targetIndex, Boolean(options.immediate));
+      };
+
+      if (options.immediate || targetIndex === activeScene || video.readyState >= 2) reveal();
+      const playback = video.play();
+      if (playback && typeof playback.then === 'function') {
+        playback.then(reveal).catch(() => {});
+      }
     };
 
     controls.forEach((control, index) => {
-      control.addEventListener('click', () => {
-        showScene(index);
-        startCycle();
-      });
+      control.addEventListener('click', () => showScene(index));
     });
-    startCycle();
+
+    scenes.forEach((scene, index) => {
+      const video = getVideo(scene);
+      if (!video) return;
+      video.muted = true;
+      video.playsInline = true;
+      if (index !== 0) video.pause();
+    });
+
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      isOnScreen = entries[0].isIntersecting;
+      const video = getVideo(scenes[activeScene]);
+      if (!video) return;
+      if (!isOnScreen || document.hidden) video.pause();
+      else {
+        const playback = video.play();
+        if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+      }
+    }, { rootMargin: '120px' });
+    visibilityObserver.observe(hero);
+
+    document.addEventListener('visibilitychange', () => {
+      const video = getVideo(scenes[activeScene]);
+      if (!video) return;
+      if (document.hidden) video.pause();
+      else if (isOnScreen) {
+        const playback = video.play();
+        if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+      }
+    });
+
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) showScene(0, { immediate: true, restart: true });
+    });
+    window.addEventListener('pagehide', () => scenes.forEach((scene) => {
+      const video = getVideo(scene);
+      if (video) video.pause();
+    }));
+
+    showScene(0, { immediate: true });
   });
 
   class DigitalField {

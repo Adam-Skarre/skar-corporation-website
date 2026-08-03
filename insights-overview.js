@@ -38,7 +38,7 @@
     practice: {
       kicker: 'Leadership and practice',
       title: 'The Way Through.',
-      description: 'Conversations and practical lessons from people who navigate difficult decisions, real constraints, and consequential work.',
+      description: 'How engineers, operators, builders, and founders identify the real constraint, weigh imperfect options, and find a practical path forward.',
       href: '/way-through/',
       linkText: 'Discover the series'
     }
@@ -113,6 +113,8 @@
   const description = consoleElement.querySelector('[data-lens-description]');
   const link = consoleElement.querySelector('[data-lens-link]');
   const readout = consoleElement.querySelector('[data-map-readout]');
+  const coreState = consoleElement.querySelector('[data-map-core]');
+  const systemMap = consoleElement.querySelector('[data-system-map]');
   const nodes = [...consoleElement.querySelectorAll('[data-node]')];
 
   function activate(key, focusPanel = false) {
@@ -133,7 +135,11 @@
     link.firstChild.textContent = `${lens.linkText} `;
     link.href = lens.href;
     readout.textContent = lens.readout;
+    coreState.textContent = lens.readout;
+    consoleElement.dataset.activeLens = key;
     nodes.forEach((node) => node.classList.toggle('is-emphasized', lens.nodes.includes(node.dataset.node)));
+    systemMap.classList.remove('is-reframing');
+    requestAnimationFrame(() => systemMap.classList.add('is-reframing'));
     if (focusPanel) panel.focus({ preventScroll: true });
   }
 

@@ -85,10 +85,10 @@
 .lumora-feature .lumora-hero{width:min(1600px,100%);min-height:0;aspect-ratio:16/9;margin:0 auto}
 .lumora-hero{position:relative;width:100%;min-height:0;height:auto;overflow:hidden;border:1px solid rgba(163,207,240,.22);border-radius:clamp(18px,2vw,30px);background:#000;color:#fff;font-family:'Instrument Serif',serif;box-shadow:0 28px 80px rgba(0,7,15,.34)}
 .lumora-video-stack,.lumora-video-stack>[data-lumora-scene-media]{position:absolute;inset:0;width:100%;height:100%}
-.lumora-video-stack>[data-lumora-scene-media]{opacity:0;transition:opacity 1000ms ease-in-out}.lumora-video-stack>[data-lumora-scene-media].is-active{opacity:1}
+.lumora-video-stack>[data-lumora-scene-media]{opacity:0;transition:opacity 600ms ease-in-out;will-change:opacity}.lumora-video-stack>[data-lumora-scene-media].is-active{opacity:1}
 .lumora-video-stack video{width:100%;height:100%;display:block;object-fit:cover}
 .lumora-controls{position:absolute;z-index:3;left:50%;bottom:clamp(16px,2.4vw,34px);display:flex;align-items:center;gap:5px;max-width:calc(100% - 32px);padding:6px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(7,18,30,.48);box-shadow:0 14px 38px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.14);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);transform:translateX(-50%)}
-.lumora-controls button{padding:10px 14px;border:0;border-radius:999px;background:transparent;color:rgba(255,255,255,.65);font:650 10px/1 system-ui,sans-serif;letter-spacing:.04em;white-space:nowrap;cursor:pointer;transition:color 250ms ease,background 250ms ease,transform 250ms ease}.lumora-controls button:hover,.lumora-controls button:focus-visible{color:#fff}.lumora-controls button:focus-visible{outline:2px solid rgba(255,255,255,.88);outline-offset:2px}.lumora-controls button.is-active{background:rgba(255,255,255,.94);color:#0b1b2a;box-shadow:0 4px 14px rgba(0,0,0,.18)}.lumora-controls button:active{transform:scale(.96)}
+.lumora-controls button{padding:10px 14px;border:0;border-radius:999px;background:transparent;color:rgba(255,255,255,.65);font:650 10px/1 system-ui,sans-serif;letter-spacing:.04em;white-space:nowrap;cursor:pointer;touch-action:manipulation;transition:color 250ms ease,background 250ms ease,transform 250ms ease}.lumora-controls button:hover,.lumora-controls button:focus-visible{color:#fff}.lumora-controls button:focus-visible{outline:2px solid rgba(255,255,255,.88);outline-offset:2px}.lumora-controls button.is-active{background:rgba(255,255,255,.94);color:#0b1b2a;box-shadow:0 4px 14px rgba(0,0,0,.18)}.lumora-controls button:active{transform:scale(.96)}
 .lumora-shell{position:relative;z-index:2;min-height:960px;padding:28px clamp(24px,4vw,54px) 34px;display:flex;flex-direction:column}
 .lumora-hero .liquid-glass{position:relative;overflow:hidden;border:0;background:rgba(255,255,255,.01);background-blend-mode:luminosity;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:inset 0 1px 1px rgba(255,255,255,.1)}
 .lumora-hero .liquid-glass:before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.4px;background:linear-gradient(180deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,.15) 20%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(255,255,255,.15) 80%,rgba(255,255,255,.45) 100%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
@@ -173,6 +173,37 @@
   .interaction-gallery-grid{grid-template-columns:1fr}.interaction-card,.interaction-card-wide{grid-column:auto;min-height:560px}.interaction-card-wide{min-height:0}.interaction-card-wide .interaction-art,.interaction-art{min-height:330px}.interaction-card-wide .interaction-art{min-height:0;aspect-ratio:16/9}.interaction-card>div:last-child{padding:28px 26px 32px}.interaction-card-lumora{min-height:820px}.lumora-shell{min-height:820px;padding:22px 20px 26px}.lumora-nav-pill{display:none}.lumora-menu-button{display:block}.lumora-logo{font-size:26px}.lumora-main{padding:58px 0 24px}.lumora-main h3{font-size:clamp(45px,13vw,66px);margin-top:22px}.lumora-main>p{font-size:13px}.lumora-switcher{gap:10px;flex-wrap:wrap;margin-top:22px}.lumora-switcher button{font-size:10px}.lumora-stats{gap:10px;flex-wrap:wrap;font-size:10px}.lumora-stats i{display:none}.lumora-mobile-panel{position:absolute;z-index:50;inset:70px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-size:34px;opacity:0;visibility:hidden;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 500ms}.lumora-mobile-panel>*{opacity:0;transform:translateY(16px);transition:opacity 500ms cubic-bezier(.4,0,.2,1),transform 500ms cubic-bezier(.4,0,.2,1)}.lumora-mobile-panel button{margin-top:18px;padding:13px 22px;border:0;border-radius:12px;background:#fff;color:#000;font:600 14px system-ui,sans-serif}.lumora-mobile-panel.is-open{opacity:1;visibility:visible}.lumora-mobile-panel.is-open>*{opacity:1;transform:translateY(0)}.lumora-mobile-panel.is-open>*:nth-child(1){transition-delay:100ms}.lumora-mobile-panel.is-open>*:nth-child(2){transition-delay:150ms}.lumora-mobile-panel.is-open>*:nth-child(3){transition-delay:200ms}.lumora-mobile-panel.is-open>*:nth-child(4){transition-delay:250ms}.lumora-mobile-panel.is-open>*:nth-child(5){transition-delay:300ms}.lumora-feature{padding:64px 18px}.lumora-feature .lumora-hero{min-height:0;aspect-ratio:4/5}.lumora-controls{bottom:14px;max-width:calc(100% - 20px);overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.lumora-controls::-webkit-scrollbar{display:none}.lumora-controls button{padding:9px 11px;font-size:9px}.foldcraft-hero{min-height:330px}.foldcraft-links,.foldcraft-talk{display:none}.foldcraft-menu-button{display:block}.foldcraft-nav{padding:18px 20px}.foldcraft-content{padding:46px 22px 28px}.foldcraft-top h3{font-size:clamp(40px,12vw,60px)}.foldcraft-bottom p{font-size:14px}
   .web-engagement-list{margin-top:36px}.web-engagement-list article{grid-template-columns:100px 1fr;gap:20px}.digital-cta{padding:58px 24px;align-items:flex-start;flex-direction:column}.digital-cta a{width:100%;justify-content:space-between}
   .software-thesis>p{margin-top:32px;font-size:17px}.software-stack{padding-bottom:82px}.software-layer{grid-template-columns:1fr;gap:10px;padding:27px 0}.software-layer h3{margin:5px 0 6px}.software-layer p{margin:0}.software-decisions-grid{grid-template-columns:1fr}.software-decisions-grid article,.software-decisions-grid article:nth-child(n){grid-column:auto;min-height:260px;padding:28px}.software-decisions-grid h3{margin:44px 0 12px}.software-evidence-rail article{grid-template-columns:1fr;gap:12px}
+}
+@media (max-width:760px){
+  .lumora-feature{padding:46px 14px 58px}
+  .lumora-feature .lumora-hero{aspect-ratio:4/5;border-radius:24px}
+  .lumora-video-stack>[data-lumora-scene-media]{transition-duration:380ms}
+  .lumora-controls{
+    left:50%;
+    bottom:12px;
+    width:min(330px,calc(100% - 24px));
+    max-width:none;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:4px;
+    padding:5px;
+    overflow:visible;
+    border-radius:22px;
+    background:rgba(7,18,30,.62)
+  }
+  .lumora-controls button{
+    width:100%;
+    min-height:38px;
+    padding:9px 8px;
+    border-radius:17px;
+    font-size:9px;
+    text-align:center
+  }
+}
+@media (max-width:370px){
+  .lumora-feature{padding-left:10px;padding-right:10px}
+  .lumora-controls{width:calc(100% - 18px)}
+  .lumora-controls button{font-size:8.5px;letter-spacing:.025em}
 }
 @media (prefers-reduced-motion:reduce){.digital-aurora i{animation:none!important}.foldcraft-top>span,.foldcraft-top h3,.foldcraft-bottom p,.foldcraft-bottom a{animation:none!important}.digital-button,.software-layer:before,.ui-motion-card,.ui-motion-media video,.lumora-video-stack>[data-lumora-scene-media],.lumora-mobile-panel,.lumora-mobile-panel>*,.foldcraft-mobile-menu,.foldcraft-mobile-menu>div{transition:none!important}}
 @media (color-gamut:p3){
