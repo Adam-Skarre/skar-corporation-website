@@ -196,6 +196,13 @@
           <span>Follow SKAR</span>
           <a href="https://x.com/Skarcorporation" target="_blank" rel="noopener noreferrer" aria-label="Follow SKAR on X"><b class="footer-social-x" aria-hidden="true">X</b></a>
           <a href="https://www.linkedin.com/company/skar-corp" target="_blank" rel="noopener noreferrer" aria-label="Follow SKAR on LinkedIn"><b class="footer-social-linkedin" aria-hidden="true">in</b></a>
+          <a href="https://www.instagram.com/skartechnologies/" target="_blank" rel="noopener noreferrer" aria-label="Follow Skar Technologies on Instagram at @skartechnologies">
+            <svg class="footer-social-instagram" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="3.25" y="3.25" width="17.5" height="17.5" rx="5"></rect>
+              <circle cx="12" cy="12" r="4.1"></circle>
+              <circle class="footer-social-instagram__dot" cx="17.35" cy="6.85" r="1.15"></circle>
+            </svg>
+          </a>
         </div>
       </div>
     `;
