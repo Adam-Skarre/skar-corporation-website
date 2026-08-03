@@ -43,7 +43,7 @@
     const name = `${values.firstName || ''} ${values.lastName || ''}`.trim();
     const subject = `${values.inquiryType || 'General inquiry'} — ${values.company || name}`;
     const body = [
-      'SKAR Corporation inquiry',
+      'Skar Technologies Inc. inquiry',
       '',
       `Name: ${name}`,
       `Email: ${values.email || ''}`,
