@@ -4364,15 +4364,32 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .market-scenario__controls input::-webkit-slider-thumb{width:18px;height:18px;appearance:none;border:4px solid #dcecff;border-radius:50%;background:#3f83c8;box-shadow:0 0 0 5px rgba(89,154,219,.14)}
 .market-scenario__controls button{margin-top:28px;padding:11px 14px;border:1px solid #4c718f;color:#bad1e3;background:transparent;font:inherit;font-size:10px;font-weight:750;cursor:pointer;transition:background .7s cubic-bezier(.32,.72,0,1)}
 .market-scenario__controls button:hover{background:#123754}.market-scenario__controls button:focus-visible{outline:2px solid #9acbfa;outline-offset:3px}
-.market-scenario__result{display:grid;grid-template-columns:220px 1fr;gap:35px;align-items:center;padding:46px}
-.scenario-orbit{position:relative;width:210px;height:210px;display:grid;place-items:center;border:1px solid rgba(126,178,226,.25);border-radius:50%}
-.scenario-orbit:before,.scenario-orbit:after,.scenario-orbit i{content:"";position:absolute;border:1px solid rgba(126,178,226,.16);border-radius:50%}
-.scenario-orbit:before{inset:22px}.scenario-orbit:after{inset:48px}.scenario-orbit i:nth-child(1){inset:-10px 54px;animation:scenarioSpin 11s linear infinite}.scenario-orbit i:nth-child(2){inset:53px -12px;animation:scenarioSpin 8s linear infinite reverse}.scenario-orbit i:nth-child(3){width:7px;height:7px;top:24px;right:37px;background:#a8d1f8;box-shadow:0 0 18px #75ade4}
-.scenario-orbit b{color:#fff;font-size:58px;font-weight:500;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
-@keyframes scenarioSpin{to{transform:rotate(360deg)}}
+.market-scenario__result{display:grid;grid-template-columns:minmax(300px,.95fr) minmax(260px,1.05fr);gap:42px;align-items:center;padding:46px}
+.scenario-pressure-map{--pressure:.6;position:relative;width:min(100%,390px);aspect-ratio:1;margin:auto;color:#dfeefd;isolation:isolate}
+.scenario-pressure-map:before{content:"";position:absolute;inset:25%;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(66,142,214,calc(.18 + var(--pressure)*.22)),rgba(25,76,119,.06) 48%,transparent 72%);filter:blur(8px);transition:background .7s ease}
+.scenario-pressure-map__meta{position:absolute;top:0;right:0;left:0;display:flex;justify-content:space-between;gap:15px;color:#769bb9;font-size:8px;font-weight:800;letter-spacing:.15em}
+.scenario-pressure-map__meta small{color:#a2c5e3;font:inherit;text-align:right}
+.scenario-pressure-map svg{position:absolute;inset:22px 10px 4px;width:calc(100% - 20px);height:calc(100% - 26px);overflow:visible}
+.scenario-pressure-grid polygon,.scenario-pressure-grid line{fill:none;stroke:rgba(120,174,220,.14);stroke-width:1;vector-effect:non-scaling-stroke}
+.scenario-pressure-grid polygon:first-child{stroke:rgba(120,174,220,.25)}
+.scenario-pressure-ghost{fill:none;stroke:rgba(121,187,245,.2);stroke-width:1;stroke-dasharray:4 8;vector-effect:non-scaling-stroke;animation:scenarioGhost 4.8s ease-in-out infinite}
+.scenario-pressure-profile{fill:url(#scenario-profile-fill);stroke:#77b8f2;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.scenario-pressure-points circle{fill:#c8e5ff;stroke:#4b91d1;stroke-width:2;vector-effect:non-scaling-stroke}
+.scenario-pressure-core{position:absolute;top:50%;left:50%;width:92px;height:92px;display:grid;place-content:center;border:1px solid rgba(131,191,244,.55);border-radius:50%;background:rgba(7,30,50,.94);box-shadow:0 0 0 13px rgba(65,132,194,.08),0 0 45px rgba(49,124,192,.2);transform:translate(-50%,-46%)}
+.scenario-pressure-core b{color:#fff;font-size:44px;font-weight:520;line-height:.9;letter-spacing:-.06em;font-variant-numeric:tabular-nums;text-align:center}
+.scenario-pressure-core small{margin-top:8px;color:#7196b5;font-size:7px;font-weight:800;letter-spacing:.18em;text-align:center}
+.scenario-pressure-factor{position:absolute;display:grid;gap:4px;min-width:72px;color:#7399b8;font-size:7px;font-weight:800;letter-spacing:.14em;pointer-events:none}
+.scenario-pressure-factor b{color:#dcecf9;font-size:10px;font-weight:650;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.scenario-pressure-factor--capital{top:38px;left:50%;text-align:center;transform:translateX(-50%)}
+.scenario-pressure-factor--demand{top:50%;right:0;text-align:left;transform:translateY(-30%)}
+.scenario-pressure-factor--automation{bottom:0;left:50%;text-align:center;transform:translateX(-50%)}
+.scenario-pressure-factor--capacity{top:50%;left:0;text-align:right;transform:translateY(-30%)}
+@keyframes scenarioGhost{0%,100%{opacity:.3}50%{opacity:.75}}
 .scenario-result-copy>span,.scenario-actions span{color:#7196b5;font-size:9px;font-weight:800;letter-spacing:.15em}
 .scenario-result-copy h3{margin:15px 0 13px;color:#fff;font-size:clamp(30px,3vw,46px);line-height:1;letter-spacing:-.045em}
 .scenario-result-copy p{margin:0;color:#a4b7c5;font-size:14px;line-height:1.7}
+.scenario-score-formula{display:flex;align-items:center;gap:13px;margin-top:26px;padding-top:18px;border-top:1px solid rgba(124,171,214,.18);color:#7298b7;font-size:8px;font-weight:800;letter-spacing:.14em}
+.scenario-score-formula span{display:flex;align-items:baseline;gap:7px}.scenario-score-formula b{color:#d9eaf7;font-size:13px;font-weight:650;letter-spacing:0;font-variant-numeric:tabular-nums}.scenario-score-formula i{color:#527898;font-style:normal}
 .scenario-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(124,171,214,.2)}
 .scenario-actions article{padding:25px 20px 4px;border-right:1px solid rgba(124,171,214,.2)}.scenario-actions article:first-child{padding-left:0}.scenario-actions article:last-child{border-right:0}
 .scenario-actions strong{display:block;margin-top:12px;color:#e8f3fa;font-size:15px;font-weight:600}
@@ -4418,10 +4435,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .market-workspace .market-monitor-nav{display:block}.market-monitor-nav__label{display:none}.market-workspace .market-signal-tab{min-height:84px}.market-workspace .market-chart-panel{padding:24px 15px}.market-workspace .market-chart-frame{height:290px}
   .market-insight-rail{display:block}.market-insight-rail>div{border-right:0;border-bottom:1px solid var(--terminal-line)}
   .market-transmission__stage{min-height:970px;margin-top:42px}.market-transmission__nodes{grid-template-columns:1fr;gap:8px}.transmission-node{min-height:80px}.market-transmission__readout{padding:27px 22px}.market-transmission__readout h3{font-size:34px}
-  .market-scenario__shell{margin-top:42px}.market-scenario__controls{padding:25px 20px}.market-scenario__result{grid-template-columns:1fr;padding:35px 20px}.scenario-orbit{width:180px;height:180px;margin:auto}.scenario-result-copy{text-align:center}.scenario-actions{grid-template-columns:1fr}.scenario-actions article,.scenario-actions article:first-child{padding:20px 0;border-right:0;border-bottom:1px solid rgba(124,171,214,.2)}.scenario-actions article:last-child{border-bottom:0}
+  .market-scenario__shell{margin-top:42px}.market-scenario__controls{padding:25px 20px}.market-scenario__result{grid-template-columns:1fr;padding:35px 20px}.scenario-pressure-map{width:min(100%,360px)}.scenario-result-copy{text-align:center}.scenario-score-formula{justify-content:center}.scenario-actions{grid-template-columns:1fr}.scenario-actions article,.scenario-actions article:first-child{padding:20px 0;border-right:0;border-bottom:1px solid rgba(124,171,214,.2)}.scenario-actions article:last-child{border-bottom:0}
   .market-intelligence__head{margin-bottom:40px}.market-intelligence__grid article{min-height:auto;padding:34px 0}.market-intelligence__grid h3,.market-intelligence__lead h3{margin-top:45px;font-size:clamp(34px,9.5vw,46px)}
 }
-@media(prefers-reduced-motion:reduce){.scenario-orbit i,.market-reveal{animation:none;transition:none}.market-reveal{opacity:1;transform:none;filter:none}}
+@media(prefers-reduced-motion:reduce){.scenario-pressure-ghost,.market-reveal{animation:none;transition:none}.market-reveal{opacity:1;transform:none;filter:none}}
 /* Solutions — illuminated engagement progression */
 .solutions-process{
   --process-navy:#061d31;
