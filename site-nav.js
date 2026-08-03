@@ -138,7 +138,7 @@
   }
 
   header.innerHTML = `
-    <a class="nav-brand" href="/" aria-label="Skar Technologies Inc. home">
+    <a class="nav-brand" href="/" aria-label="Skar Technologies home">
       <span class="nav-emblem" aria-hidden="true"></span>
       <img class="nav-wordmark" src="/assets/skar-logotype.png" alt="">
     </a>
@@ -160,7 +160,7 @@
   mobileLayer.innerHTML = `
     <div class="mobile-nav-shell" role="dialog" aria-modal="true" aria-label="Site navigation">
       <div class="mobile-nav-head">
-        <a class="mobile-nav-brand" href="/" aria-label="Skar Technologies Inc. home">
+        <a class="mobile-nav-brand" href="/" aria-label="Skar Technologies home">
           <img src="/assets/skar-logotype.png" alt="">
         </a>
         <button class="mobile-nav-close" type="button" aria-label="Close navigation"><span aria-hidden="true"></span></button>
@@ -183,7 +183,7 @@
     footer.innerHTML = `
       <div class="footer-grid">
         <div class="footer-identity">
-          <a class="brand" href="/" aria-label="Skar Technologies Inc. home"><img class="brand-wordmark" src="/assets/skar-wordmark.png?v=20260802-2" alt="Skar Technologies Inc."></a>
+          <a class="brand" href="/" aria-label="Skar Technologies home"><img class="brand-wordmark" src="/assets/skar-wordmark.png?v=20260802-2" alt="Skar Technologies"></a>
           <p>Knowledge. Vision. Engineering.</p>
         </div>
         <div class="footer-section"><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
