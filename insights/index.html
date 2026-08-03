@@ -12,12 +12,12 @@
   <meta property="og:image" content="https://skarcorporation.com/assets/insights-monolith-mountains.png">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/refinement.css?v=20260802-4">
-  <link rel="stylesheet" href="/insights-overview.css?v=20260802-3">
+    <link rel="stylesheet" href="/insights-overview.css?v=20260802-4">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <link rel="shortcut icon" href="/assets/skar-favicon.svg">
 <script src="/site-nav.js?v=20260802-3" defer></script>
 <script src="/math-art.js?v=20260729-1" defer></script>
-<script src="/insights-overview.js?v=20260731-2" defer></script>
+    <script src="/insights-overview.js?v=20260802-3" defer></script>
 </head>
 <body class="insights-overview-page">
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -44,7 +44,7 @@
     <div class="home-featured-head"><div><p class="eyebrow">Selected work &amp; thinking</p><h2 id="insights-selected-title">Ideas, models, and research from SKAR.</h2></div><div class="home-featured-intro"><p>Original analysis and computational work across engineering, operations, energy, and business technology.</p><a href="#insights-directory">Explore all insights <span aria-hidden="true">↓</span></a></div></div>
     <div class="home-featured-grid">
       <a class="home-featured-card" href="/visualization/"><div class="home-featured-card-copy"><small>METHODS · LIVE MODELS</small><h3>Computational visualization</h3><p>Nonlinear dynamics, parametric geometry, uncertainty, and stability made visible through evolving mathematical systems.</p><span>Explore the studies <b aria-hidden="true">↗</b></span></div><div class="home-featured-visual math-art-shell" aria-hidden="true"><canvas class="math-art-canvas" data-math-art="field"></canvas></div></a>
-      <a class="home-featured-card" href="/way-through/"><div class="home-featured-card-copy"><small>THE SKAR WAY · ORIGINAL SERIES</small><h3>The Way Through</h3><p>Conversations and practical lessons from people who navigate difficult decisions, real constraints, and consequential work.</p><span>Discover the series <b aria-hidden="true">↗</b></span></div><div class="home-featured-visual math-art-shell" aria-hidden="true"><canvas class="math-art-canvas" data-math-art="terrain"></canvas></div></a>
+      <a class="home-featured-card" href="/way-through/"><div class="home-featured-card-copy"><small>THE SKAR WAY · ORIGINAL SERIES</small><h3>The Way Through</h3><p>How engineers, operators, builders, and founders identify the real constraint, weigh imperfect options, and find a practical path forward.</p><span>Discover the series <b aria-hidden="true">↗</b></span></div><div class="home-featured-visual math-art-shell" aria-hidden="true"><canvas class="math-art-canvas" data-math-art="terrain"></canvas></div></a>
       <a class="home-featured-card" href="/report-industry-4-0/"><div class="home-featured-card-copy"><small>INDEPENDENT RESEARCH · INDUSTRY 4.0</small><h3>The next operating system of industry</h3><p>How manufacturing is becoming observable, computational, and increasingly able to coordinate and adapt.</p><span>Explore the field report <b aria-hidden="true">↗</b></span></div><div class="home-featured-visual math-art-shell" aria-hidden="true"><canvas class="math-art-canvas" data-math-art="research"></canvas></div></a>
       <a class="home-featured-card" href="/report-data-center-demand/"><div class="home-featured-card-copy"><small>INDEPENDENT RESEARCH · ENERGY &amp; INFRASTRUCTURE</small><h3>Planning for Load Growth</h3><p>A scenario-based decision framework for rapidly rising U.S. data-center electricity demand.</p><span>Read the energy brief <b aria-hidden="true">↗</b></span></div><div class="home-featured-visual math-art-shell" aria-hidden="true"><canvas class="math-art-canvas" data-math-art="market"></canvas></div></a>
     </div>
@@ -111,29 +111,93 @@
             <a href="/research/" data-lens-link>Open the research library <span aria-hidden="true">↗</span></a>
           </div>
           <div class="insights-system-map" aria-label="Interactive evidence map" data-system-map>
-            <svg viewBox="0 0 720 470" role="img" aria-labelledby="insights-map-title insights-map-desc">
-              <title id="insights-map-title">Evidence relationship map</title>
-              <desc id="insights-map-desc">A changing network connects evidence, assumptions, constraints, scenarios, and decisions.</desc>
-              <g class="map-rings" aria-hidden="true">
-                <ellipse cx="360" cy="235" rx="245" ry="150"></ellipse>
-                <ellipse cx="360" cy="235" rx="174" ry="218" transform="rotate(58 360 235)"></ellipse>
-                <ellipse cx="360" cy="235" rx="286" ry="82" transform="rotate(-18 360 235)"></ellipse>
+            <div class="insights-map-caption" aria-hidden="true"><span>Decision topology</span><b>Live system / 01</b></div>
+            <svg viewBox="0 0 820 520" role="img" aria-labelledby="insights-map-title insights-map-desc">
+              <title id="insights-map-title">Decision topology map</title>
+              <desc id="insights-map-desc">A changing signal field connects evidence, assumptions, constraints, scenarios, consequences, and judgment to a central decision state.</desc>
+              <defs>
+                <linearGradient id="map-flow" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#315f8d" stop-opacity=".18"></stop>
+                  <stop offset=".52" stop-color="#73b4ff" stop-opacity=".72"></stop>
+                  <stop offset="1" stop-color="#315f8d" stop-opacity=".12"></stop>
+                </linearGradient>
+                <radialGradient id="map-core-field">
+                  <stop offset="0" stop-color="#4d9cf4" stop-opacity=".24"></stop>
+                  <stop offset=".58" stop-color="#24609d" stop-opacity=".08"></stop>
+                  <stop offset="1" stop-color="#071e33" stop-opacity="0"></stop>
+                </radialGradient>
+                <pattern id="map-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+                  <path d="M48 0H0V48" fill="none" stroke="#8db9e5" stroke-opacity=".055" stroke-width="1"></path>
+                </pattern>
+                <filter id="map-glow" x="-200%" y="-200%" width="400%" height="400%">
+                  <feGaussianBlur stdDeviation="4" result="blur"></feGaussianBlur>
+                  <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+                </filter>
+              </defs>
+              <rect class="map-grid-plane" width="820" height="520" fill="url(#map-grid)"></rect>
+              <g class="map-axes" aria-hidden="true">
+                <path d="M62 260H758M420 42V478"></path>
+                <path d="M70 252V268M750 252V268M412 50H428M412 470H428"></path>
+              </g>
+              <g class="map-field" aria-hidden="true">
+                <circle class="map-field-glow" cx="420" cy="260" r="205" fill="url(#map-core-field)"></circle>
+                <circle cx="420" cy="260" r="158"></circle>
+                <circle cx="420" cy="260" r="112"></circle>
+                <path d="M420 102A158 158 0 0 1 578 260M420 418A158 158 0 0 1 262 260"></path>
               </g>
               <g class="map-connections" aria-hidden="true">
-                <path d="M126 144 L302 102 L579 151 L616 336 L381 393 L142 318 Z"></path>
-                <path d="M126 144 L381 393 M302 102 L142 318 M579 151 L142 318 M616 336 L302 102"></path>
+                <path d="M112 132C238 132 286 198 420 260"></path>
+                <path d="M310 68C330 158 363 202 420 260"></path>
+                <path d="M708 142C612 151 527 207 420 260"></path>
+                <path d="M730 370C618 364 528 310 420 260"></path>
+                <path d="M395 456C410 375 416 318 420 260"></path>
+                <path d="M92 370C219 361 312 314 420 260"></path>
+              </g>
+              <g class="map-flow-lines" aria-hidden="true">
+                <path d="M112 132C238 132 286 198 420 260"></path>
+                <path d="M310 68C330 158 363 202 420 260"></path>
+                <path d="M708 142C612 151 527 207 420 260"></path>
+                <path d="M730 370C618 364 528 310 420 260"></path>
+                <path d="M395 456C410 375 416 318 420 260"></path>
+                <path d="M92 370C219 361 312 314 420 260"></path>
+              </g>
+              <g class="map-core" transform="translate(420 260)" aria-hidden="true">
+                <circle class="map-core-orbit" r="76"></circle>
+                <circle class="map-core-ring" r="54"></circle>
+                <path class="map-core-crosshair" d="M-88 0H-64M64 0H88M0-88V-64M0 64V88"></path>
+                <circle class="map-core-point" r="5"></circle>
+                <text class="map-core-kicker" y="-13">Decision field</text>
+                <text class="map-core-label" y="13" data-map-core>Evidence integrity</text>
               </g>
               <g class="map-nodes">
-                <g class="map-node is-emphasized" data-node="evidence" transform="translate(126 144)"><circle r="34"></circle><text>Evidence</text></g>
-                <g class="map-node" data-node="assumptions" transform="translate(302 102)"><circle r="24"></circle><text>Assumptions</text></g>
-                <g class="map-node" data-node="constraints" transform="translate(579 151)"><circle r="28"></circle><text>Constraints</text></g>
-                <g class="map-node" data-node="scenarios" transform="translate(616 336)"><circle r="23"></circle><text>Scenarios</text></g>
-                <g class="map-node" data-node="consequences" transform="translate(381 393)"><circle r="27"></circle><text>Consequences</text></g>
-                <g class="map-node" data-node="judgment" transform="translate(142 318)"><circle r="22"></circle><text>Judgment</text></g>
-                <g class="map-core" transform="translate(360 235)"><circle r="56"></circle><circle r="39"></circle><text>Decision</text></g>
+                <g class="map-node is-emphasized" data-node="evidence" transform="translate(112 132)">
+                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="150" height="54"></rect>
+                  <text class="map-node-index" x="33" y="-7">01</text><text class="map-node-label" x="58" y="-7">EVIDENCE</text><text class="map-node-status" x="33" y="13">Observed input</text>
+                </g>
+                <g class="map-node" data-node="assumptions" transform="translate(310 68)">
+                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="162" height="54"></rect>
+                  <text class="map-node-index" x="33" y="-7">02</text><text class="map-node-label" x="58" y="-7">ASSUMPTIONS</text><text class="map-node-status" x="33" y="13">Working premise</text>
+                </g>
+                <g class="map-node map-node-right" data-node="constraints" transform="translate(708 142)">
+                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M-8 0H-20"></path><rect class="map-node-panel" x="-178" y="-27" width="158" height="54"></rect>
+                  <text class="map-node-index" x="-165" y="-7">03</text><text class="map-node-label" x="-140" y="-7">CONSTRAINTS</text><text class="map-node-status" x="-165" y="13">Operating limit</text>
+                </g>
+                <g class="map-node map-node-right" data-node="scenarios" transform="translate(730 370)">
+                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M-8 0H-20"></path><rect class="map-node-panel" x="-168" y="-27" width="148" height="54"></rect>
+                  <text class="map-node-index" x="-155" y="-7">04</text><text class="map-node-label" x="-130" y="-7">SCENARIOS</text><text class="map-node-status" x="-155" y="13">Tested condition</text>
+                </g>
+                <g class="map-node" data-node="consequences" transform="translate(395 456)">
+                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="176" height="54"></rect>
+                  <text class="map-node-index" x="33" y="-7">05</text><text class="map-node-label" x="58" y="-7">CONSEQUENCES</text><text class="map-node-status" x="33" y="13">Downstream effect</text>
+                </g>
+                <g class="map-node" data-node="judgment" transform="translate(92 370)">
+                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="148" height="54"></rect>
+                  <text class="map-node-index" x="33" y="-7">06</text><text class="map-node-label" x="58" y="-7">JUDGMENT</text><text class="map-node-status" x="33" y="13">Human context</text>
+                </g>
               </g>
             </svg>
             <div class="insights-map-readout"><span>Active lens</span><strong data-map-readout>Evidence integrity</strong></div>
+            <div class="insights-map-legend" aria-hidden="true"><i></i> active signal <span>06 nodes</span></div>
           </div>
         </article>
       </div>
@@ -184,7 +248,7 @@
           <div class="insights-work-copy">
             <small>The SKAR Way · Original series</small>
             <h3>The Way Through.</h3>
-            <p>Conversations and practical lessons from people who navigate difficult decisions, real constraints, and consequential work.</p>
+            <p>How engineers, operators, builders, and founders identify the real constraint, weigh imperfect options, and find a practical path forward.</p>
             <span class="insights-work-link">Discover the series <b aria-hidden="true">↗</b></span>
           </div>
         </a>
@@ -221,6 +285,6 @@
     </section>
   </main>
 
-  <footer class="footer"><div class="footer-grid"><div><a class="brand" href="/"><img class="brand-wordmark" src="/assets/skar-wordmark.png?v=20260802-2" alt="Skar Corporation"></a></div><div><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div><div><h4>Expertise</h4><a href="/solutions/">Solutions</a><a href="/industries/">Industries</a></div><div><h4>Insights</h4><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/visualization/">Visualization</a><a href="/news/">News</a></div></div><div class="copyright">© 2026 Skar Corporation. All rights reserved.</div></footer>
+  <footer class="footer"><div class="footer-grid"><div><a class="brand" href="/"><img class="brand-wordmark" src="/assets/skar-wordmark.png?v=20260802-3" alt="Skar Corporation"></a></div><div><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div><div><h4>Expertise</h4><a href="/solutions/">Solutions</a><a href="/industries/">Industries</a></div><div><h4>Insights</h4><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/visualization/">Visualization</a><a href="/news/">News</a></div></div><div class="copyright">© 2026 Skar Corporation. All rights reserved.</div></footer>
 </body>
 </html>
