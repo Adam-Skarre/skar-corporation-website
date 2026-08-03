@@ -12,7 +12,7 @@
   <meta property="og:image" content="https://skarcorporation.com/assets/insights-monolith-mountains.png">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/refinement.css?v=20260802-4">
-    <link rel="stylesheet" href="/insights-overview.css?v=20260802-4">
+    <link rel="stylesheet" href="/insights-overview.css?v=20260803-1">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <link rel="shortcut icon" href="/assets/skar-favicon.svg">
 <script src="/site-nav.js?v=20260802-3" defer></script>
@@ -111,7 +111,7 @@
             <a href="/research/" data-lens-link>Open the research library <span aria-hidden="true">↗</span></a>
           </div>
           <div class="insights-system-map" aria-label="Interactive evidence map" data-system-map>
-            <div class="insights-map-caption" aria-hidden="true"><span>Decision topology</span><b>Live system / 01</b></div>
+            <div class="insights-map-caption" aria-hidden="true"><span>Decision topology</span><b>Living system / 01</b></div>
             <svg viewBox="0 0 820 520" role="img" aria-labelledby="insights-map-title insights-map-desc">
               <title id="insights-map-title">Decision topology map</title>
               <desc id="insights-map-desc">A changing signal field connects evidence, assumptions, constraints, scenarios, consequences, and judgment to a central decision state.</desc>
@@ -126,73 +126,77 @@
                   <stop offset=".58" stop-color="#24609d" stop-opacity=".08"></stop>
                   <stop offset="1" stop-color="#071e33" stop-opacity="0"></stop>
                 </radialGradient>
-                <pattern id="map-grid" width="48" height="48" patternUnits="userSpaceOnUse">
-                  <path d="M48 0H0V48" fill="none" stroke="#8db9e5" stroke-opacity=".055" stroke-width="1"></path>
-                </pattern>
                 <filter id="map-glow" x="-200%" y="-200%" width="400%" height="400%">
                   <feGaussianBlur stdDeviation="4" result="blur"></feGaussianBlur>
                   <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
                 </filter>
               </defs>
-              <rect class="map-grid-plane" width="820" height="520" fill="url(#map-grid)"></rect>
-              <g class="map-axes" aria-hidden="true">
-                <path d="M62 260H758M420 42V478"></path>
-                <path d="M70 252V268M750 252V268M412 50H428M412 470H428"></path>
-              </g>
+              <rect class="map-atmosphere" width="820" height="520"></rect>
               <g class="map-field" aria-hidden="true">
                 <circle class="map-field-glow" cx="420" cy="260" r="205" fill="url(#map-core-field)"></circle>
-                <circle cx="420" cy="260" r="158"></circle>
-                <circle cx="420" cy="260" r="112"></circle>
-                <path d="M420 102A158 158 0 0 1 578 260M420 418A158 158 0 0 1 262 260"></path>
+                <path d="M101 289C194 179 298 155 409 209C520 263 608 193 728 243"></path>
+                <path d="M86 327C202 227 293 225 405 269C513 312 626 233 744 284"></path>
+                <path d="M112 367C224 290 322 300 418 324C528 352 626 293 715 326"></path>
+                <ellipse cx="420" cy="260" rx="176" ry="116"></ellipse>
+                <ellipse cx="420" cy="260" rx="126" ry="78"></ellipse>
               </g>
               <g class="map-connections" aria-hidden="true">
-                <path d="M112 132C238 132 286 198 420 260"></path>
-                <path d="M310 68C330 158 363 202 420 260"></path>
-                <path d="M708 142C612 151 527 207 420 260"></path>
-                <path d="M730 370C618 364 528 310 420 260"></path>
-                <path d="M395 456C410 375 416 318 420 260"></path>
-                <path d="M92 370C219 361 312 314 420 260"></path>
+                <path d="M145 150C247 141 303 203 420 260"></path>
+                <path d="M315 92C330 168 367 214 420 260"></path>
+                <path d="M675 155C583 167 515 213 420 260"></path>
+                <path d="M680 365C584 357 511 307 420 260"></path>
+                <path d="M430 445C425 369 423 314 420 260"></path>
+                <path d="M125 360C237 357 314 308 420 260"></path>
               </g>
               <g class="map-flow-lines" aria-hidden="true">
-                <path d="M112 132C238 132 286 198 420 260"></path>
-                <path d="M310 68C330 158 363 202 420 260"></path>
-                <path d="M708 142C612 151 527 207 420 260"></path>
-                <path d="M730 370C618 364 528 310 420 260"></path>
-                <path d="M395 456C410 375 416 318 420 260"></path>
-                <path d="M92 370C219 361 312 314 420 260"></path>
+                <path d="M145 150C247 141 303 203 420 260"></path>
+                <path d="M315 92C330 168 367 214 420 260"></path>
+                <path d="M675 155C583 167 515 213 420 260"></path>
+                <path d="M680 365C584 357 511 307 420 260"></path>
+                <path d="M430 445C425 369 423 314 420 260"></path>
+                <path d="M125 360C237 357 314 308 420 260"></path>
+              </g>
+              <g class="map-signal-packets" aria-hidden="true">
+                <circle r="2.4"><animateMotion dur="6.8s" repeatCount="indefinite" path="M145 150C247 141 303 203 420 260"></animateMotion></circle>
+                <circle r="1.8"><animateMotion dur="8.2s" begin="-3.1s" repeatCount="indefinite" path="M315 92C330 168 367 214 420 260"></animateMotion></circle>
+                <circle r="2.2"><animateMotion dur="7.5s" begin="-5.4s" repeatCount="indefinite" path="M675 155C583 167 515 213 420 260"></animateMotion></circle>
+                <circle r="1.7"><animateMotion dur="9s" begin="-2.7s" repeatCount="indefinite" path="M680 365C584 357 511 307 420 260"></animateMotion></circle>
+                <circle r="2.1"><animateMotion dur="7.9s" begin="-6.2s" repeatCount="indefinite" path="M430 445C425 369 423 314 420 260"></animateMotion></circle>
+                <circle r="1.9"><animateMotion dur="8.6s" begin="-4.4s" repeatCount="indefinite" path="M125 360C237 357 314 308 420 260"></animateMotion></circle>
               </g>
               <g class="map-core" transform="translate(420 260)" aria-hidden="true">
-                <circle class="map-core-orbit" r="76"></circle>
-                <circle class="map-core-ring" r="54"></circle>
-                <path class="map-core-crosshair" d="M-88 0H-64M64 0H88M0-88V-64M0 64V88"></path>
-                <circle class="map-core-point" r="5"></circle>
-                <text class="map-core-kicker" y="-13">Decision field</text>
-                <text class="map-core-label" y="13" data-map-core>Evidence integrity</text>
+                <ellipse class="map-core-orbit map-core-orbit-a" rx="84" ry="31"></ellipse>
+                <ellipse class="map-core-orbit map-core-orbit-b" rx="84" ry="31"></ellipse>
+                <ellipse class="map-core-orbit map-core-orbit-c" rx="84" ry="31"></ellipse>
+                <circle class="map-core-ring" r="46"></circle>
+                <circle class="map-core-point" r="4"></circle>
+                <text class="map-core-kicker" y="-11">Decision field</text>
+                <text class="map-core-label" y="11" data-map-core>Evidence integrity</text>
               </g>
               <g class="map-nodes">
-                <g class="map-node is-emphasized" data-node="evidence" transform="translate(112 132)">
-                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="150" height="54"></rect>
-                  <text class="map-node-index" x="33" y="-7">01</text><text class="map-node-label" x="58" y="-7">EVIDENCE</text><text class="map-node-status" x="33" y="13">Observed input</text>
+                <g class="map-node is-emphasized" data-node="evidence" transform="translate(145 150)">
+                  <circle class="map-node-halo" r="19"></circle><circle class="map-node-point" r="5"></circle><path class="map-node-tick" d="M9 0H29"></path>
+                  <text class="map-node-index" x="36" y="-6">01</text><text class="map-node-label" x="36" y="11">Evidence</text>
                 </g>
-                <g class="map-node" data-node="assumptions" transform="translate(310 68)">
-                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="162" height="54"></rect>
-                  <text class="map-node-index" x="33" y="-7">02</text><text class="map-node-label" x="58" y="-7">ASSUMPTIONS</text><text class="map-node-status" x="33" y="13">Working premise</text>
+                <g class="map-node" data-node="assumptions" transform="translate(315 92)">
+                  <circle class="map-node-halo" r="19"></circle><circle class="map-node-point" r="5"></circle><path class="map-node-tick" d="M9 0H29"></path>
+                  <text class="map-node-index" x="36" y="-6">02</text><text class="map-node-label" x="36" y="11">Assumptions</text>
                 </g>
-                <g class="map-node map-node-right" data-node="constraints" transform="translate(708 142)">
-                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M-8 0H-20"></path><rect class="map-node-panel" x="-178" y="-27" width="158" height="54"></rect>
-                  <text class="map-node-index" x="-165" y="-7">03</text><text class="map-node-label" x="-140" y="-7">CONSTRAINTS</text><text class="map-node-status" x="-165" y="13">Operating limit</text>
+                <g class="map-node map-node-right" data-node="constraints" transform="translate(675 155)">
+                  <circle class="map-node-halo" r="19"></circle><circle class="map-node-point" r="5"></circle><path class="map-node-tick" d="M-9 0H-29"></path>
+                  <text class="map-node-index" x="-36" y="-6">03</text><text class="map-node-label" x="-36" y="11">Constraints</text>
                 </g>
-                <g class="map-node map-node-right" data-node="scenarios" transform="translate(730 370)">
-                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M-8 0H-20"></path><rect class="map-node-panel" x="-168" y="-27" width="148" height="54"></rect>
-                  <text class="map-node-index" x="-155" y="-7">04</text><text class="map-node-label" x="-130" y="-7">SCENARIOS</text><text class="map-node-status" x="-155" y="13">Tested condition</text>
+                <g class="map-node map-node-right" data-node="scenarios" transform="translate(680 365)">
+                  <circle class="map-node-halo" r="19"></circle><circle class="map-node-point" r="5"></circle><path class="map-node-tick" d="M-9 0H-29"></path>
+                  <text class="map-node-index" x="-36" y="-6">04</text><text class="map-node-label" x="-36" y="11">Scenarios</text>
                 </g>
-                <g class="map-node" data-node="consequences" transform="translate(395 456)">
-                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="176" height="54"></rect>
-                  <text class="map-node-index" x="33" y="-7">05</text><text class="map-node-label" x="58" y="-7">CONSEQUENCES</text><text class="map-node-status" x="33" y="13">Downstream effect</text>
+                <g class="map-node" data-node="consequences" transform="translate(430 445)">
+                  <circle class="map-node-halo" r="19"></circle><circle class="map-node-point" r="5"></circle><path class="map-node-tick" d="M9 0H29"></path>
+                  <text class="map-node-index" x="36" y="-6">05</text><text class="map-node-label" x="36" y="11">Consequences</text>
                 </g>
-                <g class="map-node" data-node="judgment" transform="translate(92 370)">
-                  <circle class="map-node-point" r="7"></circle><path class="map-node-tick" d="M8 0H20"></path><rect class="map-node-panel" x="20" y="-27" width="148" height="54"></rect>
-                  <text class="map-node-index" x="33" y="-7">06</text><text class="map-node-label" x="58" y="-7">JUDGMENT</text><text class="map-node-status" x="33" y="13">Human context</text>
+                <g class="map-node" data-node="judgment" transform="translate(125 360)">
+                  <circle class="map-node-halo" r="19"></circle><circle class="map-node-point" r="5"></circle><path class="map-node-tick" d="M9 0H29"></path>
+                  <text class="map-node-index" x="36" y="-6">06</text><text class="map-node-label" x="36" y="11">Judgment</text>
                 </g>
               </g>
             </svg>
