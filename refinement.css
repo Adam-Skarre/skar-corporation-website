@@ -1317,8 +1317,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(prefers-reduced-motion:reduce){.press-page{animation:none!important}.press-page:not(.press-page-1){display:none}}
 
 /* News — aligned with the SKAR page system */
-.page-hero-news{position:relative;isolation:isolate;overflow:hidden;min-height:610px;display:flex;flex-direction:column;justify-content:center;background:#071b2e url("/assets/skar-new-york-editorial.jpg") center 54%/cover no-repeat}
-.page-hero-news:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,17,31,.96) 0%,rgba(4,17,31,.82) 50%,rgba(4,17,31,.34) 100%)}
+.page-hero-news{position:relative;isolation:isolate;overflow:hidden;min-height:610px;display:flex;flex-direction:column;justify-content:center;background:#071b2e url("/assets/skar-news-editorial-hero.jpg") center center/cover no-repeat}
+.page-hero-news:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,17,31,.94) 0%,rgba(4,17,31,.76) 42%,rgba(4,17,31,.16) 78%,rgba(4,17,31,.08) 100%)}
 .page-hero-news .eyebrow{color:#9fc4ff}
 .page-hero-news h1{color:#fff}
 .page-hero-news>p:last-child{max-width:720px;color:#e4eaf0}
@@ -1326,8 +1326,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .news-list article{grid-template-columns:190px minmax(0,1fr);gap:45px;padding:42px 0}
 .news-list h3{max-width:760px;font-family:inherit;font-size:clamp(26px,2.5vw,36px);font-weight:650;line-height:1.15;letter-spacing:-.025em}
 .news-list article a{display:inline-block;margin-top:8px;border-bottom:1px solid currentColor;padding-bottom:4px}
-@media(max-width:900px){.page-hero-news{min-height:560px;background-position:45% center}.news-list article{grid-template-columns:1fr;gap:12px}}
-@media(max-width:600px){.page-hero-news{min-height:520px;background-position:40% center}.page-hero-news:before{background:rgba(4,17,31,.72)}}
+@media(max-width:900px){.page-hero-news{min-height:560px;background-position:58% center}.news-list article{grid-template-columns:1fr;gap:12px}}
+@media(max-width:600px){.page-hero-news{min-height:520px;background-position:62% center}.page-hero-news:before{background:linear-gradient(90deg,rgba(4,17,31,.9),rgba(4,17,31,.58))}}
 
 /* iPhone navigation CTA: unmistakably SKAR blue, aligned, and touch-safe */
 @media(max-width:760px){
