@@ -170,36 +170,115 @@
     });
   }
 
-  const birdCard = document.querySelector('.insights-work-feature');
-  const birds = birdCard ? [...birdCard.querySelectorAll('.insights-bird')] : [];
-  if (birdCard && birds.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    birdCard.addEventListener('pointermove', (event) => {
-      const rect = birdCard.getBoundingClientRect();
-      birds.forEach((bird, index) => {
-        const birdRect = bird.getBoundingClientRect();
-        const birdX = birdRect.left + birdRect.width / 2;
-        const birdY = birdRect.top + birdRect.height / 2;
-        const deltaX = birdX - event.clientX;
-        const deltaY = birdY - event.clientY;
-        const distance = Math.max(1, Math.hypot(deltaX, deltaY));
-        const influence = Math.max(0, 1 - distance / Math.min(260, rect.width * 0.42));
-        const strength = (12 + index * 1.8) * influence;
-        bird.style.setProperty('--bird-shift-x', `${(deltaX / distance) * strength}px`);
-        bird.style.setProperty('--bird-shift-y', `${(deltaY / distance) * strength - influence * 5}px`);
-      });
+  const mountainField = document.querySelector('[data-market-mountain]');
+  const mountainCanvas = mountainField?.querySelector('canvas');
+  if (mountainField && mountainCanvas) {
+    const context = mountainCanvas.getContext('2d');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const pointer = { x: 0, y: 0, targetX: 0, targetY: 0, depth: 0, targetDepth: 0 };
+    let width = 0;
+    let height = 0;
+    let ratio = 1;
+    let frame = 0;
+    let visible = true;
+
+    const ridge = (x) => {
+      const peak = (center, spread, amplitude) => amplitude * Math.exp(-Math.pow((x - center) / spread, 2));
+      return 0.79 - peak(0.18, 0.16, 0.19) - peak(0.43, 0.2, 0.34) - peak(0.69, 0.15, 0.25) - peak(0.87, 0.11, 0.36) + Math.sin(x * 29) * 0.012;
+    };
+
+    const resize = () => {
+      const rect = mountainField.getBoundingClientRect();
+      ratio = Math.min(window.devicePixelRatio || 1, 1.65);
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      mountainCanvas.width = Math.round(width * ratio);
+      mountainCanvas.height = Math.round(height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    };
+
+    const drawChart = (time, offset, alpha, phase) => {
+      context.beginPath();
+      for (let i = 0; i <= 58; i += 1) {
+        const x = i / 58;
+        const px = x * width + pointer.x * (10 + offset * 3);
+        const py = (ridge(x) + offset + Math.sin(x * 15 + phase + time * 0.00035) * 0.018) * height + pointer.y * 7;
+        if (i === 0) context.moveTo(px, py);
+        else context.lineTo(px, py);
+      }
+      context.strokeStyle = `rgba(255,255,255,${alpha})`;
+      context.lineWidth = 1 + pointer.depth * 0.7;
+      context.setLineDash([3, 8]);
+      context.lineDashOffset = -time * 0.012;
+      context.stroke();
+      context.setLineDash([]);
+    };
+
+    const draw = (time = 0) => {
+      pointer.x += (pointer.targetX - pointer.x) * 0.055;
+      pointer.y += (pointer.targetY - pointer.y) * 0.055;
+      pointer.depth += (pointer.targetDepth - pointer.depth) * 0.045;
+      context.clearRect(0, 0, width, height);
+
+      const sky = context.createLinearGradient(0, 0, 0, height);
+      sky.addColorStop(0, `rgb(${84 + pointer.depth * 10},${151 + pointer.depth * 12},${222 + pointer.depth * 9})`);
+      sky.addColorStop(0.58, '#b9d9f6');
+      sky.addColorStop(1, '#e6f2ff');
+      context.fillStyle = sky;
+      context.fillRect(0, 0, width, height);
+
+      const spacing = width < 520 ? 8 : 7;
+      const scale = 1 + pointer.depth * 0.075;
+      const centerX = width / 2;
+      const baseline = height * 0.97;
+      for (let px = -spacing; px <= width + spacing; px += spacing) {
+        const normalizedX = Math.max(0, Math.min(1, px / width));
+        const top = ridge(normalizedX) * height;
+        for (let py = top; py <= baseline; py += spacing) {
+          const relativeY = (py - top) / Math.max(1, baseline - top);
+          const depthShift = (relativeY - 0.5) * pointer.x * 18;
+          const x = centerX + (px - centerX) * scale + depthShift;
+          const y = height * 0.62 + (py - height * 0.62) * scale + pointer.y * (5 + relativeY * 9);
+          const shimmer = 0.5 + 0.5 * Math.sin(time * 0.00115 + px * 0.038 + py * 0.027);
+          const radius = 1.05 + relativeY * 0.5 + pointer.depth * 0.35 + shimmer * 0.18;
+          const alpha = 0.5 + (1 - relativeY) * 0.26 + shimmer * 0.15 + pointer.depth * 0.09;
+          context.beginPath();
+          context.arc(x, y, radius, 0, Math.PI * 2);
+          context.fillStyle = `rgba(248,252,255,${Math.min(0.98, alpha)})`;
+          context.fill();
+        }
+      }
+
+      drawChart(time, -0.045, 0.48 + pointer.depth * 0.2, 0.4);
+      drawChart(time, 0.035, 0.34 + pointer.depth * 0.18, 2.2);
+      drawChart(time, 0.11, 0.22 + pointer.depth * 0.15, 4.1);
+
+      if (!reducedMotion && visible) frame = requestAnimationFrame(draw);
+    };
+
+    mountainField.addEventListener('pointerenter', () => { pointer.targetDepth = 1; });
+    mountainField.addEventListener('pointermove', (event) => {
+      const rect = mountainField.getBoundingClientRect();
+      pointer.targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+      pointer.targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    });
+    mountainField.addEventListener('pointerleave', () => {
+      pointer.targetX = 0;
+      pointer.targetY = 0;
+      pointer.targetDepth = 0;
     });
 
-    birdCard.addEventListener('pointerleave', () => {
-      birds.forEach((bird) => {
-        bird.style.setProperty('--bird-shift-x', '0px');
-        bird.style.setProperty('--bird-shift-y', '0px');
-      });
-    });
-
-    birdCard.addEventListener('pointerdown', () => {
-      birdCard.classList.remove('is-bird-startled');
-      requestAnimationFrame(() => birdCard.classList.add('is-bird-startled'));
-      window.setTimeout(() => birdCard.classList.remove('is-bird-startled'), 650);
-    });
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible && !reducedMotion && !frame) frame = requestAnimationFrame(draw);
+      if (!visible && frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    }, { rootMargin: '120px' });
+    observer.observe(mountainField);
+    new ResizeObserver(resize).observe(mountainField);
+    resize();
+    if (reducedMotion) draw(0);
   }
 })();

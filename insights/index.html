@@ -12,12 +12,12 @@
   <meta property="og:image" content="https://skarcorporation.com/assets/insights-monolith-mountains.png">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/refinement.css?v=20260802-4">
-    <link rel="stylesheet" href="/insights-overview.css?v=20260803-2">
+    <link rel="stylesheet" href="/insights-overview.css?v=20260804-1">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <link rel="shortcut icon" href="/assets/skar-favicon.svg">
 <script src="/site-nav.js?v=20260802-3" defer></script>
 <script src="/math-art.js?v=20260729-1" defer></script>
-    <script src="/insights-overview.js?v=20260803-2" defer></script>
+    <script src="/insights-overview.js?v=20260804-1" defer></script>
 </head>
 <body class="insights-overview-page">
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -215,22 +215,17 @@
       </div>
 
       <div class="insights-work-grid">
-        <a class="insights-work-card insights-work-feature" href="/visualization/" data-insight-topic="models">
-          <div class="insights-work-art insights-art-simulation" aria-hidden="true">
-            <span></span><i></i><b></b>
-            <div class="insights-bird-field">
-              <svg class="insights-bird" style="--bird-x:16%;--bird-y:27%;--bird-scale:.72;--bird-delay:-2.1s" viewBox="0 0 32 18"><path class="bird-wing bird-wing-left" d="M16 11C12 5 7 2 2 4c5 1 9 5 14 11Z"></path><path class="bird-wing bird-wing-right" d="M16 11c4-6 9-9 14-7-5 1-9 5-14 11Z"></path><circle cx="16" cy="12" r="1.8"></circle></svg>
-              <svg class="insights-bird" style="--bird-x:36%;--bird-y:44%;--bird-scale:.48;--bird-delay:-4.6s" viewBox="0 0 32 18"><path class="bird-wing bird-wing-left" d="M16 11C12 5 7 2 2 4c5 1 9 5 14 11Z"></path><path class="bird-wing bird-wing-right" d="M16 11c4-6 9-9 14-7-5 1-9 5-14 11Z"></path><circle cx="16" cy="12" r="1.8"></circle></svg>
-              <svg class="insights-bird" style="--bird-x:57%;--bird-y:23%;--bird-scale:.9;--bird-delay:-.8s" viewBox="0 0 32 18"><path class="bird-wing bird-wing-left" d="M16 11C12 5 7 2 2 4c5 1 9 5 14 11Z"></path><path class="bird-wing bird-wing-right" d="M16 11c4-6 9-9 14-7-5 1-9 5-14 11Z"></path><circle cx="16" cy="12" r="1.8"></circle></svg>
-              <svg class="insights-bird" style="--bird-x:73%;--bird-y:49%;--bird-scale:.58;--bird-delay:-3.4s" viewBox="0 0 32 18"><path class="bird-wing bird-wing-left" d="M16 11C12 5 7 2 2 4c5 1 9 5 14 11Z"></path><path class="bird-wing bird-wing-right" d="M16 11c4-6 9-9 14-7-5 1-9 5-14 11Z"></path><circle cx="16" cy="12" r="1.8"></circle></svg>
-              <svg class="insights-bird" style="--bird-x:83%;--bird-y:31%;--bird-scale:.4;--bird-delay:-5.8s" viewBox="0 0 32 18"><path class="bird-wing bird-wing-left" d="M16 11C12 5 7 2 2 4c5 1 9 5 14 11Z"></path><path class="bird-wing bird-wing-right" d="M16 11c4-6 9-9 14-7-5 1-9 5-14 11Z"></path><circle cx="16" cy="12" r="1.8"></circle></svg>
-            </div>
+        <a class="insights-work-card insights-work-feature insights-work-mountain" href="/market-views/" data-insight-topic="markets">
+          <div class="insights-work-art insights-mountain-field" data-market-mountain aria-hidden="true">
+            <canvas></canvas>
+            <div class="insights-mountain-index"><span>Market topography</span><b>Move to explore</b></div>
+            <div class="insights-mountain-depth"><i></i><span>Signal depth</span></div>
           </div>
           <div class="insights-work-copy">
-            <small>Computational visualization</small>
-            <h3>Make governing behavior visible.</h3>
-            <p>Nonlinear dynamics, parametric geometry, simulation, and uncertainty expressed as evolving mathematical systems.</p>
-            <span class="insights-work-link">Explore the studies <b aria-hidden="true">↗</b></span>
+            <small>Market views · Interactive signal field</small>
+            <h3>Read the terrain before the decision.</h3>
+            <p>Hover through a living map of capital, capacity, demand, and risk—then connect movement in the market to the choices it changes.</p>
+            <span class="insights-work-link">Enter Market Views <b aria-hidden="true">↗</b></span>
           </div>
         </a>
 
@@ -244,15 +239,27 @@
           <div class="insights-report-trace" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
         </a>
 
-        <a class="insights-work-card insights-work-market" href="/market-views/" data-insight-topic="markets">
-          <div class="insights-market-field" aria-hidden="true">
-            <span style="--h:42%"></span><span style="--h:68%"></span><span style="--h:51%"></span><span style="--h:84%"></span><span style="--h:63%"></span><span style="--h:91%"></span><span style="--h:73%"></span>
+        <a class="insights-work-card insights-work-model" href="/visualization/" data-insight-topic="models">
+          <div class="insights-pixel-bird-stage" aria-hidden="true">
+            <span class="insights-pixel-grid"></span>
+            <svg class="insights-pixel-bird" viewBox="0 0 96 64" shape-rendering="crispEdges">
+              <g class="pixel-bird-body">
+                <rect x="40" y="28" width="24" height="8"></rect><rect x="48" y="36" width="16" height="8"></rect><rect x="64" y="24" width="8" height="8"></rect><rect x="72" y="28" width="8" height="4"></rect><rect x="40" y="36" width="8" height="4"></rect>
+              </g>
+              <g class="pixel-bird-wing pixel-bird-wing-up">
+                <rect x="32" y="20" width="16" height="8"></rect><rect x="24" y="12" width="16" height="8"></rect><rect x="16" y="8" width="16" height="8"></rect><rect x="40" y="20" width="8" height="8"></rect>
+              </g>
+              <g class="pixel-bird-wing pixel-bird-wing-down">
+                <rect x="32" y="36" width="16" height="8"></rect><rect x="24" y="44" width="16" height="8"></rect><rect x="16" y="48" width="16" height="8"></rect><rect x="40" y="36" width="8" height="8"></rect>
+              </g>
+            </svg>
+            <span class="insights-bird-prompt">Hover to release</span>
           </div>
           <div class="insights-work-copy">
-            <small>Market views</small>
-            <h3>Translate external change into internal choices.</h3>
-            <p>Signals in capital, technology, energy, and industrial capacity interpreted through the decisions they affect.</p>
-            <span class="insights-work-link">Examine the signals <b aria-hidden="true">↗</b></span>
+            <small>Computational visualization</small>
+            <h3>Make governing behavior visible.</h3>
+            <p>Nonlinear dynamics, parametric geometry, simulation, and uncertainty expressed as evolving mathematical systems.</p>
+            <span class="insights-work-link">Explore the studies <b aria-hidden="true">↗</b></span>
           </div>
         </a>
 
