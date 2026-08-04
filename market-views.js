@@ -460,6 +460,77 @@
     }
   }
 
+  const decisionContent = {
+    capital: {
+      signal: "Cost of long-duration capital remains elevated.",
+      evidence: "10-year Treasury · current rate and direction",
+      exposure: "Delay and utilization now carry more economic weight.",
+      detail: "Financing sensitivity · payback period · scope",
+      question: "Which tranche can earn the right to unlock the next?",
+      trigger: "Change the view when utilization and financing remain inside the gate."
+    },
+    demand: {
+      signal: "Aggregate demand is holding, but mix and timing remain uneven.",
+      evidence: "Orders · backlog conversion · customer concentration",
+      exposure: "Headline growth can land in the wrong product, region, or margin pool.",
+      detail: "Volume · mix · timing · contribution margin",
+      question: "Which demand is dependable enough to plan capacity against?",
+      trigger: "Change the view when mix, cancellation, or backlog conversion breaks range."
+    },
+    capacity: {
+      signal: "Physical investment is not converting to productive output at one speed.",
+      evidence: "Construction · industrial production · operating constraints",
+      exposure: "Installed assets can remain unavailable, unqualified, or uneconomic.",
+      detail: "Labor · energy · yield · maintenance · suppliers",
+      question: "What constraint governs usable throughput in the next planning window?",
+      trigger: "Change the view when the governing constraint moves or reserve capacity clears."
+    },
+    ai: {
+      signal: "AI compresses the time between evidence, recommendation, and action.",
+      evidence: "Model use · decision latency · exception rate · authority",
+      exposure: "A faster workflow can amplify weak data, common assumptions, or unclear ownership.",
+      detail: "Provenance · evaluation · permissions · review · rollback",
+      question: "Where should AI assist, recommend, or act under a defined limit?",
+      trigger: "Change the view only after workflow-level evaluation proves readiness."
+    }
+  };
+
+  class DecisionLens {
+    constructor(root) {
+      this.root = root;
+      this.tabs = [...root.querySelectorAll("[data-decision-key]")];
+      this.tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => this.select(tab));
+        tab.addEventListener("keydown", event => {
+          let nextIndex = null;
+          if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % this.tabs.length;
+          if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + this.tabs.length) % this.tabs.length;
+          if (event.key === "Home") nextIndex = 0;
+          if (event.key === "End") nextIndex = this.tabs.length - 1;
+          if (nextIndex === null) return;
+          event.preventDefault();
+          this.tabs[nextIndex].focus();
+          this.select(this.tabs[nextIndex]);
+        });
+      });
+      this.select(this.tabs[0]);
+    }
+
+    select(tab) {
+      const item = decisionContent[tab.dataset.decisionKey];
+      this.tabs.forEach(candidate => {
+        const selected = candidate === tab;
+        candidate.classList.toggle("active", selected);
+        candidate.setAttribute("aria-selected", selected ? "true" : "false");
+        candidate.tabIndex = selected ? 0 : -1;
+      });
+      Object.entries(item).forEach(([key, value]) => {
+        const target = this.root.querySelector(`[data-decision-${key}]`);
+        if (target) target.textContent = value;
+      });
+    }
+  }
+
   class ScenarioLab {
     constructor(root) {
       this.root = root;
@@ -555,8 +626,13 @@
       Object.entries(contributions).forEach(([key, value]) => {
         this.root.querySelector(`[data-scenario-factor="${key}"]`).textContent = this.formatContribution(value);
       });
+      Object.entries(pressure).forEach(([key, value]) => {
+        const bar = this.root.querySelector(`[data-scenario-bar="${key}"]`);
+        if (bar) bar.style.width = `${Math.max(6, value * 100)}%`;
+      });
       this.root.querySelector("[data-scenario-driver]").textContent = `HIGHEST STRESS · ${driverLabels[strongestDriver]}`;
       this.root.querySelector("[data-scenario-delta]").textContent = `${delta >= 0 ? "+" : "−"}${Math.abs(Math.round(delta))}`;
+      this.root.querySelector("[data-scenario-score]").textContent = score;
       this.map.style.setProperty("--pressure", score / 100);
       this.map.setAttribute("aria-label", `Composite decision pressure: ${score} out of 100. Highest-stress dimension: ${driverLabels[strongestDriver].toLowerCase()}.`);
       this.animateProfile(profile, score);
@@ -568,7 +644,7 @@
     }
   }
 
-  const revealSections = document.querySelectorAll(".market-brief-v2__intro,.market-brief-v2__summary,.market-terminal__head,.market-pulse-grid,.market-workspace,.market-transmission__head,.market-transmission__stage,.market-scenario__head,.market-scenario__shell,.market-intelligence__head,.market-intelligence__grid,.market-reading-v2 .market-reading-intro,.market-reading-v2 .market-reading-grid");
+  const revealSections = document.querySelectorAll(".mv3-edition,.mv3-brief__grid,.mv3-section-head,.mv3-monitor,.mv3-decision__shell,.mv3-scenario__shell,.mv3-ai__intro,.mv3-ai__stages,.mv3-reading__grid");
   if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
       if (!entry.isIntersecting) return;
@@ -584,6 +660,7 @@
   }));
 
   document.querySelectorAll("[data-market-monitor]").forEach(root => new MarketMonitor(root));
+  document.querySelectorAll("[data-decision-lens]").forEach(root => new DecisionLens(root));
   document.querySelectorAll("[data-agentic-system]").forEach(root => new AgenticSystem(root));
   document.querySelectorAll("[data-transmission-map]").forEach(root => new TransmissionMap(root));
   document.querySelectorAll("[data-scenario-lab]").forEach(root => new ScenarioLab(root));
