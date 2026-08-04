@@ -183,7 +183,7 @@
     footer.innerHTML = `
       <div class="footer-grid">
         <div class="footer-identity">
-          <a class="brand" href="/" aria-label="Skar Technologies home"><img class="brand-wordmark" src="/assets/skar-wordmark.png?v=20260802-2" alt="Skar Technologies"></a>
+          <a class="brand" href="/" aria-label="Skar Technologies home"><img class="brand-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
           <p>Knowledge. Vision. Engineering.</p>
         </div>
         <div class="footer-section"><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
