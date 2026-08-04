@@ -194,7 +194,7 @@
         <div class="copyright">© 2026 Skar Technologies Inc. All rights reserved.</div>
         <div class="footer-follow" aria-label="Follow SKAR">
           <span>Follow SKAR</span>
-          <a href="https://x.com/Skarcorporation" target="_blank" rel="noopener noreferrer" aria-label="Follow SKAR on X"><b class="footer-social-x" aria-hidden="true">X</b></a>
+          <a href="https://x.com/SkarTechInc" target="_blank" rel="noopener noreferrer" aria-label="Follow Skar Technologies on X at @SkarTechInc"><b class="footer-social-x" aria-hidden="true">X</b></a>
           <a href="https://www.linkedin.com/company/skar-corp" target="_blank" rel="noopener noreferrer" aria-label="Follow SKAR on LinkedIn"><b class="footer-social-linkedin" aria-hidden="true">in</b></a>
           <a href="https://www.instagram.com/skartechnologies/" target="_blank" rel="noopener noreferrer" aria-label="Follow Skar Technologies on Instagram at @skartechnologies">
             <svg class="footer-social-instagram" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
