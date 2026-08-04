@@ -61,30 +61,17 @@
       </div>
 
       <div class="solutions-process-shell">
-        <div class="solutions-process-tabs" role="tablist" aria-label="SKAR engagement phases">
-          <button class="solutions-process-tab is-active" id="solutions-tab-align" type="button" role="tab" aria-selected="true" aria-controls="solutions-panel-align" tabindex="0" data-process-tab="align">
-            <span class="solutions-process-number">01</span>
-            <span class="solutions-process-title">Align</span>
-            <span class="solutions-process-summary">Frame the decision before selecting the method.</span>
-            <span class="solutions-process-cue">Explore phase <span aria-hidden="true">→</span></span>
-          </button>
-          <button class="solutions-process-tab" id="solutions-tab-collaborate" type="button" role="tab" aria-selected="false" aria-controls="solutions-panel-collaborate" tabindex="-1" data-process-tab="collaborate">
-            <span class="solutions-process-number">02</span>
-            <span class="solutions-process-title">Collaborate</span>
-            <span class="solutions-process-summary">Build the analytical basis with the people who know the system.</span>
-            <span class="solutions-process-cue">Explore phase <span aria-hidden="true">→</span></span>
-          </button>
-          <button class="solutions-process-tab" id="solutions-tab-deliver" type="button" role="tab" aria-selected="false" aria-controls="solutions-panel-deliver" tabindex="-1" data-process-tab="deliver">
-            <span class="solutions-process-number">03</span>
-            <span class="solutions-process-title">Deliver</span>
-            <span class="solutions-process-summary">Put the result into the operating environment.</span>
-            <span class="solutions-process-cue">Explore phase <span aria-hidden="true">→</span></span>
-          </button>
-        </div>
-
-        <div class="solutions-process-details">
-          <article class="solutions-process-panel is-active" id="solutions-panel-align" role="tabpanel" aria-labelledby="solutions-tab-align" data-process-panel="align">
+        <div class="solutions-process-tabs" role="tablist" aria-label="Skar engagement phases">
+          <div class="solutions-process-phase" role="presentation">
+            <button class="solutions-process-tab is-active" id="solutions-tab-align" type="button" role="tab" aria-selected="true" aria-controls="solutions-panel-align" tabindex="0" data-process-tab="align">
+              <span class="solutions-process-number">01</span>
+              <span class="solutions-process-title">Align</span>
+              <span class="solutions-process-summary">Frame the decision before selecting the method.</span>
+              <span class="solutions-process-cue"><span class="solutions-process-cue-closed">View phase</span><span class="solutions-process-cue-open">Phase open</span><span aria-hidden="true">↓</span></span>
+            </button>
+            <article class="solutions-process-panel is-active" id="solutions-panel-align" role="tabpanel" aria-labelledby="solutions-tab-align" data-process-panel="align">
             <div class="solutions-process-panel-lead">
+              <p class="solutions-process-panel-phase">01 · Align</p>
               <p class="eyebrow">The decision boundary</p>
               <h3>Establish what must be decided—and what would change the answer.</h3>
             </div>
@@ -102,10 +89,19 @@
               <strong>A shared definition of the problem and the tradeoffs that matter.</strong>
               <a href="../engineering/">Explore engineering <span aria-hidden="true">↗</span></a>
             </div>
-          </article>
+            </article>
+          </div>
 
-          <article class="solutions-process-panel" id="solutions-panel-collaborate" role="tabpanel" aria-labelledby="solutions-tab-collaborate" data-process-panel="collaborate" hidden>
+          <div class="solutions-process-phase" role="presentation">
+            <button class="solutions-process-tab" id="solutions-tab-collaborate" type="button" role="tab" aria-selected="false" aria-controls="solutions-panel-collaborate" tabindex="-1" data-process-tab="collaborate">
+              <span class="solutions-process-number">02</span>
+              <span class="solutions-process-title">Collaborate</span>
+              <span class="solutions-process-summary">Build the analytical basis with the people who know the system.</span>
+              <span class="solutions-process-cue"><span class="solutions-process-cue-closed">View phase</span><span class="solutions-process-cue-open">Phase open</span><span aria-hidden="true">↓</span></span>
+            </button>
+            <article class="solutions-process-panel" id="solutions-panel-collaborate" role="tabpanel" aria-labelledby="solutions-tab-collaborate" data-process-panel="collaborate" hidden>
             <div class="solutions-process-panel-lead">
+              <p class="solutions-process-panel-phase">02 · Collaborate</p>
               <p class="eyebrow">The analytical basis</p>
               <h3>Make the logic visible, testable, and informed by operating reality.</h3>
             </div>
@@ -123,10 +119,19 @@
               <strong>A model or tool whose reasoning can be examined and improved.</strong>
               <a href="../modeling-data-analysis/">Explore modeling <span aria-hidden="true">↗</span></a>
             </div>
-          </article>
+            </article>
+          </div>
 
-          <article class="solutions-process-panel" id="solutions-panel-deliver" role="tabpanel" aria-labelledby="solutions-tab-deliver" data-process-panel="deliver" hidden>
+          <div class="solutions-process-phase" role="presentation">
+            <button class="solutions-process-tab" id="solutions-tab-deliver" type="button" role="tab" aria-selected="false" aria-controls="solutions-panel-deliver" tabindex="-1" data-process-tab="deliver">
+              <span class="solutions-process-number">03</span>
+              <span class="solutions-process-title">Deliver</span>
+              <span class="solutions-process-summary">Put the result into the operating environment.</span>
+              <span class="solutions-process-cue"><span class="solutions-process-cue-closed">View phase</span><span class="solutions-process-cue-open">Phase open</span><span aria-hidden="true">↓</span></span>
+            </button>
+            <article class="solutions-process-panel" id="solutions-panel-deliver" role="tabpanel" aria-labelledby="solutions-tab-deliver" data-process-panel="deliver" hidden>
             <div class="solutions-process-panel-lead">
+              <p class="solutions-process-panel-phase">03 · Deliver</p>
               <p class="eyebrow">The operating result</p>
               <h3>Connect the recommendation to the people and systems responsible for acting.</h3>
             </div>
@@ -144,7 +149,8 @@
               <strong>A usable outcome connected to the decision it was built to support.</strong>
               <a href="../contact/">Start a conversation <span aria-hidden="true">↗</span></a>
             </div>
-          </article>
+            </article>
+          </div>
         </div>
       </div>
     </section>
