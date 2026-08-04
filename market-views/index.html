@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Market Views | Skar Technologies Inc.</title>
+  <title>Market Views | Skar Technologies</title>
   <meta name="description" content="SKAR Market Views connects capital conditions, industrial capacity, infrastructure demand, and emerging autonomous systems to operating and investment decisions.">
   <link rel="canonical" href="https://skarcorporation.com/market-views/">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-  <meta property="og:title" content="Market Views | Skar Technologies Inc.">
+  <meta property="og:title" content="Market Views | Skar Technologies">
   <meta property="og:description" content="External signals interpreted through the engineering, operating, and capital decisions they change.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://skarcorporation.com/market-views/">
   <link rel="stylesheet" href="/site.css">
-  <link rel="stylesheet" href="/refinement.css?v=20260802-5">
+  <link rel="stylesheet" href="/refinement.css?v=20260803-1">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <script src="/site-nav.js?v=20260802-3" defer></script>
   <script src="/math-art.js?v=20260729-2" defer></script>
-  <script src="/market-views.js?v=20260802-2" defer></script>
+  <script src="/market-views.js?v=20260803-1" defer></script>
 </head>
 <body>
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -122,7 +122,7 @@
     <section class="market-scenario" aria-labelledby="market-scenario-title" data-scenario-lab>
       <div class="market-scenario__head">
         <div><p class="eyebrow">Scenario lab</p><h2 id="market-scenario-title">Stress the decision, not just the forecast.</h2></div>
-        <p>Move the operating assumptions. The decision posture updates as pressures compound. This is a directional planning model, not a forecast.</p>
+        <p>Each control adds to or relieves pressure from a 48-point baseline. The live profile reveals the highest-stress dimension; farther from the center means greater pressure. The posture is directional, not predictive.</p>
       </div>
       <div class="market-scenario__shell">
         <div class="market-scenario__controls">
@@ -133,8 +133,36 @@
           <button type="button" data-scenario-reset>Reset baseline</button>
         </div>
         <div class="market-scenario__result" aria-live="polite">
-          <div class="scenario-orbit" aria-hidden="true"><i></i><i></i><i></i><b data-scenario-score>63</b></div>
-          <div class="scenario-result-copy"><span>DECISION PRESSURE INDEX</span><h3 data-scenario-posture>Stage the commitment.</h3><p data-scenario-copy>Demand supports movement, but capital and capacity conditions make a fully irreversible commitment fragile.</p></div>
+          <div class="scenario-pressure-map" data-scenario-map role="img" aria-label="Composite decision pressure: 60 out of 100. Highest-stress dimension: capacity.">
+            <div class="scenario-pressure-map__meta"><span>LIVE PRESSURE PROFILE</span><small data-scenario-driver>HIGHEST STRESS · CAPACITY</small></div>
+            <svg viewBox="0 0 340 340" aria-hidden="true">
+              <defs>
+                <linearGradient id="scenario-profile-fill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8cc6ff" stop-opacity=".34"/><stop offset="1" stop-color="#3e84cd" stop-opacity=".08"/></linearGradient>
+                <filter id="scenario-profile-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <g class="scenario-pressure-grid">
+                <polygon points="170,48 292,170 170,292 48,170"/>
+                <polygon points="170,79 261,170 170,261 79,170"/>
+                <polygon points="170,109 231,170 170,231 109,170"/>
+                <polygon points="170,140 200,170 170,200 140,170"/>
+                <line x1="170" y1="38" x2="170" y2="302"/><line x1="38" y1="170" x2="302" y2="170"/>
+              </g>
+              <polygon class="scenario-pressure-ghost" data-scenario-ghost points="170,110 223,170 170,224 95,170"/>
+              <polygon class="scenario-pressure-profile" data-scenario-profile points="170,110 223,170 170,224 95,170"/>
+              <g class="scenario-pressure-points" filter="url(#scenario-profile-glow)">
+                <circle data-scenario-point="capital" cx="170" cy="110" r="4"/>
+                <circle data-scenario-point="demand" cx="223" cy="170" r="4"/>
+                <circle data-scenario-point="automation" cx="170" cy="224" r="4"/>
+                <circle data-scenario-point="capacity" cx="95" cy="170" r="4"/>
+              </g>
+            </svg>
+            <div class="scenario-pressure-core"><b data-scenario-score>60</b><small>OF 100</small></div>
+            <div class="scenario-pressure-factor scenario-pressure-factor--capital"><span>CAPITAL</span><b data-scenario-factor="capital">+3 pts</b></div>
+            <div class="scenario-pressure-factor scenario-pressure-factor--demand"><span>DEMAND</span><b data-scenario-factor="demand">−4 pts</b></div>
+            <div class="scenario-pressure-factor scenario-pressure-factor--automation"><span>AUTHORITY</span><b data-scenario-factor="automation">+8 pts</b></div>
+            <div class="scenario-pressure-factor scenario-pressure-factor--capacity"><span>CAPACITY</span><b data-scenario-factor="capacity">+5 pts</b></div>
+          </div>
+          <div class="scenario-result-copy"><span>COMPOSITE DECISION PRESSURE</span><h3 data-scenario-posture>Stage the commitment.</h3><p data-scenario-copy>Demand supports movement, but capital and capacity conditions make a fully irreversible commitment fragile.</p><div class="scenario-score-formula"><span>BASELINE <b>48</b></span><i>+</i><span>LIVE EFFECTS <b data-scenario-delta>+12</b></span></div></div>
           <div class="scenario-actions">
             <article><span>CAPITAL POSTURE</span><strong data-scenario-capital>Preserve options</strong></article>
             <article><span>OPERATING PRIORITY</span><strong data-scenario-operations>Protect throughput</strong></article>
@@ -166,7 +194,7 @@
   </main>
   <footer class="footer">
     <div class="footer-grid">
-      <div><a class="brand" href="/"><img class="brand-wordmark" src="/assets/skar-wordmark.png?v=20260802-3" alt="Skar Technologies Inc."></a></div>
+      <div><a class="brand" href="/"><img class="brand-wordmark" src="/assets/skar-wordmark.png?v=20260802-3" alt="Skar Technologies"></a></div>
       <div><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
       <div><h4>Expertise</h4><a href="/solutions/">Solutions</a><a href="/industries/">Industries</a></div>
       <div><h4>Insights</h4><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/news/">News</a></div>

@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Artificial Intelligence | Skar Technologies Inc.</title>
+  <title>Artificial Intelligence | Skar Technologies</title>
   <meta name="description" content="Practical artificial intelligence strategy, workflow design, and implementation focused on useful business outcomes."><link rel="canonical" href="https://skarcorporation.com/artificial-intelligence/"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="stylesheet" href="../site.css">
-  <link rel="stylesheet" href="../refinement.css?v=20260802-4">
+  <link rel="stylesheet" href="../refinement.css?v=20260803-5">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <script src="../site-nav.js?v=20260802-3" defer></script><script src="../capability-art.js?v=20260729-20" defer></script>
+  <script src="../site-nav.js?v=20260802-3" defer></script><script src="../capability-art.js?v=20260729-20" defer></script><script src="../ai-systems.js?v=20260803-1" defer></script>
 </head>
 <body class="capability-page-ai">
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -32,9 +32,104 @@
         <article><small>Assurance</small><div><h3>Evaluation and governance</h3><p>Quality measures, exception monitoring, auditability, and evidence for scale.</p></div></article>
       </div>
     </section>
+
+    <section class="ai-frontier" aria-labelledby="ai-frontier-title">
+      <div class="ai-frontier-head">
+        <div>
+          <p class="eyebrow">The useful frontier</p>
+          <h2 id="ai-frontier-title">Autonomy should be earned, not assumed.</h2>
+        </div>
+        <p>The right level of AI depends on consequence, reversibility, observability, and who remains accountable. Explore four operating postures.</p>
+      </div>
+      <div class="ai-frontier-shell" data-ai-frontier>
+        <div class="ai-frontier-map" aria-label="AI operating posture matrix">
+          <span class="ai-axis ai-axis-y">Consequence <i>Low</i><b>High</b></span>
+          <span class="ai-axis ai-axis-x">Observability <i>Low</i><b>High</b></span>
+          <div class="ai-frontier-grid" aria-hidden="true"></div>
+          <button class="ai-posture ai-posture-avoid" type="button" data-posture="avoid" aria-pressed="false"><span>04</span>Do not automate</button>
+          <button class="ai-posture ai-posture-decide" type="button" data-posture="decide" aria-pressed="false"><span>03</span>Recommend</button>
+          <button class="ai-posture ai-posture-assist is-active" type="button" data-posture="assist" aria-pressed="true"><span>01</span>Assist</button>
+          <button class="ai-posture ai-posture-act" type="button" data-posture="act" aria-pressed="false"><span>02</span>Constrained action</button>
+          <div class="ai-frontier-orbit" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <aside class="ai-frontier-detail" aria-live="polite">
+          <p class="ai-detail-index" data-ai-detail-index>01 · ASSIST</p>
+          <h3 data-ai-detail-title>Increase the quality of human work.</h3>
+          <p data-ai-detail-copy>Use AI to retrieve, organize, compare, and draft while a person remains the clear author of the decision.</p>
+          <dl>
+            <div><dt>Authority</dt><dd data-ai-detail-authority>Human retains</dd></div>
+            <div><dt>Review</dt><dd data-ai-detail-review>Every output</dd></div>
+            <div><dt>Best fit</dt><dd data-ai-detail-fit>Research and synthesis</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section class="ai-runtime" aria-labelledby="ai-runtime-title">
+      <div class="ai-runtime-head">
+        <div>
+          <p class="eyebrow">Governance at runtime</p>
+          <h2 id="ai-runtime-title">Make every consequential step visible.</h2>
+        </div>
+        <p>A governed system should show what entered, what the model inferred, which tools it used, where policy intervened, and who approved the result.</p>
+      </div>
+      <div class="ai-trace" aria-label="Illustrative governed AI workflow trace">
+        <div class="ai-trace-top">
+          <span><i></i> Illustrative workflow trace</span>
+          <span>TRACE / 0427</span>
+          <span>STATUS / REVIEWED</span>
+        </div>
+        <div class="ai-trace-flow">
+          <article style="--step:0">
+            <span>01</span><small>Evidence</small><h3>Source received</h3><p>Approved operating data enters with identity, timestamp, and provenance intact.</p><b>Verified input</b>
+          </article>
+          <article style="--step:1">
+            <span>02</span><small>Reasoning</small><h3>Options formed</h3><p>The system compares bounded alternatives and exposes assumptions behind each path.</p><b>3 paths retained</b>
+          </article>
+          <article style="--step:2" class="ai-trace-policy">
+            <span>03</span><small>Policy gate</small><h3>Authority checked</h3><p>Permissions, confidence, and consequence determine whether the workflow can proceed.</p><b>Human gate opened</b>
+          </article>
+          <article style="--step:3">
+            <span>04</span><small>Decision</small><h3>Recommendation issued</h3><p>A named owner receives the recommendation, evidence, alternatives, and exceptions.</p><b>Owner acknowledged</b>
+          </article>
+          <article style="--step:4">
+            <span>05</span><small>Learning</small><h3>Outcome observed</h3><p>Results return to the evaluation record without silently changing system behavior.</p><b>Evaluation queued</b>
+          </article>
+        </div>
+        <div class="ai-trace-signal" aria-hidden="true"><i></i></div>
+      </div>
+    </section>
+
+    <section class="ai-assurance" aria-labelledby="ai-assurance-title">
+      <div class="ai-assurance-head">
+        <p class="eyebrow">Evidence before scale</p>
+        <div>
+          <h2 id="ai-assurance-title">A demo proves possibility. An evaluation proves readiness.</h2>
+          <p>We define the release standard before implementation, test the full workflow rather than the model alone, and preserve the evidence required to govern it.</p>
+        </div>
+      </div>
+      <div class="ai-assurance-grid">
+        <article><span>01</span><div class="ai-assurance-mark" aria-hidden="true"><i></i><i></i><i></i></div><h3>Task validity</h3><p>Does the system solve the actual operating problem under realistic conditions?</p><small>Purpose · context · boundaries</small></article>
+        <article><span>02</span><div class="ai-assurance-mark" aria-hidden="true"><i></i><i></i><i></i></div><h3>Decision quality</h3><p>Are outputs accurate, calibrated, useful, and better than the available baseline?</p><small>Quality · uncertainty · comparison</small></article>
+        <article><span>03</span><div class="ai-assurance-mark" aria-hidden="true"><i></i><i></i><i></i></div><h3>Operational resilience</h3><p>What happens when data is missing, tools fail, conditions shift, or inputs are hostile?</p><small>Failure · recovery · monitoring</small></article>
+        <article><span>04</span><div class="ai-assurance-mark" aria-hidden="true"><i></i><i></i><i></i></div><h3>Control integrity</h3><p>Can people understand authority, inspect decisions, intervene, and reconstruct events?</p><small>Ownership · audit · escalation</small></article>
+      </div>
+    </section>
+
+    <section class="ai-engagements" aria-labelledby="ai-engagements-title">
+      <div class="ai-engagements-head">
+        <p class="eyebrow">How we engage</p>
+        <h2 id="ai-engagements-title">Start with the decision. Build only what earns its place.</h2>
+      </div>
+      <div class="ai-engagement-grid">
+        <article><span>01 / DISCOVER</span><h3>AI opportunity and risk architecture</h3><p>Identify high-value workflows, expose hidden dependencies, define decision rights, and rank opportunities by usefulness—not enthusiasm.</p></article>
+        <article><span>02 / PROVE</span><h3>Bounded pilot and evaluation system</h3><p>Build a narrow working system with representative data, measurable release gates, failure tests, and a clear human operating model.</p></article>
+        <article><span>03 / OPERATE</span><h3>Production workflow and governance</h3><p>Integrate tools, permissions, monitoring, escalation, and evidence capture so the system remains observable after launch.</p></article>
+      </div>
+    </section>
     <section class="capability-proof">
       <div><p class="eyebrow">Our standard</p><h2>Useful, observable, and accountable.</h2></div>
-      <p>We favor bounded systems with clear ownership and measurable performance over novelty without an operating purpose.</p>
+      <p>We favor bounded systems with clear ownership and measurable performance over novelty without an operating purpose. If a simpler tool is the better answer, we will say so.</p>
     </section>
   </main>
   <footer class="footer"></footer>

@@ -464,6 +464,13 @@
     constructor(root) {
       this.root = root;
       this.inputs = [...root.querySelectorAll("[data-scenario-input]")];
+      this.profile = root.querySelector("[data-scenario-profile]");
+      this.ghost = root.querySelector("[data-scenario-ghost]");
+      this.map = root.querySelector("[data-scenario-map]");
+      this.points = [...root.querySelectorAll("[data-scenario-point]")];
+      this.currentProfile = null;
+      this.currentScore = null;
+      this.animationFrame = null;
       this.inputs.forEach(input => input.addEventListener("input", () => this.update()));
       root.querySelector("[data-scenario-reset]").addEventListener("click", () => {
         const defaults = { rates: 25, demand: 2, capacity: -3, automation: 45 };
@@ -473,19 +480,86 @@
       this.update();
     }
 
+    formatContribution(value) {
+      const rounded = Math.round(value);
+      return `${rounded >= 0 ? "+" : "−"}${Math.abs(rounded)} pts`;
+    }
+
+    animateProfile(targetProfile, targetScore) {
+      if (!this.profile || !this.map) return;
+      if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+      const fromProfile = this.currentProfile || targetProfile;
+      const fromScore = this.currentScore ?? targetScore;
+      const start = performance.now();
+      const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 620;
+      const draw = now => {
+        const raw = duration ? Math.min(1, (now - start) / duration) : 1;
+        const eased = 1 - Math.pow(1 - raw, 3);
+        const frame = targetProfile.map((point, index) => ({
+          x: fromProfile[index].x + (point.x - fromProfile[index].x) * eased,
+          y: fromProfile[index].y + (point.y - fromProfile[index].y) * eased
+        }));
+        const pointString = frame.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+        this.profile.setAttribute("points", pointString);
+        this.ghost.setAttribute("points", pointString);
+        this.points.forEach((point, index) => {
+          point.setAttribute("cx", frame[index].x.toFixed(1));
+          point.setAttribute("cy", frame[index].y.toFixed(1));
+        });
+        const frameScore = fromScore + (targetScore - fromScore) * eased;
+        this.root.querySelector("[data-scenario-score]").textContent = Math.round(frameScore);
+        this.currentProfile = frame;
+        this.currentScore = frameScore;
+        if (raw < 1) this.animationFrame = requestAnimationFrame(draw);
+        else {
+          this.animationFrame = null;
+        }
+      };
+      this.animationFrame = requestAnimationFrame(draw);
+    }
+
     update() {
       const values = Object.fromEntries(this.inputs.map(input => [input.dataset.scenarioInput, Number(input.value)]));
       this.root.querySelector('[data-scenario-output="rates"]').textContent = `${values.rates >= 0 ? "+" : "−"}${Math.abs(values.rates)} bp`;
       this.root.querySelector('[data-scenario-output="demand"]').textContent = `${values.demand >= 0 ? "+" : "−"}${Math.abs(values.demand)}%`;
       this.root.querySelector('[data-scenario-output="capacity"]').textContent = `${values.capacity >= 0 ? "+" : "−"}${Math.abs(values.capacity)}%`;
       this.root.querySelector('[data-scenario-output="automation"]').textContent = `${values.automation}%`;
-      const score = Math.max(0, Math.min(100, Math.round(48 + values.rates * .13 - values.demand * 1.8 - values.capacity * 1.5 + values.automation * .18)));
+      const contributions = {
+        capital: values.rates * .13,
+        demand: -values.demand * 1.8,
+        automation: values.automation * .18,
+        capacity: -values.capacity * 1.5
+      };
+      const delta = Object.values(contributions).reduce((sum, value) => sum + value, 0);
+      const score = Math.max(0, Math.min(100, Math.round(48 + delta)));
+      const pressure = {
+        capital: Math.max(0, Math.min(1, (values.rates + 100) / 250)),
+        demand: Math.max(0, Math.min(1, (10 - values.demand) / 18)),
+        automation: Math.max(0, Math.min(1, values.automation / 100)),
+        capacity: Math.max(0, Math.min(1, (12 - values.capacity) / 24))
+      };
+      const radius = 120;
+      const profile = [
+        { x: 170, y: 170 - pressure.capital * radius },
+        { x: 170 + pressure.demand * radius, y: 170 },
+        { x: 170, y: 170 + pressure.automation * radius },
+        { x: 170 - pressure.capacity * radius, y: 170 }
+      ];
+      const strongestDriver = Object.entries(pressure).sort((a, b) => b[1] - a[1])[0][0];
+      const driverLabels = { capital: "CAPITAL", demand: "DEMAND", automation: "AUTOMATION", capacity: "CAPACITY" };
       let posture = "Advance with gates.";
       let copy = "The environment supports movement if evidence gates remain attached to each major commitment.";
       if (score >= 72) { posture = "Protect the downside."; copy = "Compounding pressures make irreversible scope fragile. Reduce exposure, preserve liquidity, and define explicit stop conditions."; }
       else if (score >= 55) { posture = "Stage the commitment."; copy = "Demand supports movement, but capital and capacity conditions make a fully irreversible commitment fragile."; }
       else if (score < 35) { posture = "Use the window."; copy = "Pressure is contained. Accelerate the highest conviction moves while retaining observable thresholds for reversal."; }
-      this.root.querySelector("[data-scenario-score]").textContent = score;
+      Object.entries(contributions).forEach(([key, value]) => {
+        this.root.querySelector(`[data-scenario-factor="${key}"]`).textContent = this.formatContribution(value);
+      });
+      this.root.querySelector("[data-scenario-driver]").textContent = `HIGHEST STRESS · ${driverLabels[strongestDriver]}`;
+      this.root.querySelector("[data-scenario-delta]").textContent = `${delta >= 0 ? "+" : "−"}${Math.abs(Math.round(delta))}`;
+      this.map.style.setProperty("--pressure", score / 100);
+      this.map.setAttribute("aria-label", `Composite decision pressure: ${score} out of 100. Highest-stress dimension: ${driverLabels[strongestDriver].toLowerCase()}.`);
+      this.animateProfile(profile, score);
       this.root.querySelector("[data-scenario-posture]").textContent = posture;
       this.root.querySelector("[data-scenario-copy]").textContent = copy;
       this.root.querySelector("[data-scenario-capital]").textContent = score > 68 ? "Preserve liquidity" : score > 48 ? "Preserve options" : "Fund priority moves";

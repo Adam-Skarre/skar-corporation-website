@@ -169,4 +169,37 @@
       engraving.style.setProperty('--insights-y', `${y * 5}px`);
     });
   }
+
+  const birdCard = document.querySelector('.insights-work-feature');
+  const birds = birdCard ? [...birdCard.querySelectorAll('.insights-bird')] : [];
+  if (birdCard && birds.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    birdCard.addEventListener('pointermove', (event) => {
+      const rect = birdCard.getBoundingClientRect();
+      birds.forEach((bird, index) => {
+        const birdRect = bird.getBoundingClientRect();
+        const birdX = birdRect.left + birdRect.width / 2;
+        const birdY = birdRect.top + birdRect.height / 2;
+        const deltaX = birdX - event.clientX;
+        const deltaY = birdY - event.clientY;
+        const distance = Math.max(1, Math.hypot(deltaX, deltaY));
+        const influence = Math.max(0, 1 - distance / Math.min(260, rect.width * 0.42));
+        const strength = (12 + index * 1.8) * influence;
+        bird.style.setProperty('--bird-shift-x', `${(deltaX / distance) * strength}px`);
+        bird.style.setProperty('--bird-shift-y', `${(deltaY / distance) * strength - influence * 5}px`);
+      });
+    });
+
+    birdCard.addEventListener('pointerleave', () => {
+      birds.forEach((bird) => {
+        bird.style.setProperty('--bird-shift-x', '0px');
+        bird.style.setProperty('--bird-shift-y', '0px');
+      });
+    });
+
+    birdCard.addEventListener('pointerdown', () => {
+      birdCard.classList.remove('is-bird-startled');
+      requestAnimationFrame(() => birdCard.classList.add('is-bird-startled'));
+      window.setTimeout(() => birdCard.classList.remove('is-bird-startled'), 650);
+    });
+  }
 })();
