@@ -1,116 +1,182 @@
 (() => {
   const canvas = document.querySelector('[data-about-mountain]');
-  if (!canvas) return;
+  const stage = document.querySelector('[data-about-mountain-stage]');
+  const hero = document.querySelector('[data-about-hero]');
+  if (!canvas || !stage || !hero) return;
 
-  const hero = canvas.closest('.page-hero-about');
   const context = canvas.getContext('2d', { alpha: true });
-  if (!hero || !context) return;
+  if (!context) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let width = 0;
-  let height = 0;
+  let width = 1;
+  let height = 1;
   let pixelRatio = 1;
-  let particles = [];
+  let points = [];
   let frame = 0;
   let visible = true;
-  let pointerX = 0;
-  let pointerY = 0;
-  let targetX = 0;
-  let targetY = 0;
+  let activity = reducedMotion ? 0.18 : 0;
+  let activityTarget = reducedMotion ? 0.18 : 0;
+  let pointerX = 0.72;
+  let pointerY = 0.52;
+  let pointerTargetX = pointerX;
+  let pointerTargetY = pointerY;
+  let lastTime = 0;
 
-  function randomFactory(seed) {
-    let value = seed >>> 0;
-    return () => {
-      value = (value * 1664525 + 1013904223) >>> 0;
-      return value / 4294967296;
-    };
-  }
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  const gaussian = (x, center, spread, amplitude) => {
+    const distance = (x - center) / spread;
+    return Math.exp(-(distance * distance)) * amplitude;
+  };
 
   function ridge(normalizedX) {
-    const gaussian = (center, spread, heightFactor) => {
-      const distance = (normalizedX - center) / spread;
-      return Math.exp(-(distance * distance)) * heightFactor;
-    };
-    return height * (
-      0.79
-      - gaussian(0.49, 0.085, 0.19)
-      - gaussian(0.64, 0.07, 0.31)
-      - gaussian(0.76, 0.055, 0.23)
-      - gaussian(0.87, 0.08, 0.29)
-      - gaussian(0.98, 0.09, 0.17)
-    );
+    const rollingBase = 0.875 + Math.sin(normalizedX * 14.5) * 0.008;
+    return rollingBase
+      - gaussian(normalizedX, 0.23, 0.075, 0.105)
+      - gaussian(normalizedX, 0.365, 0.054, 0.19)
+      - gaussian(normalizedX, 0.585, 0.115, 0.31)
+      - gaussian(normalizedX, 0.69, 0.073, 0.255)
+      - gaussian(normalizedX, 0.805, 0.098, 0.29)
+      - gaussian(normalizedX, 0.955, 0.13, 0.19);
   }
 
-  function buildParticles() {
-    const random = randomFactory(20260803);
-    const count = Math.max(430, Math.min(1350, Math.round(width * height / 830)));
-    particles = Array.from({ length: count }, () => {
-      const normalizedX = 0.36 + random() * 0.7;
-      const top = ridge(normalizedX);
-      const depth = Math.pow(random(), 1.55);
-      return {
-        x: normalizedX * width,
-        y: top + (height - top + 18) * depth,
-        depth,
-        radius: 0.45 + random() * 1.15,
-        phase: random() * Math.PI * 2,
-        speed: 0.28 + random() * 0.55
-      };
-    });
+  function hash(column, row) {
+    const value = Math.sin(column * 127.1 + row * 311.7) * 43758.5453123;
+    return value - Math.floor(value);
+  }
+
+  function buildPoints() {
+    const mobile = width < 700;
+    const spacing = mobile ? 8.5 : clamp(width / 178, 8.2, 12.2);
+    const startY = height * (mobile ? 0.29 : 0.22);
+    const bottom = height + spacing;
+    const next = [];
+    let column = 0;
+
+    for (let x = -spacing; x <= width + spacing; x += spacing) {
+      const normalizedX = x / width;
+      const ridgeY = ridge(normalizedX) * height;
+      let row = 0;
+      for (let y = Math.max(startY, ridgeY); y <= bottom; y += spacing) {
+        const depth = clamp((y - ridgeY) / Math.max(1, bottom - ridgeY), 0, 1);
+        const noise = hash(column, row);
+        const edge = Math.exp(-depth * 3.6);
+        next.push({
+          x,
+          y,
+          normalizedX,
+          depth,
+          edge,
+          noise,
+          phase: noise * Math.PI * 2,
+          size: spacing * (0.22 + edge * 0.16 + noise * 0.07)
+        });
+        row += 1;
+      }
+      column += 1;
+    }
+    points = next;
   }
 
   function resize() {
-    const rect = hero.getBoundingClientRect();
-    width = Math.max(1, Math.round(rect.width));
-    height = Math.max(1, Math.round(rect.height));
-    pixelRatio = Math.min(window.devicePixelRatio || 1, 1.6);
+    const bounds = stage.getBoundingClientRect();
+    width = Math.max(1, Math.round(bounds.width));
+    height = Math.max(1, Math.round(bounds.height));
+    pixelRatio = Math.min(window.devicePixelRatio || 1, 1.65);
     canvas.width = Math.round(width * pixelRatio);
     canvas.height = Math.round(height * pixelRatio);
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    buildParticles();
+    buildPoints();
     if (reducedMotion) draw(0);
   }
 
-  function drawContours(time) {
+  function drawContour(time, offset, alpha, dash) {
     context.save();
-    context.lineWidth = 0.8;
-    context.setLineDash([2, 9]);
-    context.lineDashOffset = reducedMotion ? 0 : -(time * 0.013);
-    for (let contour = 0; contour < 3; contour += 1) {
-      context.beginPath();
-      for (let x = width * 0.38; x <= width * 1.02; x += 7) {
-        const normalizedX = x / width;
-        const y = ridge(normalizedX) + contour * 31 + Math.sin(normalizedX * 28 + contour) * 3;
-        if (x === width * 0.38) context.moveTo(x, y);
-        else context.lineTo(x, y);
-      }
-      context.strokeStyle = `rgba(151, 204, 252, ${0.2 - contour * 0.045})`;
-      context.stroke();
+    context.beginPath();
+    for (let x = -8; x <= width + 8; x += 6) {
+      const normalizedX = x / width;
+      const ripple = reducedMotion ? 0 : Math.sin(normalizedX * 18 + time * 0.00032 + offset) * activity * 3.2;
+      const y = ridge(normalizedX) * height + offset + ripple;
+      if (x === -8) context.moveTo(x, y);
+      else context.lineTo(x, y);
     }
+    context.strokeStyle = `rgba(244, 250, 255, ${alpha})`;
+    context.lineWidth = 1;
+    context.setLineDash(dash);
+    context.lineDashOffset = reducedMotion ? 0 : -time * 0.012;
+    context.stroke();
+    context.restore();
+  }
+
+  function drawSignal(time) {
+    const baseline = height * 0.56;
+    context.save();
+    context.beginPath();
+    for (let x = width * 0.06; x <= width * 0.94; x += 8) {
+      const normalized = (x - width * 0.06) / (width * 0.88);
+      const envelope = Math.sin(normalized * Math.PI);
+      const y = baseline
+        - Math.sin(normalized * 17.5 + time * 0.00022) * height * 0.042 * envelope
+        - Math.sin(normalized * 42) * height * 0.009;
+      if (x === width * 0.06) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.strokeStyle = `rgba(247, 251, 255, ${0.13 + activity * 0.16})`;
+    context.lineWidth = 1.15;
+    context.stroke();
     context.restore();
   }
 
   function draw(time) {
-    context.clearRect(0, 0, width, height);
-    pointerX += (targetX - pointerX) * 0.045;
-    pointerY += (targetY - pointerY) * 0.045;
-    drawContours(time);
+    const delta = Math.min(32, Math.max(0, time - lastTime || 16));
+    lastTime = time;
+    activity += (activityTarget - activity) * Math.min(1, delta * 0.0085);
+    pointerX += (pointerTargetX - pointerX) * Math.min(1, delta * 0.011);
+    pointerY += (pointerTargetY - pointerY) * Math.min(1, delta * 0.011);
 
-    particles.forEach((particle, index) => {
-      const shimmer = reducedMotion ? 0.72 : 0.62 + Math.sin(time * 0.001 * particle.speed + particle.phase) * 0.28;
-      const ridgeWeight = 1 - particle.depth;
-      const alpha = Math.max(0.08, (0.16 + ridgeWeight * 0.58) * shimmer);
-      const parallax = 0.25 + ridgeWeight * 0.75;
-      const x = particle.x + pointerX * parallax;
-      const y = particle.y + pointerY * parallax;
-      context.beginPath();
-      context.arc(x, y, particle.radius * (0.75 + shimmer * 0.35), 0, Math.PI * 2);
-      context.fillStyle = index % 17 === 0
-        ? `rgba(222, 240, 255, ${Math.min(0.9, alpha * 1.5)})`
-        : `rgba(126, 186, 239, ${alpha})`;
-      context.fill();
+    context.clearRect(0, 0, width, height);
+    drawSignal(time);
+    drawContour(time, 0, 0.52, [2, 7]);
+    drawContour(time, 20, 0.22, [1, 9]);
+    drawContour(time, 42, 0.13, [1, 11]);
+
+    const cursorX = pointerX * width;
+    const cursorY = pointerY * height;
+    const influenceRadius = Math.max(105, Math.min(width, height) * 0.28);
+
+    points.forEach((point) => {
+      const dx = point.x - cursorX;
+      const dy = point.y - cursorY;
+      const distance = Math.hypot(dx, dy);
+      const local = clamp(1 - distance / influenceRadius, 0, 1);
+      const falloff = local * local * (3 - 2 * local) * activity;
+      const directionX = distance > 0 ? dx / distance : 0;
+      const directionY = distance > 0 ? dy / distance : 0;
+      const wave = reducedMotion ? 0 : Math.sin(time * 0.002 + point.phase + point.normalizedX * 19);
+      const strata = reducedMotion ? 0 : Math.sin(time * 0.0012 + point.y * 0.033 + point.phase);
+      const push = falloff * (11 + point.edge * 18);
+      const driftX = activity * (wave * 2.2 + strata * point.edge * 2.8);
+      const driftY = activity * (strata * 1.5 - point.edge * 2.2);
+      const x = point.x + directionX * push + driftX;
+      const y = point.y + directionY * push * 0.72 + driftY;
+      const shimmer = reducedMotion ? 0.78 : 0.69 + Math.sin(time * 0.0011 + point.phase) * 0.16;
+      const alpha = clamp((0.42 + point.edge * 0.5) * shimmer + falloff * 0.24, 0.24, 1);
+      const size = point.size * (1 + activity * 0.38 + falloff * 0.62);
+
+      context.fillStyle = point.noise > 0.94
+        ? `rgba(255, 255, 255, ${alpha})`
+        : `rgba(241, 248, 255, ${alpha * 0.93})`;
+
+      if (activity > 0.08) {
+        const quantizedX = Math.round(x / 2) * 2;
+        const quantizedY = Math.round(y / 2) * 2;
+        context.fillRect(quantizedX - size / 2, quantizedY - size / 2, size, size);
+      } else {
+        context.beginPath();
+        context.arc(x, y, size * 0.47, 0, Math.PI * 2);
+        context.fill();
+      }
     });
   }
 
@@ -119,17 +185,32 @@
     frame = window.requestAnimationFrame(animate);
   }
 
-  if (!reducedMotion) {
-    hero.addEventListener('pointermove', (event) => {
-      const rect = hero.getBoundingClientRect();
-      targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 11;
-      targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 7;
-    });
-    hero.addEventListener('pointerleave', () => {
-      targetX = 0;
-      targetY = 0;
-    });
+  function updatePointer(event) {
+    if (reducedMotion) return;
+    const bounds = stage.getBoundingClientRect();
+    const normalizedX = clamp((event.clientX - bounds.left) / bounds.width, 0, 1);
+    const normalizedY = clamp((event.clientY - bounds.top) / bounds.height, 0, 1);
+    pointerTargetX = normalizedX;
+    pointerTargetY = normalizedY;
+    const mountainTop = ridge(normalizedX);
+    activityTarget = normalizedY >= mountainTop - 0.08 ? 1 : 0;
+    hero.classList.toggle('is-mountain-active', activityTarget > 0.5);
   }
+
+  stage.addEventListener('pointermove', updatePointer, { passive: true });
+  stage.addEventListener('pointerenter', updatePointer, { passive: true });
+  stage.addEventListener('pointerdown', (event) => {
+    updatePointer(event);
+    activityTarget = reducedMotion ? 0.18 : 1;
+    hero.classList.add('is-mountain-active');
+  }, { passive: true });
+  stage.addEventListener('pointerleave', () => {
+    if (reducedMotion) return;
+    activityTarget = 0;
+    pointerTargetX = 0.72;
+    pointerTargetY = 0.52;
+    hero.classList.remove('is-mountain-active');
+  });
 
   const observer = 'IntersectionObserver' in window
     ? new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0.02 })
@@ -137,7 +218,7 @@
   if (observer) observer.observe(hero);
 
   const resizeObserver = 'ResizeObserver' in window ? new ResizeObserver(resize) : null;
-  if (resizeObserver) resizeObserver.observe(hero);
+  if (resizeObserver) resizeObserver.observe(stage);
   else window.addEventListener('resize', resize, { passive: true });
 
   resize();
