@@ -192,6 +192,96 @@
     });
   }
 
+  const problems = document.querySelector('[data-ai-problems]');
+  if (problems) {
+    const problemData = {
+      knowledge: {
+        index: '01', trace: 'CASE / KNOWLEDGE-01',
+        title: 'Turn scattered knowledge into traceable decisions.',
+        copy: 'Critical context is distributed across documents, systems, and people. Teams search repeatedly and still cannot see which evidence supports an answer.',
+        signal: 'Search, rework, inconsistent answers', risk: 'Decisions lose context and provenance', start: 'One recurring research workflow',
+        input: 'Scattered evidence', system: 'Approved retrieval + source trace', output: 'Reusable institutional context',
+        outcomeTitle: 'Build a trusted knowledge layer.', outcomeCopy: 'Connect approved sources, preserve citations, and make uncertainty visible before a person uses the result.',
+        measure: 'Answer quality + evidence trace', boundary: 'Source-level permissions', owner: 'Knowledge or process lead'
+      },
+      latency: {
+        index: '02', trace: 'CASE / DECISION-02',
+        title: 'Compress the distance between signal and action.',
+        copy: 'Important decisions wait while people assemble updates, reconcile versions, and translate evidence into the format an owner can use.',
+        signal: 'Slow synthesis and serial handoffs', risk: 'Action arrives after the operating window', start: 'One repeated decision cycle',
+        input: 'Live signals + decision criteria', system: 'Continuous synthesis + exception routing', output: 'Decision-ready briefing',
+        outcomeTitle: 'Create a living decision surface.', outcomeCopy: 'Keep evidence current, isolate material changes, and route a concise recommendation to the person with authority.',
+        measure: 'Cycle time + decision readiness', boundary: 'Recommendation, not commitment', owner: 'Named decision owner'
+      },
+      exceptions: {
+        index: '03', trace: 'CASE / EXCEPTION-03',
+        title: 'Resolve the work a fixed rule cannot absorb.',
+        copy: 'Operations slow when unusual requests, incomplete records, or changing conditions fall outside the standard process and require expert interpretation.',
+        signal: 'Growing queues and manual triage', risk: 'Critical exceptions are treated like routine work', start: 'A high-volume exception queue',
+        input: 'Event + operating history', system: 'Classification + bounded investigation', output: 'Prioritized resolution path',
+        outcomeTitle: 'Turn exceptions into an observable queue.', outcomeCopy: 'Classify the event, gather the right context, propose a reversible next step, and escalate when confidence or authority runs out.',
+        measure: 'Resolution time + escalation recall', boundary: 'Stop conditions + rollback', owner: 'Operations lead'
+      },
+      control: {
+        index: '04', trace: 'CASE / CONTROL-04',
+        title: 'Make policy executable and visible.',
+        copy: 'Review effort grows when permissions, policies, and approval rules live outside the workflow and must be reconstructed after each action.',
+        signal: 'Manual checks and incomplete audit trails', risk: 'Controls exist on paper but not in behavior', start: 'One high-friction control process',
+        input: 'Policy + proposed action', system: 'Machine-readable gates + evidence log', output: 'Auditable approval path',
+        outcomeTitle: 'Move controls into the operating loop.', outcomeCopy: 'Check identity, evidence, permissions, thresholds, and required approvals before an action can proceed.',
+        measure: 'Policy adherence + audit completeness', boundary: 'Explicit permissions', owner: 'Business and control owners'
+      },
+      capacity: {
+        index: '05', trace: 'CASE / CAPACITY-05',
+        title: 'Scale expert judgment without hiding ownership.',
+        copy: 'Specialists spend valuable time repeating research, formatting, comparison, and follow-up instead of applying judgment to consequential work.',
+        signal: 'Expert bottlenecks and uneven quality', risk: 'Knowledge does not compound across the team', start: 'A repeatable expert workflow',
+        input: 'Expert method + company context', system: 'Reusable agent pattern + review gate', output: 'Consistent first-pass work',
+        outcomeTitle: 'Make expertise reusable—not anonymous.', outcomeCopy: 'Encode the repeatable method, preserve the expert’s standards, and keep a clear person accountable for the final output.',
+        measure: 'Adoption + expert review time', boundary: 'Expert-owned release standard', owner: 'Functional expert'
+      }
+    };
+    const fields = {
+      index: problems.querySelector('[data-problem-index]'), trace: problems.querySelector('[data-problem-trace]'),
+      title: problems.querySelector('[data-problem-title]'), copy: problems.querySelector('[data-problem-copy]'),
+      signal: problems.querySelector('[data-problem-signal]'), risk: problems.querySelector('[data-problem-risk]'), start: problems.querySelector('[data-problem-start]'),
+      input: problems.querySelector('[data-problem-input]'), system: problems.querySelector('[data-problem-system]'), output: problems.querySelector('[data-problem-output]'),
+      outcomeTitle: problems.querySelector('[data-problem-outcome-title]'), outcomeCopy: problems.querySelector('[data-problem-outcome-copy]'),
+      measure: problems.querySelector('[data-problem-measure]'), boundary: problems.querySelector('[data-problem-boundary]'), owner: problems.querySelector('[data-problem-owner]')
+    };
+    const field = problems.querySelector('[data-problem-field]');
+    const tabs = [...problems.querySelectorAll('[data-problem-tab]')];
+    const selectProblem = (key, button) => {
+      const data = problemData[key];
+      tabs.forEach(tab => {
+        const active = tab === button;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      Object.entries(fields).forEach(([name, element]) => { element.textContent = data[name]; });
+      field.dataset.problemField = key;
+      field.classList.remove('is-changing');
+      requestAnimationFrame(() => field.classList.add('is-changing'));
+      animateCopy(Object.values(fields));
+    };
+    tabs.forEach((button, index) => {
+      button.tabIndex = index === 0 ? 0 : -1;
+      button.addEventListener('click', () => selectProblem(button.dataset.problemTab, button));
+      button.addEventListener('keydown', event => {
+        let next = null;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = tabs.length - 1;
+        if (next === null) return;
+        event.preventDefault();
+        tabs[next].focus();
+        selectProblem(tabs[next].dataset.problemTab, tabs[next]);
+      });
+    });
+  }
+
   const authority = document.querySelector('[data-ai-authority]');
   if (authority) {
     const profiles = {
@@ -272,7 +362,73 @@
     evaluation.querySelectorAll('[data-evaluation-tab]').forEach(button => button.addEventListener('click', () => selectSuite(button.dataset.evaluationTab, button)));
   }
 
-  const revealItems = document.querySelectorAll('.ai-os-head,.ai-os-figure,.ai-studio-head,.ai-studio-tabs,.ai-studio-console,.ai-authority-head,.ai-authority-figure,.ai-evaluation-head,.ai-evaluation-console,.ai-evaluation-principles,.ai-delivery-head,.ai-delivery-rail');
+  const horizon = document.querySelector('[data-ai-horizon]');
+  if (horizon) {
+    const horizonData = {
+      now: {
+        index: '01 / NOW', title: 'AI joins the workflow.',
+        copy: 'Grounded assistants retrieve, compare, draft, and prepare work inside a defined business process.',
+        capability: 'Context-aware assistance', control: 'Approved sources + human review', effect: 'Less search, rework, and handoff delay', owner: 'Author and decision owner',
+        status: 'Assistance active / human review required'
+      },
+      coordinate: {
+        index: '02 / EMERGING', title: 'Specialist agents begin to coordinate.',
+        copy: 'A planner can divide a larger job among bounded research, analysis, and action agents while preserving one trace of the work.',
+        capability: 'Multi-step agent coordination', control: 'Scoped tools + explicit handoffs', effect: 'Longer workflows move as one system', owner: 'Workflow owner and exception reviewer',
+        status: 'Four specialists active / shared trace retained'
+      },
+      adaptive: {
+        index: '03 / NEXT', title: 'Operating systems respond to live events.',
+        copy: 'Agents monitor changing conditions, update context, and re-plan bounded work without waiting for every step to be manually initiated.',
+        capability: 'Event-driven planning and action', control: 'Runtime policy + observability + rollback', effect: 'Operations become more responsive', owner: 'Objective, limits, and intervention owner',
+        status: 'Live events connected / policy engine monitoring'
+      },
+      enduring: {
+        index: '04 / ENDURING', title: 'Human judgment remains the consequential boundary.',
+        copy: 'People continue to set objectives, resolve ambiguity, define acceptable risk, and own decisions whose consequences cannot be delegated away.',
+        capability: 'Human–agent operating model', control: 'Authority + evaluation + intervention', effect: 'Capability scales without losing accountability', owner: 'Named human authority',
+        status: 'Network active / consequential commitments human-owned'
+      }
+    };
+    const fields = {
+      index: horizon.querySelector('[data-horizon-index]'), title: horizon.querySelector('[data-horizon-title]'),
+      copy: horizon.querySelector('[data-horizon-copy]'), capability: horizon.querySelector('[data-horizon-capability]'),
+      control: horizon.querySelector('[data-horizon-control]'), effect: horizon.querySelector('[data-horizon-effect]'),
+      owner: horizon.querySelector('[data-horizon-owner]'), status: horizon.querySelector('[data-horizon-status]')
+    };
+    const tabs = [...horizon.querySelectorAll('[data-horizon-tab]')];
+    const selectHorizon = (key, button) => {
+      const data = horizonData[key];
+      horizon.dataset.horizonStage = key;
+      tabs.forEach(tab => {
+        const active = tab === button;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      Object.entries(fields).forEach(([name, element]) => { element.textContent = data[name]; });
+      horizon.querySelector('.ai-horizon-field').classList.remove('is-changing');
+      requestAnimationFrame(() => horizon.querySelector('.ai-horizon-field').classList.add('is-changing'));
+      animateCopy(Object.values(fields));
+    };
+    tabs.forEach((button, index) => {
+      button.tabIndex = index === 0 ? 0 : -1;
+      button.addEventListener('click', () => selectHorizon(button.dataset.horizonTab, button));
+      button.addEventListener('keydown', event => {
+        let next = null;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = tabs.length - 1;
+        if (next === null) return;
+        event.preventDefault();
+        tabs[next].focus();
+        selectHorizon(tabs[next].dataset.horizonTab, tabs[next]);
+      });
+    });
+  }
+
+  const revealItems = document.querySelectorAll('.ai-os-head,.ai-os-figure,.ai-studio-head,.ai-studio-tabs,.ai-studio-console,.ai-problems-head,.ai-problems-tabs,.ai-problems-console,.ai-authority-head,.ai-authority-figure,.ai-evaluation-head,.ai-evaluation-console,.ai-evaluation-principles,.ai-horizon-head,.ai-horizon-console,.ai-delivery-head,.ai-delivery-rail');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
     revealItems.forEach(item => item.classList.add('is-visible'));
     return;
