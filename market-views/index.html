@@ -12,11 +12,11 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://skarcorporation.com/market-views/">
   <link rel="stylesheet" href="/site.css">
-  <link rel="stylesheet" href="/refinement.css?v=20260803-1">
+  <link rel="stylesheet" href="/refinement.css?v=20260804-2">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <script src="/site-nav.js?v=20260802-3" defer></script>
   <script src="/math-art.js?v=20260729-2" defer></script>
-  <script src="/market-views.js?v=20260803-1" defer></script>
+  <script src="/market-views.js?v=20260804-2" defer></script>
 </head>
 <body>
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -34,161 +34,112 @@
       </div>
     </section>
 
-    <section class="market-brief-v2" aria-labelledby="market-brief-title">
-      <div class="market-brief-v2__intro">
-        <p class="eyebrow">Decision brief · 02 August 2026</p>
-        <h2 id="market-brief-title">The signal matters only when its transmission path is visible.</h2>
-      </div>
-      <div class="market-brief-v2__summary">
-        <p>Capital remains selective while physical investment and operating demand move at different speeds. The useful question is not whether one indicator is up or down. It is where pressure travels next, how quickly it arrives, and which commitment loses flexibility first.</p>
-        <div class="market-brief-v2__tags" aria-label="Current decision themes">
-          <span><i></i>Capital discipline</span><span><i></i>Capacity conversion</span><span><i></i>Control architecture</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="market-terminal" id="signal-monitor" aria-labelledby="market-terminal-title">
-      <div class="market-terminal__head">
-        <div>
-          <p class="eyebrow">SKAR signal terminal</p>
-          <h2 id="market-terminal-title">One system.<br>Four pressure points.</h2>
-        </div>
-        <div class="market-terminal__regime">
-          <span>Current decision regime</span>
-          <strong>Selective expansion</strong>
-          <p>Demand is holding while financing and conversion constraints keep the value of optionality elevated.</p>
-        </div>
-      </div>
-
-      <div class="market-pulse-grid" aria-label="Reference signal summary">
-        <button type="button" class="market-pulse active" data-series-jump="rates"><span>01 · CAPITAL</span><strong>4.61%</strong><small>10Y Treasury</small><b>Higher hurdle</b></button>
-        <button type="button" class="market-pulse" data-series-jump="conditions"><span>02 · LIQUIDITY</span><strong>−0.554</strong><small>Chicago Fed NFCI</small><b>Still accommodative</b></button>
-        <button type="button" class="market-pulse" data-series-jump="output"><span>03 · OUTPUT</span><strong>102.6</strong><small>Industrial production</small><b>Firming slowly</b></button>
-        <button type="button" class="market-pulse" data-series-jump="buildout"><span>04 · BUILDOUT</span><strong>$174.8B</strong><small>Manufacturing construction</small><b>Cooling from peak</b></button>
-      </div>
-
-      <div class="market-workspace" data-market-monitor>
-        <div class="market-monitor-nav" role="tablist" aria-label="Market signal">
-          <div class="market-monitor-nav__label">Select pressure</div>
-          <button type="button" class="market-signal-tab active" id="signal-tab-rates" role="tab" aria-selected="true" aria-controls="market-chart-panel" data-series="rates"><span>01</span><strong>Cost of capital</strong><small>Pricing commitments</small></button>
-          <button type="button" class="market-signal-tab" id="signal-tab-conditions" role="tab" aria-selected="false" aria-controls="market-chart-panel" tabindex="-1" data-series="conditions"><span>02</span><strong>Financial conditions</strong><small>Funding availability</small></button>
-          <button type="button" class="market-signal-tab" id="signal-tab-output" role="tab" aria-selected="false" aria-controls="market-chart-panel" tabindex="-1" data-series="output"><span>03</span><strong>Industrial output</strong><small>Usable capacity</small></button>
-          <button type="button" class="market-signal-tab" id="signal-tab-buildout" role="tab" aria-selected="false" aria-controls="market-chart-panel" tabindex="-1" data-series="buildout"><span>04</span><strong>Physical buildout</strong><small>Capacity in formation</small></button>
-        </div>
-
-        <div class="market-chart-panel" id="market-chart-panel" role="tabpanel" aria-labelledby="signal-tab-rates">
-          <div class="market-chart-meta">
-            <div><span class="market-chart-kicker" data-market-kicker>CAPITAL PRICING</span><h3 data-market-title>10-year Treasury yield</h3></div>
-            <div class="market-chart-reading"><strong data-market-value>4.61%</strong><span data-market-date>28 Jul 2026</span></div>
-          </div>
-          <div class="market-chart-frame"><canvas data-market-chart aria-label="Recent path of the selected market indicator"></canvas><div class="market-chart-tooltip" data-market-tooltip hidden></div></div>
-          <div class="market-chart-axis" aria-hidden="true"><span data-market-start>03 Jun</span><span data-market-end>28 Jul</span></div>
-        </div>
-
-        <aside class="market-insight-rail" aria-live="polite">
-          <div><span>REGIME</span><strong data-market-regime>Restrictive</strong><small data-market-direction>+12 bp over window</small></div>
-          <div><span>TRANSMISSION</span><p data-market-signal>Long duration capital remains expensive relative to the pre 2022 environment.</p></div>
-          <div><span>DECISION TEST</span><p data-market-decision>Re test hurdle rates, phasing, financing sensitivity, and the value of preserving options before committing capital.</p></div>
-          <a data-market-source href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noopener">Open source series <span>↗</span></a>
-        </aside>
-      </div>
-      <p class="market-data-note">Reference observations from Federal Reserve Economic Data. Dates vary by release cadence and series may be revised. Strategic context only, not investment advice.</p>
-    </section>
-
-    <section class="market-transmission" aria-labelledby="market-transmission-title">
-      <div class="market-transmission__head">
-        <p class="eyebrow">Transmission map</p>
-        <h2 id="market-transmission-title">Pressure does not stay where it begins.</h2>
-        <p>Select a pressure to see how it moves from the external environment into an operating decision.</p>
-      </div>
-      <div class="market-transmission__stage" data-transmission-map>
-        <canvas data-transmission-canvas aria-hidden="true"></canvas>
-        <div class="market-transmission__nodes">
-          <button class="transmission-node active" type="button" data-transmission="capital"><span>01</span><strong>Capital</strong><small>Price and access</small></button>
-          <button class="transmission-node" type="button" data-transmission="demand"><span>02</span><strong>Demand</strong><small>Volume and mix</small></button>
-          <button class="transmission-node" type="button" data-transmission="capacity"><span>03</span><strong>Capacity</strong><small>People and assets</small></button>
-          <button class="transmission-node" type="button" data-transmission="control"><span>04</span><strong>Control</strong><small>Authority and limits</small></button>
-        </div>
-        <div class="market-transmission__readout">
-          <span data-transmission-label>CAPITAL → COMMITMENT</span>
-          <h3 data-transmission-title>Higher financing cost narrows the margin for timing error.</h3>
-          <p data-transmission-copy>Projects with long payback periods become more sensitive to delay, utilization, and refinancing assumptions. Preserve stage gates before scope becomes irreversible.</p>
-          <div class="market-transmission__meter"><i data-transmission-meter style="--meter:78%"></i></div>
-          <small data-transmission-strength>Transmission strength · elevated</small>
-        </div>
-      </div>
-    </section>
-
-    <section class="market-scenario" aria-labelledby="market-scenario-title" data-scenario-lab>
-      <div class="market-scenario__head">
-        <div><p class="eyebrow">Scenario lab</p><h2 id="market-scenario-title">Stress the decision, not just the forecast.</h2></div>
-        <p>Each control adds to or relieves pressure from a 48-point baseline. The live profile reveals the highest-stress dimension; farther from the center means greater pressure. The posture is directional, not predictive.</p>
-      </div>
-      <div class="market-scenario__shell">
-        <div class="market-scenario__controls">
-          <label><span><b>Cost of capital</b><output data-scenario-output="rates">+25 bp</output></span><input type="range" min="-100" max="150" value="25" step="25" data-scenario-input="rates"></label>
-          <label><span><b>Demand change</b><output data-scenario-output="demand">+2%</output></span><input type="range" min="-8" max="10" value="2" step="1" data-scenario-input="demand"></label>
-          <label><span><b>Capacity availability</b><output data-scenario-output="capacity">−3%</output></span><input type="range" min="-12" max="12" value="-3" step="1" data-scenario-input="capacity"></label>
-          <label><span><b>Automation authority</b><output data-scenario-output="automation">45%</output></span><input type="range" min="0" max="100" value="45" step="5" data-scenario-input="automation"></label>
-          <button type="button" data-scenario-reset>Reset baseline</button>
-        </div>
-        <div class="market-scenario__result" aria-live="polite">
-          <div class="scenario-pressure-map" data-scenario-map role="img" aria-label="Composite decision pressure: 60 out of 100. Highest-stress dimension: capacity.">
-            <div class="scenario-pressure-map__meta"><span>LIVE PRESSURE PROFILE</span><small data-scenario-driver>HIGHEST STRESS · CAPACITY</small></div>
-            <svg viewBox="0 0 340 340" aria-hidden="true">
-              <defs>
-                <linearGradient id="scenario-profile-fill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8cc6ff" stop-opacity=".34"/><stop offset="1" stop-color="#3e84cd" stop-opacity=".08"/></linearGradient>
-                <filter id="scenario-profile-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-              </defs>
-              <g class="scenario-pressure-grid">
-                <polygon points="170,48 292,170 170,292 48,170"/>
-                <polygon points="170,79 261,170 170,261 79,170"/>
-                <polygon points="170,109 231,170 170,231 109,170"/>
-                <polygon points="170,140 200,170 170,200 140,170"/>
-                <line x1="170" y1="38" x2="170" y2="302"/><line x1="38" y1="170" x2="302" y2="170"/>
-              </g>
-              <polygon class="scenario-pressure-ghost" data-scenario-ghost points="170,110 223,170 170,224 95,170"/>
-              <polygon class="scenario-pressure-profile" data-scenario-profile points="170,110 223,170 170,224 95,170"/>
-              <g class="scenario-pressure-points" filter="url(#scenario-profile-glow)">
-                <circle data-scenario-point="capital" cx="170" cy="110" r="4"/>
-                <circle data-scenario-point="demand" cx="223" cy="170" r="4"/>
-                <circle data-scenario-point="automation" cx="170" cy="224" r="4"/>
-                <circle data-scenario-point="capacity" cx="95" cy="170" r="4"/>
-              </g>
-            </svg>
-            <div class="scenario-pressure-core"><b data-scenario-score>60</b><small>OF 100</small></div>
-            <div class="scenario-pressure-factor scenario-pressure-factor--capital"><span>CAPITAL</span><b data-scenario-factor="capital">+3 pts</b></div>
-            <div class="scenario-pressure-factor scenario-pressure-factor--demand"><span>DEMAND</span><b data-scenario-factor="demand">−4 pts</b></div>
-            <div class="scenario-pressure-factor scenario-pressure-factor--automation"><span>AUTHORITY</span><b data-scenario-factor="automation">+8 pts</b></div>
-            <div class="scenario-pressure-factor scenario-pressure-factor--capacity"><span>CAPACITY</span><b data-scenario-factor="capacity">+5 pts</b></div>
-          </div>
-          <div class="scenario-result-copy"><span>COMPOSITE DECISION PRESSURE</span><h3 data-scenario-posture>Stage the commitment.</h3><p data-scenario-copy>Demand supports movement, but capital and capacity conditions make a fully irreversible commitment fragile.</p><div class="scenario-score-formula"><span>BASELINE <b>48</b></span><i>+</i><span>LIVE EFFECTS <b data-scenario-delta>+12</b></span></div></div>
-          <div class="scenario-actions">
-            <article><span>CAPITAL POSTURE</span><strong data-scenario-capital>Preserve options</strong></article>
-            <article><span>OPERATING PRIORITY</span><strong data-scenario-operations>Protect throughput</strong></article>
-            <article><span>CONTROL THRESHOLD</span><strong data-scenario-control>Human gate required</strong></article>
+    <div class="market-view-v3">
+      <section class="mv3-brief" aria-labelledby="market-brief-title">
+        <div class="mv3-edition"><span>SKAR MARKET BRIEF</span><time datetime="2026-08-04">04 AUGUST 2026</time><span>8 MINUTE READ</span></div>
+        <div class="mv3-brief__grid">
+          <div><p class="eyebrow">Current lens</p><h2 id="market-brief-title">Expansion is available.<br><em>Conviction is expensive.</em></h2></div>
+          <div class="mv3-brief__thesis">
+            <p>Demand and industrial output remain constructive, but capital cost and slower capacity formation raise the penalty for timing error. The operating advantage belongs to organizations that can stage commitments, expose constraints, and update decisions as evidence changes.</p>
+            <ol aria-label="Key takeaways">
+              <li><b>01</b><span><strong>Fund evidence, not momentum.</strong> Use explicit gates before long-duration capital becomes irreversible.</span></li>
+              <li><b>02</b><span><strong>Distinguish installed capacity from usable output.</strong> Labor, energy, yield, and suppliers decide what can actually be delivered.</span></li>
+              <li><b>03</b><span><strong>Treat AI as operating infrastructure.</strong> Faster sensing matters only when authority, review, and rollback remain visible.</span></li>
+            </ol>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="market-intelligence" aria-labelledby="market-intelligence-title">
-      <div class="market-intelligence__head"><p class="eyebrow">What the evidence changes</p><h2 id="market-intelligence-title">Three views for the next decision cycle.</h2></div>
-      <div class="market-intelligence__grid">
-        <article class="market-intelligence__lead"><span>01 · CAPITAL ALLOCATION</span><h3>Optionality has measurable value when the path stays uncertain.</h3><p>When capital remains costly and demand holds, the advantage shifts toward staged commitments, explicit off ramps, and evidence gates that unlock the next tranche.</p><a href="https://www.blackstone.com/insights/article/office-of-the-cio-2026-investment-perspectives/" target="_blank" rel="noopener">Reference perspective · Blackstone ↗</a></article>
-        <article><span>02 · OPERATING PERFORMANCE</span><h3>Separate market demand from deliverable output.</h3><p>Growth becomes useful only after labor, equipment, yield, energy, supplier, and cycle time constraints are visible in the same model.</p><a href="https://www.bcg.com/publications/2026/finance-leaders-are-rewriting-the-performance-agenda" target="_blank" rel="noopener">Reference perspective · BCG ↗</a></article>
-        <article><span>03 · AUTONOMOUS MARKETS</span><h3>Shared infrastructure can create shared failure modes.</h3><p>As agents observe, interpret, allocate, and act, governance must cover data provenance, model dependence, authority, limits, and rollback across the entire loop.</p><a href="https://www.bis.org/about/bisih/topics/suptech_regtech/logos.htm" target="_blank" rel="noopener">Research program · BIS Project Logos ↗</a></article>
-      </div>
-    </section>
+      <section class="mv3-signal-desk" id="signal-monitor" aria-labelledby="market-terminal-title">
+        <div class="mv3-section-head">
+          <div><p class="eyebrow">Signal desk · public data</p><h2 id="market-terminal-title">Four conditions.<br>One decision environment.</h2></div>
+          <p>Choose a signal to examine its path, current reading, business transmission, and the management question it raises. Every figure includes its date and source.</p>
+        </div>
+        <div class="mv3-monitor" data-market-monitor>
+          <div class="mv3-signal-tabs" role="tablist" aria-label="Market signal">
+            <button type="button" class="market-signal-tab active" id="signal-tab-rates" role="tab" aria-selected="true" aria-controls="market-chart-panel" data-series="rates"><span>01 · CAPITAL</span><strong>Cost of capital</strong><small>10-year Treasury · 4.61%</small></button>
+            <button type="button" class="market-signal-tab" id="signal-tab-conditions" role="tab" aria-selected="false" aria-controls="market-chart-panel" tabindex="-1" data-series="conditions"><span>02 · LIQUIDITY</span><strong>Financial conditions</strong><small>Chicago Fed NFCI · −0.554</small></button>
+            <button type="button" class="market-signal-tab" id="signal-tab-output" role="tab" aria-selected="false" aria-controls="market-chart-panel" tabindex="-1" data-series="output"><span>03 · OUTPUT</span><strong>Industrial production</strong><small>Index · 102.6</small></button>
+            <button type="button" class="market-signal-tab" id="signal-tab-buildout" role="tab" aria-selected="false" aria-controls="market-chart-panel" tabindex="-1" data-series="buildout"><span>04 · BUILDOUT</span><strong>Capacity formation</strong><small>Annualized · $174.8B</small></button>
+          </div>
+          <div class="mv3-chart-panel" id="market-chart-panel" role="tabpanel" aria-labelledby="signal-tab-rates">
+            <div class="market-chart-meta"><div><span data-market-kicker>CAPITAL PRICING</span><h3 data-market-title>10-year Treasury yield</h3></div><div class="market-chart-reading"><strong data-market-value>4.61%</strong><span data-market-date>28 Jul 2026</span></div></div>
+            <div class="market-chart-frame"><canvas data-market-chart aria-label="Recent path of the selected market indicator"></canvas><div class="market-chart-tooltip" data-market-tooltip hidden></div></div>
+            <div class="market-chart-axis" aria-hidden="true"><span data-market-start>03 Jun</span><span data-market-end>28 Jul</span></div>
+          </div>
+          <aside class="mv3-insight-rail" aria-live="polite">
+            <div class="mv3-regime"><span>CURRENT REGIME</span><strong data-market-regime>Restrictive</strong><small data-market-direction>+12 bp over window</small></div>
+            <div><span>WHAT CHANGED</span><p data-market-signal>Long-duration capital remains expensive relative to the pre-2022 environment.</p></div>
+            <div><span>WHAT IT MEANS</span><p data-market-decision>Re-test hurdle rates, phasing, financing sensitivity, and the value of preserving options before committing capital.</p></div>
+            <a data-market-source href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noopener">Federal Reserve Economic Data <span>↗</span></a>
+          </aside>
+        </div>
+        <p class="mv3-data-note">Reference observations from Federal Reserve Economic Data. Release dates vary and series may be revised. Strategic context only—not investment advice.</p>
+      </section>
 
-    <section class="market-reading market-reading-v2">
-      <div class="market-reading-intro"><p class="eyebrow">Selected SKAR analysis</p><h2>Go deeper on the systems behind the signal.</h2></div>
-      <div class="market-reading-grid">
-        <a href="/report-industry-4-0/"><span>INDUSTRIAL SYSTEMS</span><h3>From connected assets to adaptive operations</h3><p>How sensing, simulation, orchestration, and decision infrastructure change the operating model.</p><b>Read the research ↗</b></a>
-        <a href="/report-data-center-demand/"><span>ENERGY &amp; INFRASTRUCTURE</span><h3>Planning for load growth</h3><p>A scenario framework connecting electricity demand to capacity, timing, and capital.</p><b>Read the brief ↗</b></a>
-        <a href="/report-ai-adoption/"><span>OPERATING MODEL</span><h3>Before the model</h3><p>Why useful AI begins with a defined decision, reliable evidence, ownership, and controls.</p><b>Read the brief ↗</b></a>
-      </div>
-    </section>
+      <section class="mv3-decision" aria-labelledby="mv3-decision-title" data-decision-lens>
+        <div class="mv3-section-head mv3-section-head--light"><div><p class="eyebrow">Decision transmission</p><h2 id="mv3-decision-title">A market signal is useful only when it changes a choice.</h2></div><p>Select a business exposure to connect external evidence to an operating question and a threshold for action.</p></div>
+        <div class="mv3-decision__shell">
+          <div class="mv3-decision__tabs" role="tablist" aria-label="Business exposure">
+            <button type="button" class="active" data-decision-key="capital" role="tab" aria-selected="true"><span>01</span>Capital program</button>
+            <button type="button" data-decision-key="demand" role="tab" aria-selected="false"><span>02</span>Demand plan</button>
+            <button type="button" data-decision-key="capacity" role="tab" aria-selected="false"><span>03</span>Capacity system</button>
+            <button type="button" data-decision-key="ai" role="tab" aria-selected="false"><span>04</span>AI operating model</button>
+          </div>
+          <div class="mv3-decision__flow" aria-live="polite">
+            <article><span>OBSERVED SIGNAL</span><strong data-decision-signal>Cost of long-duration capital remains elevated.</strong><small data-decision-evidence>10-year Treasury · current rate and direction</small></article>
+            <i aria-hidden="true">→</i>
+            <article><span>BUSINESS EXPOSURE</span><strong data-decision-exposure>Delay and utilization now carry more economic weight.</strong><small data-decision-detail>Financing sensitivity · payback period · scope</small></article>
+            <i aria-hidden="true">→</i>
+            <article class="mv3-decision__question"><span>MANAGEMENT QUESTION</span><strong data-decision-question>Which tranche can earn the right to unlock the next?</strong><small data-decision-trigger>Change the view when utilization and financing remain inside the gate.</small></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="mv3-scenario" aria-labelledby="market-scenario-title" data-scenario-lab>
+        <div class="mv3-section-head"><div><p class="eyebrow">Illustrative scenario lab</p><h2 id="market-scenario-title">Stress the commitment.<br>Keep the logic visible.</h2></div><p>Move four operating assumptions. The result is a transparent decision-pressure index—not a market forecast—and updates beside the controls on every screen size.</p></div>
+        <div class="mv3-scenario__shell">
+          <div class="mv3-scenario__controls">
+            <label><span><b>Cost of capital</b><output data-scenario-output="rates">+25 bp</output></span><input type="range" min="-100" max="150" value="25" step="25" data-scenario-input="rates"></label>
+            <label><span><b>Demand change</b><output data-scenario-output="demand">+2%</output></span><input type="range" min="-8" max="10" value="2" step="1" data-scenario-input="demand"></label>
+            <label><span><b>Capacity availability</b><output data-scenario-output="capacity">−3%</output></span><input type="range" min="-12" max="12" value="-3" step="1" data-scenario-input="capacity"></label>
+            <label><span><b>Automation authority</b><output data-scenario-output="automation">45%</output></span><input type="range" min="0" max="100" value="45" step="5" data-scenario-input="automation"></label>
+            <button type="button" data-scenario-reset>Reset baseline</button>
+          </div>
+          <div class="mv3-scenario__result" aria-live="polite">
+            <div class="mv3-pressure" data-scenario-map role="img" aria-label="Illustrative decision pressure: 60 out of 100.">
+              <div><span>DECISION PRESSURE</span><strong data-scenario-score>60</strong><small>/ 100</small></div>
+              <div class="mv3-pressure__bars">
+                <p><span>Capital</span><i><b data-scenario-bar="capital"></b></i><em data-scenario-factor="capital">+3 pts</em></p>
+                <p><span>Demand</span><i><b data-scenario-bar="demand"></b></i><em data-scenario-factor="demand">−4 pts</em></p>
+                <p><span>Capacity</span><i><b data-scenario-bar="capacity"></b></i><em data-scenario-factor="capacity">+5 pts</em></p>
+                <p><span>Authority</span><i><b data-scenario-bar="automation"></b></i><em data-scenario-factor="automation">+8 pts</em></p>
+              </div>
+            </div>
+            <div class="mv3-scenario__copy"><span data-scenario-driver>HIGHEST STRESS · CAPACITY</span><h3 data-scenario-posture>Stage the commitment.</h3><p data-scenario-copy>Demand supports movement, but capital and capacity conditions make a fully irreversible commitment fragile.</p><div><span>BASELINE <b>48</b></span><span>LIVE EFFECTS <b data-scenario-delta>+12</b></span></div></div>
+            <div class="mv3-scenario__actions"><article><span>CAPITAL POSTURE</span><strong data-scenario-capital>Preserve options</strong></article><article><span>OPERATING PRIORITY</span><strong data-scenario-operations>Protect throughput</strong></article><article><span>CONTROL THRESHOLD</span><strong data-scenario-control>Human gate required</strong></article></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mv3-ai" aria-labelledby="mv3-ai-title">
+        <div class="mv3-ai__intro"><p class="eyebrow">AI for business</p><h2 id="mv3-ai-title">AI changes the speed of the market—and the cost of a late decision.</h2><p>The advantage is not a model that predicts everything. It is an operating system that senses earlier, tests choices faster, and keeps human accountability attached to action.</p></div>
+        <div class="mv3-ai__stages">
+          <article><b>01</b><span>SENSE</span><h3>Build a live evidence layer.</h3><p>Unify orders, prices, suppliers, capacity, service levels, and external indicators around the decision being made.</p><small>Business use · procurement and demand sensing</small></article>
+          <article><b>02</b><span>TEST</span><h3>Recalculate the operating plan.</h3><p>Use AI to compare scenarios, expose assumptions, and identify the constraint most likely to govern delivery.</p><small>Business use · capital planning and operations</small></article>
+          <article><b>03</b><span>GOVERN</span><h3>Make authority observable.</h3><p>Define what the system may recommend, what it may execute, and where review, escalation, and rollback are required.</p><small>Business use · controlled automation</small></article>
+        </div>
+      </section>
+
+      <section class="mv3-reading" aria-labelledby="mv3-reading-title">
+        <div class="mv3-section-head mv3-section-head--light"><div><p class="eyebrow">Selected SKAR analysis</p><h2 id="mv3-reading-title">Research for the next decision cycle.</h2></div><p>Focused briefs connect external conditions to the engineering, energy, operating, and technology choices leaders must make.</p></div>
+        <div class="mv3-reading__grid">
+          <a href="/report-industry-4-0/"><span>FIELD REPORT · 12 MIN</span><h3>The next operating system of industry</h3><p>How sensing, simulation, orchestration, and decision infrastructure change the operating model.</p><b>INDUSTRIAL SYSTEMS <i>↗</i></b></a>
+          <a href="/report-data-center-demand/"><span>DECISION BRIEF · 9 MIN</span><h3>Planning for load growth</h3><p>A scenario framework connecting electricity demand to capacity, timing, and capital.</p><b>ENERGY &amp; INFRASTRUCTURE <i>↗</i></b></a>
+          <a href="/report-ai-adoption/"><span>OPERATING NOTE · 7 MIN</span><h3>Before the model</h3><p>Why useful AI begins with a defined decision, reliable evidence, ownership, and controls.</p><b>AI OPERATING MODEL <i>↗</i></b></a>
+        </div>
+      </section>
+    </div>
 
     <section class="cta-band market-cta"><div><p class="eyebrow">A market view should change a decision</p><h2>Make the external signal operational.</h2></div><a class="button white" href="/contact/">Discuss the decision <b>↗</b></a></section>
   </main>
