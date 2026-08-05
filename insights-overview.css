@@ -102,41 +102,45 @@
 .insights-work-copy h3{font-size:clamp(32px,3vw,51px);line-height:1.02;letter-spacing:-.045em;margin:55px 0 16px;max-width:650px}
 .insights-work-copy p{color:#607080;font-size:15px;line-height:1.65;max-width:610px;margin:0 0 30px}
 .insights-work-link{margin-top:auto;color:#0d3153;font-size:11px;font-weight:850;border-bottom:1px solid #8ba1b6;padding-bottom:5px}.insights-work-link b{color:#4b82d6;margin-left:10px}
-.insights-work-feature{grid-row:span 2;min-height:798px;display:grid;grid-template-rows:1.08fr .92fr;background:#071f35;color:#fff}
-.insights-work-feature .insights-work-copy{border-top:1px solid rgba(139,175,209,.23)}.insights-work-feature .insights-work-copy h3{font-size:clamp(45px,4.6vw,76px);margin-top:60px}.insights-work-feature .insights-work-copy p{color:#aebdcc}.insights-work-feature .insights-work-link{color:#fff;border-color:#5f86aa}
+.insights-work-feature{grid-row:span 2;min-height:798px;background:#071f35;color:#fff}
 .insights-work-art{position:relative;background:radial-gradient(circle at 52% 47%,#174775 0,rgba(10,44,73,.78) 34%,#061b2e 68%);overflow:hidden}
-.insights-art-simulation:before,.insights-art-simulation:after,.insights-art-simulation span,.insights-art-simulation i,.insights-art-simulation b{content:"";position:absolute;left:50%;top:50%;border:1px solid rgba(170,210,249,.62);border-radius:50% 48% 52% 43%;transform:translate(-50%,-50%) rotate(20deg);box-shadow:0 0 25px rgba(100,170,233,.08)}
-.insights-art-simulation:before{width:52%;height:68%;animation:simulationTurn 15s linear infinite}.insights-art-simulation:after{width:68%;height:42%;animation:simulationTurn 19s linear infinite reverse}.insights-art-simulation span{width:39%;height:78%;animation:simulationTurn 23s linear infinite}.insights-art-simulation i{width:76%;height:29%;animation:simulationTurn 17s linear infinite reverse}.insights-art-simulation b{width:18px;height:18px;background:#cde7ff;filter:blur(1px);box-shadow:0 0 28px #7cbbfa;animation:simulationOrbit 11s ease-in-out infinite}
-@keyframes simulationTurn{to{transform:translate(-50%,-50%) rotate(380deg)}}
-@keyframes simulationOrbit{0%,100%{transform:translate(-50%,-50%) translate(-180px,-80px)}50%{transform:translate(-50%,-50%) translate(190px,90px)}}
-.insights-bird-field{position:absolute;z-index:3;inset:0;pointer-events:none}
-.insights-bird{
-  --bird-shift-x:0px;
-  --bird-shift-y:0px;
-  position:absolute;
-  left:var(--bird-x);
-  top:var(--bird-y);
-  width:32px;
-  height:18px;
-  overflow:visible;
-  color:#d8ebfb;
-  opacity:.7;
-  filter:drop-shadow(0 0 7px rgba(128,192,245,.34));
-  translate:var(--bird-shift-x) var(--bird-shift-y);
-  transform:scale(var(--bird-scale));
-  transform-origin:center;
-  animation:birdDrift 7.5s ease-in-out var(--bird-delay) infinite alternate;
-  transition:translate .7s cubic-bezier(.16,1,.3,1),opacity .3s ease,filter .3s ease;
-}
-.insights-bird path,.insights-bird circle{fill:currentColor}
-.bird-wing{transform-box:fill-box;animation:birdFlap 1.55s ease-in-out var(--bird-delay) infinite alternate}
-.bird-wing-left{transform-origin:100% 78%}.bird-wing-right{transform-origin:0 78%}
-.insights-work-feature:hover .insights-bird{opacity:.94;filter:drop-shadow(0 0 10px rgba(155,211,255,.65))}
-.insights-work-feature:hover .bird-wing{animation-duration:.42s}
-.insights-work-feature.is-bird-startled .insights-bird{animation:birdStartle .62s cubic-bezier(.16,1,.3,1) both}
-@keyframes birdDrift{0%{transform:translate3d(-9px,4px,0) scale(var(--bird-scale)) rotate(-2deg)}100%{transform:translate3d(11px,-7px,0) scale(var(--bird-scale)) rotate(3deg)}}
-@keyframes birdFlap{from{transform:scaleY(.48) rotate(-5deg)}to{transform:scaleY(1.08) rotate(4deg)}}
-@keyframes birdStartle{0%{transform:scale(var(--bird-scale))}42%{transform:translate3d(16px,-19px,0) scale(var(--bird-scale)) rotate(-8deg)}100%{transform:translate3d(8px,-8px,0) scale(var(--bird-scale))}}
+.insights-work-bird{display:block;isolation:isolate;background:#04172a;min-height:798px;cursor:pointer;transform:translateZ(0)}
+.insights-work-bird .insights-bird-art{position:absolute;inset:0;background:radial-gradient(circle at 50% 39%,rgba(72,145,214,.35),transparent 29%),radial-gradient(circle at 48% 53%,#123f68 0,#092945 38%,#04172a 73%)}
+.insights-bird-art:before{content:"";position:absolute;z-index:1;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 20%,rgba(2,16,30,.18) 55%,rgba(2,13,25,.82) 100%);pointer-events:none}
+.insights-bird-art:after{content:"";position:absolute;z-index:1;left:-10%;right:-10%;bottom:14%;height:1px;background:linear-gradient(90deg,transparent,rgba(142,196,245,.35),transparent);box-shadow:0 42px 90px rgba(96,173,242,.16);pointer-events:none}
+.insights-bird-sky{position:absolute;inset:-15%;background:radial-gradient(circle at 18% 30%,rgba(112,184,246,.13),transparent 18%),radial-gradient(circle at 80% 20%,rgba(126,166,220,.11),transparent 21%),linear-gradient(120deg,transparent 0 44%,rgba(139,198,248,.055) 45%,transparent 46%);animation:birdSkyDrift 18s ease-in-out infinite alternate}
+.insights-bird-grain{position:absolute;inset:0;opacity:.14;background-image:linear-gradient(rgba(131,183,226,.17) 1px,transparent 1px),linear-gradient(90deg,rgba(131,183,226,.17) 1px,transparent 1px);background-size:42px 42px;-webkit-mask-image:linear-gradient(to bottom,transparent 3%,#000 24%,#000 82%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 3%,#000 24%,#000 82%,transparent 100%)}
+.insights-giant-bird{position:absolute;z-index:2;left:50%;top:44%;width:112%;height:auto;overflow:visible;transform:translate(-50%,-50%);filter:drop-shadow(0 30px 38px rgba(0,12,28,.48));will-change:transform,opacity}
+.insights-bird-flight{transform-box:view-box;transform-origin:center;will-change:transform,opacity}
+.insights-bird-aura{fill:rgba(90,164,231,.045);stroke:rgba(145,203,255,.16);stroke-width:1;filter:url(#insights-bird-glow);animation:birdAura 5.2s ease-in-out infinite}
+.insights-bird-silhouette{fill:url(#insights-bird-pixels);stroke:rgba(221,240,255,.58);stroke-width:1.3;vector-effect:non-scaling-stroke}
+.insights-bird-outline,.insights-bird-feather{fill:none;stroke:url(#insights-bird-edge);stroke-width:2;stroke-linecap:round;stroke-dasharray:4 12;opacity:.74;vector-effect:non-scaling-stroke;animation:birdLineShimmer 9s linear infinite}
+.insights-bird-feather{stroke-width:1.2;stroke-dasharray:2 10;opacity:.45;animation-duration:13s;animation-direction:reverse}
+.insights-bird-wing{transform-box:fill-box;will-change:transform}
+.insights-bird-wing-left{transform-origin:100% 70%}.insights-bird-wing-right{transform-origin:0 70%}
+.insights-bird-body{filter:url(#insights-bird-glow)}
+.insights-bird-fragments rect{fill:#cae7ff;opacity:.42;filter:url(#insights-bird-glow);animation:birdFragmentIdle 3.8s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+.insights-bird-fragments rect:nth-child(2n){animation-delay:-1.2s}.insights-bird-fragments rect:nth-child(3n){animation-delay:-2.4s}
+.insights-bird-coordinate{position:absolute;z-index:3;left:34px;top:32px;display:flex;align-items:center;gap:13px;color:rgba(214,235,253,.72);font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+.insights-bird-coordinate:before{content:"";width:28px;height:1px;background:#6ca8e2}.insights-bird-coordinate span{font-weight:850;color:#73a9e5}.insights-bird-coordinate b{font-weight:650}
+.insights-bird-copy{position:absolute;z-index:4;left:0;right:0;bottom:0;padding:118px 44px 40px;background:linear-gradient(0deg,rgba(3,18,33,.98) 0,rgba(3,18,33,.75) 48%,transparent 100%);color:#fff;transition:padding .45s cubic-bezier(.16,1,.3,1),background .45s ease}
+.insights-bird-copy small{display:block;color:#70a9ed;text-transform:uppercase;letter-spacing:.18em;font-size:9px;font-weight:850;margin-bottom:16px}
+.insights-bird-copy h3{max-width:660px;margin:0;font-size:clamp(48px,5vw,78px);line-height:.92;letter-spacing:-.055em}
+.insights-bird-prompt{position:absolute;right:44px;bottom:42px;display:flex;align-items:center;gap:12px;color:rgba(225,239,252,.78);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid rgba(140,185,226,.55);padding-bottom:6px;transition:color .25s ease,transform .35s ease}
+.insights-bird-prompt b{font-size:14px;color:#8dc5fb}.insights-work-bird:hover .insights-bird-prompt,.insights-work-bird:focus-visible .insights-bird-prompt{color:#fff;transform:translate(3px,-3px)}
+.insights-work-bird.is-bird-flying .insights-bird-flight{animation:giantBirdFlight 3.05s cubic-bezier(.55,.02,.18,.99) both}
+.insights-work-bird.is-bird-flying .insights-bird-wing-left{animation:giantBirdWingLeft .22s ease-in-out infinite alternate}
+.insights-work-bird.is-bird-flying .insights-bird-wing-right{animation:giantBirdWingRight .22s ease-in-out infinite alternate}
+.insights-work-bird.is-bird-flying .insights-bird-fragments rect{animation:birdFragmentFlight .74s cubic-bezier(.16,1,.3,1) infinite}
+.insights-work-bird.is-bird-flying .insights-bird-copy{padding-bottom:34px;background:linear-gradient(0deg,rgba(3,18,33,.92),transparent 82%)}
+@keyframes birdSkyDrift{to{transform:translate3d(2.5%,-1.5%,0) scale(1.035)}}
+@keyframes birdAura{50%{opacity:.52;transform:scale(1.06);filter:url(#insights-bird-glow)}}
+@keyframes birdLineShimmer{to{stroke-dashoffset:-128}}
+@keyframes birdFragmentIdle{to{opacity:.8;transform:translateY(-5px) scale(1.22)}}
+@keyframes giantBirdFlight{0%{transform:translate3d(0,0,0) rotate(0) scale(1);opacity:1}9%{transform:translate3d(1.5%,-3%,0) rotate(-2deg) scale(.98)}29%{transform:translate3d(19%,-15%,0) rotate(2deg) scale(.8)}49%{transform:translate3d(77%,-31%,0) rotate(9deg) scale(.5);opacity:.82}55%{transform:translate3d(112%,-39%,0) rotate(12deg) scale(.39);opacity:0}56%{transform:translate3d(-108%,20%,0) rotate(-7deg) scale(.4);opacity:0}64%{opacity:.68}83%{transform:translate3d(-17%,-5%,0) rotate(-3deg) scale(.83);opacity:1}100%{transform:translate3d(0,0,0) rotate(0) scale(1);opacity:1}}
+@keyframes giantBirdWingLeft{from{transform:rotate(7deg) scaleY(.72)}to{transform:rotate(-12deg) scaleY(1.06)}}
+@keyframes giantBirdWingRight{from{transform:rotate(-7deg) scaleY(.72)}to{transform:rotate(12deg) scaleY(1.06)}}
+@keyframes birdFragmentFlight{0%{opacity:.85;transform:translate3d(0,0,0) scale(1.2)}100%{opacity:0;transform:translate3d(-42px,34px,0) scale(.2)}}
 .insights-work-report{background:#f9f5ed}.insights-work-report .insights-work-copy{width:68%}.insights-report-trace{position:absolute;right:0;top:0;bottom:0;width:34%;display:flex;align-items:flex-end;gap:7px;padding:35px 28px;background:#e8decc}
 .insights-report-trace span{flex:1;background:#1f5bab;height:var(--trace,50%);animation:traceRise 5s ease-in-out infinite alternate}.insights-report-trace span:nth-child(1){height:34%}.insights-report-trace span:nth-child(2){height:57%;animation-delay:-1s}.insights-report-trace span:nth-child(3){height:81%;animation-delay:-2s}.insights-report-trace span:nth-child(4){height:64%;animation-delay:-3s}.insights-report-trace span:nth-child(5){height:92%;animation-delay:-4s}@keyframes traceRise{to{filter:brightness(1.35);transform:scaleY(.88);transform-origin:bottom}}
 .insights-work-market{background:#0a2945;color:#fff;display:grid;grid-template-rows:180px auto}.insights-work-market .insights-work-copy{border-top:1px solid rgba(156,188,217,.18)}.insights-work-market .insights-work-copy h3{margin-top:45px}.insights-work-market .insights-work-copy p{color:#adbdcb}.insights-work-market .insights-work-link{color:#fff;border-color:#5f86aa}.insights-market-field{display:flex;align-items:flex-end;gap:4%;padding:38px 42px 0;background:repeating-linear-gradient(0deg,transparent 0 39px,rgba(139,177,215,.08) 40px)}.insights-market-field span{flex:1;height:var(--h);background:linear-gradient(#83bdf9,#1e5da4);opacity:.72;animation:marketShift 6s ease-in-out infinite alternate}.insights-market-field span:nth-child(2n){animation-delay:-2s}.insights-market-field span:nth-child(3n){animation-delay:-4s}@keyframes marketShift{to{height:calc(var(--h) * .76);opacity:1}}
@@ -165,8 +169,8 @@
   .insights-directory{padding:75px 24px 84px}.insights-directory-heading{margin-bottom:38px}.insights-directory-heading h2{font-size:50px}.insights-directory-heading>p:last-child{font-size:16px}.insights-select-wrap{padding:32px 0 38px}.insights-select-wrap select{font-size:28px;padding-right:40px}.insights-select-icon{right:4px;bottom:53px}.insights-directory-feature{min-height:0;padding:35px 0 38px;grid-template-columns:1fr;gap:28px}.insights-directory-feature h3{margin-top:36px;font-size:38px}.insights-directory-feature>a{width:100%}
   .insights-lenses,.insights-current,.insights-method{padding:78px 24px 88px}.insights-section-lead,.insights-current-heading{margin-bottom:45px}.insights-section-lead h2,.insights-current-heading h2,.insights-method-title h2{font-size:48px}.insights-section-lead>p:last-child,.insights-current-heading>p:last-child{font-size:16px}
   .insights-lens-tabs{grid-template-columns:1fr 1fr}.insights-lens-tab:nth-child(2){border-right:0}.insights-lens-tab:nth-child(-n+2){border-bottom:1px solid var(--insights-line)}.insights-lens-copy{padding:38px 26px}.insights-lens-copy h3{font-size:38px}.insights-system-map{min-height:390px;padding:34px 10px 58px}.insights-system-map svg{width:620px;max-width:none}.insights-map-caption{left:18px;top:18px}.insights-map-caption b,.insights-map-legend span{display:none}.insights-map-readout{left:20px;bottom:18px}.insights-map-legend{right:18px;bottom:22px}.map-node-panel,.map-node-tick,.map-node text{display:none}
-  .insights-work-card{min-height:430px}.insights-work-copy{padding:32px 26px}.insights-work-copy h3{margin-top:42px}.insights-work-feature{min-height:680px;grid-template-rows:.9fr 1.1fr}.insights-work-feature .insights-work-copy h3{font-size:46px;margin-top:40px}.insights-work-report .insights-work-copy{width:100%;padding-bottom:165px}.insights-report-trace{top:auto;left:0;width:100%;height:142px;padding:20px 26px}.insights-work-market{grid-template-rows:140px auto}.insights-way-line{width:30%}.insights-work-energy .insights-work-copy{padding-right:26px;padding-bottom:150px}.insights-energy-wave{top:auto;left:0;width:100%;height:125px}
+  .insights-work-card{min-height:430px}.insights-work-copy{padding:32px 26px}.insights-work-copy h3{margin-top:42px}.insights-work-feature{min-height:680px}.insights-work-bird{min-height:680px}.insights-giant-bird{top:41%;width:154%}.insights-bird-coordinate{left:22px;top:24px}.insights-bird-coordinate b{display:none}.insights-bird-copy{padding:100px 24px 30px}.insights-bird-copy h3{font-size:46px;max-width:440px}.insights-bird-prompt{position:static;width:max-content;margin-top:22px}.insights-work-report .insights-work-copy{width:100%;padding-bottom:165px}.insights-report-trace{top:auto;left:0;width:100%;height:142px;padding:20px 26px}.insights-work-market{grid-template-rows:140px auto}.insights-way-line{width:30%}.insights-work-energy .insights-work-copy{padding-right:26px;padding-bottom:150px}.insights-energy-wave{top:auto;left:0;width:100%;height:125px}
   .insights-method-title{margin-bottom:45px}.insights-method-field{grid-template-columns:1fr}.insights-method-field article,.insights-method-field article:nth-child(3),.insights-method-field article:nth-child(4){min-height:260px;padding:28px 0;border-right:0;border-bottom:1px solid var(--insights-line)}.insights-method-field article:last-child{border-bottom:0}
   .insights-closing{padding:75px 24px 85px;grid-template-columns:1fr}.insights-closing h2{font-size:51px}.insights-closing>a{width:100%}
 }
-@media(prefers-reduced-motion:reduce){.insights-engraving,.insights-system-map:before,.map-field>ellipse,.map-field>path,.map-flow-lines path,.map-core-orbit,.map-core-ring,.map-node,.map-node-halo,.insights-art-simulation:before,.insights-art-simulation:after,.insights-art-simulation span,.insights-art-simulation i,.insights-art-simulation b,.insights-bird,.bird-wing,.insights-report-trace span,.insights-market-field span,.insights-way-line:before,.insights-way-line:after,.insights-way-line span,.insights-energy-wave i{animation:none!important}.map-signal-packets{display:none}.insights-work-card,.insights-primary-action{transition:none}}
+@media(prefers-reduced-motion:reduce){.insights-engraving,.insights-system-map:before,.map-field>ellipse,.map-field>path,.map-flow-lines path,.map-core-orbit,.map-core-ring,.map-node,.map-node-halo,.insights-bird-sky,.insights-bird-aura,.insights-bird-outline,.insights-bird-feather,.insights-bird-fragments rect,.insights-bird-flight,.insights-bird-wing,.insights-report-trace span,.insights-market-field span,.insights-way-line:before,.insights-way-line:after,.insights-way-line span,.insights-energy-wave i{animation:none!important}.map-signal-packets{display:none}.insights-work-card,.insights-primary-action{transition:none}}
