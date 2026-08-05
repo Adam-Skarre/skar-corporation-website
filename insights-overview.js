@@ -15,11 +15,11 @@
       linkText: 'Read the report'
     },
     models: {
-      kicker: 'Computational models',
-      title: 'Make governing behavior visible.',
-      description: 'Nonlinear dynamics, parametric geometry, simulation, and uncertainty expressed as evolving mathematical systems.',
-      href: '/visualization/',
-      linkText: 'Explore the studies'
+      kicker: 'Decision intelligence',
+      title: 'Turn information into a decision.',
+      description: 'Prioritized evidence, traceable assumptions, and human approval brought together in one observable AI workflow.',
+      href: '/artificial-intelligence/',
+      linkText: 'Explore applied AI'
     },
     markets: {
       kicker: 'Markets and strategy',
@@ -62,6 +62,34 @@
       directoryFeature.classList.remove('is-changing');
       requestAnimationFrame(() => directoryFeature.classList.add('is-changing'));
     });
+  }
+
+  const decisionItems = [...document.querySelectorAll('[data-decision-item]')];
+  const decisionReader = document.querySelector('.insights-decision-reader');
+  if (decisionItems.length && decisionReader) {
+    const decisionTitle = decisionReader.querySelector('[data-decision-title]');
+    const decisionSummary = decisionReader.querySelector('[data-decision-summary]');
+    const decisionOwner = decisionReader.querySelector('[data-decision-owner]');
+    const decisionCoverage = decisionReader.querySelector('[data-decision-coverage]');
+    const decisionStatus = decisionReader.querySelector('[data-decision-status]');
+
+    const selectDecision = (item) => {
+      decisionItems.forEach((candidate) => {
+        const active = candidate === item;
+        candidate.classList.toggle('is-active', active);
+        candidate.setAttribute('aria-pressed', String(active));
+      });
+
+      decisionTitle.textContent = item.dataset.title;
+      decisionSummary.textContent = item.dataset.summary;
+      decisionOwner.textContent = item.dataset.owner;
+      decisionCoverage.textContent = item.dataset.coverage;
+      decisionStatus.textContent = item.dataset.status;
+      decisionReader.classList.remove('is-updating');
+      requestAnimationFrame(() => decisionReader.classList.add('is-updating'));
+    };
+
+    decisionItems.forEach((item) => item.addEventListener('click', () => selectDecision(item)));
   }
 
   const consoleElement = document.querySelector('[data-insights-console]');
@@ -170,18 +198,4 @@
     });
   }
 
-  const birdCard = document.querySelector('.insights-work-bird');
-  if (birdCard && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    let birdFlightTimer;
-    const launchBird = () => {
-      window.clearTimeout(birdFlightTimer);
-      birdCard.classList.remove('is-bird-flying');
-      void birdCard.offsetWidth;
-      birdCard.classList.add('is-bird-flying');
-      birdFlightTimer = window.setTimeout(() => birdCard.classList.remove('is-bird-flying'), 3100);
-    };
-
-    birdCard.addEventListener('pointerenter', launchBird);
-    birdCard.addEventListener('focus', launchBird);
-  }
 })();
