@@ -12,12 +12,12 @@
   <meta property="og:image" content="https://skarcorporation.com/assets/insights-monolith-mountains.png">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/refinement.css?v=20260802-4">
-    <link rel="stylesheet" href="/insights-overview.css?v=20260804-2">
+    <link rel="stylesheet" href="/insights-overview.css?v=20260805-1">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <link rel="shortcut icon" href="/assets/skar-favicon.svg">
 <script src="/site-nav.js?v=20260802-3" defer></script>
 <script src="/math-art.js?v=20260729-1" defer></script>
-    <script src="/insights-overview.js?v=20260804-2" defer></script>
+    <script src="/insights-overview.js?v=20260805-1" defer></script>
 </head>
 <body class="insights-overview-page">
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -215,76 +215,66 @@
       </div>
 
       <div class="insights-work-grid">
-        <a class="insights-work-card insights-work-feature insights-work-bird" href="/visualization/" data-insight-topic="models" aria-label="Explore computational visualization: Make governing behavior visible">
-          <div class="insights-work-art insights-bird-art" aria-hidden="true">
-            <span class="insights-bird-sky"></span>
-            <span class="insights-bird-grain"></span>
-            <svg class="insights-giant-bird" viewBox="0 0 900 720" role="presentation">
-              <defs>
-                <pattern id="insights-bird-pixels" width="16" height="16" patternUnits="userSpaceOnUse">
-                  <rect x="1" y="1" width="10" height="10" rx="1.5" fill="#f2f8ff"></rect>
-                  <rect x="12" y="3" width="2.5" height="2.5" rx=".5" fill="#9cc9fa" opacity=".88"></rect>
-                  <rect x="4" y="13" width="2" height="2" rx=".4" fill="#70a8e8" opacity=".7"></rect>
-                </pattern>
-                <linearGradient id="insights-bird-edge" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#ffffff"></stop>
-                  <stop offset=".52" stop-color="#b8ddff"></stop>
-                  <stop offset="1" stop-color="#5a91d5"></stop>
-                </linearGradient>
-                <radialGradient id="insights-bird-core" cx="50%" cy="34%" r="70%">
-                  <stop offset="0" stop-color="#ffffff"></stop>
-                  <stop offset=".45" stop-color="#d8ecff"></stop>
-                  <stop offset="1" stop-color="#78abe8"></stop>
-                </radialGradient>
-                <filter id="insights-bird-glow" x="-35%" y="-35%" width="170%" height="170%">
-                  <feGaussianBlur stdDeviation="10" result="blur"></feGaussianBlur>
-                  <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
-                </filter>
-              </defs>
+        <article class="insights-work-card insights-work-feature insights-work-inbox" data-insight-topic="models" aria-labelledby="decision-inbox-title">
+          <div class="insights-decision-shell" aria-label="Interactive AI decision workspace">
+            <div class="insights-decision-titlebar">
+              <span class="insights-decision-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+              <strong>SKAR / Decision workspace</strong>
+              <span class="insights-decision-live"><i></i> Live</span>
+            </div>
 
-              <g class="insights-bird-flight">
-                <ellipse class="insights-bird-aura" cx="450" cy="345" rx="310" ry="235"></ellipse>
+            <div class="insights-decision-app">
+              <aside class="insights-decision-rail" aria-label="Workspace tools">
+                <span class="insights-decision-mark">S</span>
+                <span class="is-active" title="Decision queue">01</span>
+                <span title="Evidence library">02</span>
+                <span title="Scenario studio">03</span>
+                <span class="insights-decision-rail-end" title="Settings">••</span>
+              </aside>
 
-                <g class="insights-bird-wing insights-bird-wing-left">
-                  <path class="insights-bird-silhouette" d="M452 355C373 294 316 228 258 157C208 96 143 66 58 66C137 139 190 229 228 336C164 309 105 304 47 319C145 354 258 379 403 394L452 355Z"></path>
-                  <path class="insights-bird-outline" d="M447 359C361 286 303 214 255 160C207 106 150 76 76 74M401 385C274 369 167 346 66 319M228 336C293 353 352 367 414 378"></path>
-                  <path class="insights-bird-feather" d="M394 357C304 292 230 208 169 111M375 370C273 331 181 286 105 223M350 377C241 357 151 345 75 329"></path>
-                </g>
+              <div class="insights-decision-queue">
+                <header><small>Priority queue</small><strong>4 active decisions</strong></header>
+                <button class="insights-decision-item is-active" type="button" aria-pressed="true" data-decision-item data-title="Stage the capacity commitment" data-summary="Demand supports a phased expansion. Preserve an exit path until supplier lead times and capital costs clear the release threshold." data-owner="Operations council" data-coverage="82% evidence coverage" data-status="Review today">
+                  <span class="insights-decision-signal">01</span><span><strong>Q4 capacity decision</strong><small>Demand +18% · lead times expanding</small></span><em>Today</em>
+                </button>
+                <button class="insights-decision-item" type="button" aria-pressed="false" data-decision-item data-title="Hold the model for review" data-summary="Two edge cases remain outside the approved performance envelope. Keep the human gate in place and rerun the evaluation set." data-owner="AI governance" data-coverage="94.6% validated" data-status="2 exceptions">
+                  <span class="insights-decision-signal">02</span><span><strong>Model release threshold</strong><small>Evaluation pass rate 94.6%</small></span><em>2 flags</em>
+                </button>
+                <button class="insights-decision-item" type="button" aria-pressed="false" data-decision-item data-title="Open a second supply path" data-summary="Single-source exposure now exceeds the operating limit. A qualified alternative reduces schedule risk without changing the current design." data-owner="Engineering" data-coverage="7 dependencies traced" data-status="Escalated">
+                  <span class="insights-decision-signal">03</span><span><strong>Supplier concentration</strong><small>One dependency above limit</small></span><em>High</em>
+                </button>
+                <button class="insights-decision-item" type="button" aria-pressed="false" data-decision-item data-title="Protect margin before growth" data-summary="The price move restores contribution margin, but only if service levels remain inside the retention boundary during the next two cycles." data-owner="Commercial lead" data-coverage="11 signals connected" data-status="Ready">
+                  <span class="insights-decision-signal">04</span><span><strong>Pricing scenario</strong><small>Margin and retention tradeoff</small></span><em>Ready</em>
+                </button>
+              </div>
 
-                <g class="insights-bird-wing insights-bird-wing-right">
-                  <path class="insights-bird-silhouette" d="M448 355C527 294 584 228 642 157C692 96 757 66 842 66C763 139 710 229 672 336C736 309 795 304 853 319C755 354 642 379 497 394L448 355Z"></path>
-                  <path class="insights-bird-outline" d="M453 359C539 286 597 214 645 160C693 106 750 76 824 74M499 385C626 369 733 346 834 319M672 336C607 353 548 367 486 378"></path>
-                  <path class="insights-bird-feather" d="M506 357C596 292 670 208 731 111M525 370C627 331 719 286 795 223M550 377C659 357 749 345 825 329"></path>
-                </g>
+              <section class="insights-decision-reader" aria-live="polite">
+                <div class="insights-decision-toolbar" aria-hidden="true"><span>Evidence</span><span>Scenarios</span><span>Controls</span><b>•••</b></div>
+                <p><span></span> AI brief · awaiting human review</p>
+                <h4 data-decision-title>Stage the capacity commitment</h4>
+                <div class="insights-decision-summary">
+                  <small>Decision summary</small>
+                  <p data-decision-summary>Demand supports a phased expansion. Preserve an exit path until supplier lead times and capital costs clear the release threshold.</p>
+                </div>
+                <dl>
+                  <div><dt>Evidence</dt><dd data-decision-coverage>82% evidence coverage</dd></div>
+                  <div><dt>Decision owner</dt><dd data-decision-owner>Operations council</dd></div>
+                  <div><dt>Control state</dt><dd data-decision-status>Review today</dd></div>
+                </dl>
+                <footer><span>Human approval required</span><b aria-hidden="true">→</b></footer>
+              </section>
+            </div>
 
-                <g class="insights-bird-body">
-                  <path d="M450 274C478 296 496 331 496 372C496 421 476 463 461 512L450 598L439 512C424 463 404 421 404 372C404 331 422 296 450 274Z" fill="url(#insights-bird-core)"></path>
-                  <path d="M450 598L416 528L436 517L450 566L464 517L484 528Z" fill="url(#insights-bird-pixels)"></path>
-                  <path d="M429 316C438 295 462 295 471 316L464 345L450 360L436 345Z" fill="#f7fbff"></path>
-                  <path d="M441 331L450 343L459 331L450 370Z" fill="#214f86"></path>
-                  <circle cx="438" cy="321" r="3" fill="#15385f"></circle>
-                  <circle cx="462" cy="321" r="3" fill="#15385f"></circle>
-                </g>
-
-                <g class="insights-bird-fragments">
-                  <rect x="94" y="365" width="8" height="8"></rect><rect x="126" y="388" width="5" height="5"></rect>
-                  <rect x="169" y="397" width="10" height="10"></rect><rect x="203" y="422" width="6" height="6"></rect>
-                  <rect x="260" y="428" width="8" height="8"></rect><rect x="305" y="449" width="5" height="5"></rect>
-                  <rect x="798" y="365" width="8" height="8"></rect><rect x="769" y="390" width="5" height="5"></rect>
-                  <rect x="721" y="401" width="10" height="10"></rect><rect x="689" y="425" width="6" height="6"></rect>
-                  <rect x="632" y="433" width="8" height="8"></rect><rect x="588" y="450" width="5" height="5"></rect>
-                </g>
-              </g>
-            </svg>
-
-            <div class="insights-bird-coordinate"><span>FORM / 01</span><b>Pixel flight study</b></div>
+            <div class="insights-decision-command"><span aria-hidden="true">✦</span><p>Ask the decision workspace…</p><kbd>⌘ K</kbd></div>
           </div>
-          <div class="insights-bird-copy">
-            <small>Computational visualization</small>
-            <h3>Make governing behavior visible.</h3>
-            <span class="insights-bird-prompt">Move to release <b aria-hidden="true">↗</b></span>
+
+          <div class="insights-decision-copy">
+            <small>Decision intelligence · AI-native workflow</small>
+            <h3 id="decision-inbox-title">Turn information into a decision.</h3>
+            <p>Prioritized evidence, traceable assumptions, and human approval in one observable workspace.</p>
+            <a class="insights-decision-link" href="/artificial-intelligence/">Explore applied AI <b aria-hidden="true">↗</b></a>
           </div>
-        </a>
+        </article>
 
         <a class="insights-work-card insights-work-report" href="/report-industry-4-0/" data-insight-topic="research">
           <div class="insights-work-copy">
