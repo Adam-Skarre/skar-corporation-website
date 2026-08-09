@@ -333,25 +333,29 @@
       const fit = Math.min(w, h) / 400;
       this.prepare(cx, cy, Math.min(w, h) * .54);
 
-      const stride = this.mobile ? 2 : 1;
+      // Sample each parity separately. Both studies encode their paired bodies
+      // in i % 2; stepping through one parity on mobile hid the second body.
+      const stride = this.mobile ? 4 : 2;
       const phase = t * 12;
       const pointSize = Math.max(.58, this.dpr * .42);
-      for (let i = 20000; i > 0; i -= stride) {
-        const y = i / 940;
-        const k = (4 + Math.cos(y)) * Math.cos(i);
-        const e = y / 6 - 13;
-        const d = Math.hypot(k, e) - 3;
-        const q = 3 * Math.sin(k * 2) + k / 16 * y *
-          (e + 2 * Math.sin(e - d * 5 + phase)) + 99;
-        const c = d / 1.2 - phase / 4 + (i % 2) * 3;
-        const px = q * Math.sin(c) * Math.sin(c / 4 + e / 6 - 8) * fit;
-        const py = (q * d / 9 * Math.cos(c) + d * 22 - 200) * fit;
-        const angle = -.16;
-        const x = cx + px * Math.cos(angle) - py * Math.sin(angle);
-        const yy = cy + px * Math.sin(angle) + py * Math.cos(angle);
-        const shimmer = .35 + .65 * Math.sin(i * .071 + t * 9) ** 2;
-        ctx.fillStyle = `rgba(${188 + shimmer * 42},${218 + shimmer * 25},${230 + shimmer * 18},${.14 + shimmer * .5})`;
-        ctx.fillRect(x, yy, pointSize * (1 + shimmer * .45), pointSize * (1 + shimmer * .45));
+      for (let branch = 0; branch < 2; branch++) {
+        for (let i = 20000 - branch; i > 0; i -= stride) {
+          const y = i / 940;
+          const k = (4 + Math.cos(y)) * Math.cos(i);
+          const e = y / 6 - 13;
+          const d = Math.hypot(k, e) - 3;
+          const q = 3 * Math.sin(k * 2) + k / 16 * y *
+            (e + 2 * Math.sin(e - d * 5 + phase)) + 99;
+          const c = d / 1.2 - phase / 4 + branch * 3;
+          const px = q * Math.sin(c) * Math.sin(c / 4 + e / 6 - 8) * fit;
+          const py = (q * d / 9 * Math.cos(c) + d * 22 - 200) * fit;
+          const angle = -.16;
+          const x = cx + px * Math.cos(angle) - py * Math.sin(angle);
+          const yy = cy + px * Math.sin(angle) + py * Math.cos(angle);
+          const shimmer = .35 + .65 * Math.sin(i * .071 + t * 9) ** 2;
+          ctx.fillStyle = `rgba(${188 + shimmer * 42},${218 + shimmer * 25},${230 + shimmer * 18},${.14 + shimmer * .5})`;
+          ctx.fillRect(x, yy, pointSize * (1 + shimmer * .45), pointSize * (1 + shimmer * .45));
+        }
       }
       this.finish();
     }
@@ -364,22 +368,24 @@
       const phase = t * 10;
       this.prepare(cx, cy, Math.min(w, h) * .54);
 
-      const stride = this.mobile ? 2 : 1;
+      const stride = this.mobile ? 4 : 2;
       const pointSize = Math.max(.56, this.dpr * .4);
-      for (let i = 20000; i > 0; i -= stride) {
-        const m = i % 2 * 3;
-        const k = 9 * Math.cos(i / 61);
-        const e = i / 652 - 13;
-        const d = Math.hypot(k, e) ** 2 / 89 + 1;
-        const q = 79 - e / 2 * Math.sin(k) + k / d *
-          (6 + 5 * Math.sin(Math.sin(d * d + e / 9 - phase + m)));
-        const c = d / 1.9 + Math.cos(phase - d * 3 + m) / 11 - phase / 16 + m;
-        const px = q * Math.sin(c) * fit;
-        const py = (q + 40) * Math.cos(c) * fit;
-        const shimmer = .35 + .65 * Math.sin(i * .061 + phase * 2) ** 2;
-        ctx.fillStyle = `rgba(${187 + shimmer * 45},${218 + shimmer * 25},${230 + shimmer * 18},${.13 + shimmer * .52})`;
-        const size = pointSize * (1 + shimmer * .48);
-        ctx.fillRect(cx + px, cy + py, size, size);
+      for (let branch = 0; branch < 2; branch++) {
+        const m = branch * 3;
+        for (let i = 20000 - branch; i > 0; i -= stride) {
+          const k = 9 * Math.cos(i / 61);
+          const e = i / 652 - 13;
+          const d = Math.hypot(k, e) ** 2 / 89 + 1;
+          const q = 79 - e / 2 * Math.sin(k) + k / d *
+            (6 + 5 * Math.sin(Math.sin(d * d + e / 9 - phase + m)));
+          const c = d / 1.9 + Math.cos(phase - d * 3 + m) / 11 - phase / 16 + m;
+          const px = q * Math.sin(c) * fit;
+          const py = (q + 40) * Math.cos(c) * fit;
+          const shimmer = .35 + .65 * Math.sin(i * .061 + phase * 2) ** 2;
+          ctx.fillStyle = `rgba(${187 + shimmer * 45},${218 + shimmer * 25},${230 + shimmer * 18},${.13 + shimmer * .52})`;
+          const size = pointSize * (1 + shimmer * .48);
+          ctx.fillRect(cx + px, cy + py, size, size);
+        }
       }
       this.finish();
     }
