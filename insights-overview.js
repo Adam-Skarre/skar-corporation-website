@@ -85,48 +85,44 @@
       let visible = true;
       let frame = 0;
 
-      function birdPath() {
-        const path = new Path2D();
-        const cx = width * 0.5;
-        const top = height * 0.12;
-        const span = width * 0.46;
-        const shoulder = height * 0.38;
-        const lowerWing = height * 0.49;
-
-        path.moveTo(cx, shoulder);
-        path.bezierCurveTo(cx - span * 0.35, top + height * 0.02, cx - span * 0.72, top - height * 0.01, cx - span, top + height * 0.05);
-        path.bezierCurveTo(cx - span * 0.72, top + height * 0.15, cx - span * 0.62, shoulder - height * 0.01, cx - span * 0.82, lowerWing);
-        path.bezierCurveTo(cx - span * 0.5, lowerWing - height * 0.01, cx - span * 0.25, lowerWing + height * 0.03, cx - width * 0.075, shoulder + height * 0.04);
-        path.bezierCurveTo(cx - width * 0.075, height * 0.28, cx - width * 0.04, height * 0.24, cx, height * 0.24);
-        path.bezierCurveTo(cx + width * 0.04, height * 0.24, cx + width * 0.075, height * 0.28, cx + width * 0.075, shoulder + height * 0.04);
-        path.bezierCurveTo(cx + span * 0.25, lowerWing + height * 0.03, cx + span * 0.5, lowerWing - height * 0.01, cx + span * 0.82, lowerWing);
-        path.bezierCurveTo(cx + span * 0.62, shoulder - height * 0.01, cx + span * 0.72, top + height * 0.15, cx + span, top + height * 0.05);
-        path.bezierCurveTo(cx + span * 0.72, top - height * 0.01, cx + span * 0.35, top + height * 0.02, cx, shoulder);
-        path.closePath();
-
-        path.moveTo(cx - width * 0.07, height * 0.31);
-        path.bezierCurveTo(cx - width * 0.075, height * 0.47, cx - width * 0.045, height * 0.59, cx, height * 0.68);
-        path.bezierCurveTo(cx + width * 0.045, height * 0.59, cx + width * 0.075, height * 0.47, cx + width * 0.07, height * 0.31);
-        path.closePath();
-        return path;
-      }
-
       function hash(column, row) {
         const value = Math.sin(column * 127.1 + row * 311.7) * 43758.5453123;
         return value - Math.floor(value);
       }
 
       function buildPoints() {
-        const path = birdPath();
-        const spacing = width < 700 ? 8 : clamp(width / 88, 8, 12);
+        const mask = document.createElement('canvas');
+        mask.width = 900;
+        mask.height = 720;
+        const maskContext = mask.getContext('2d');
+        if (!maskContext) return;
+        const leftWing = new Path2D('M452 355C373 294 316 228 258 157C208 96 143 66 58 66C137 139 190 229 228 336C164 309 105 304 47 319C145 354 258 379 403 394L452 355Z');
+        const rightWing = new Path2D('M448 355C527 294 584 228 642 157C692 96 757 66 842 66C763 139 710 229 672 336C736 309 795 304 853 319C755 354 642 379 497 394L448 355Z');
+        const body = new Path2D('M450 274C478 296 496 331 496 372C496 421 476 463 461 512L450 598L439 512C424 463 404 421 404 372C404 331 422 296 450 274Z');
+        const tail = new Path2D('M450 598L416 528L436 517L450 566L464 517L484 528Z');
+        const head = new Path2D('M429 316C438 295 462 295 471 316L464 345L450 360L436 345Z');
+        const beak = new Path2D('M441 331L450 343L459 331L450 370Z');
+        maskContext.fillStyle = '#fff';
+        [leftWing, rightWing, body, tail, head, beak].forEach((shape) => maskContext.fill(shape));
+        const maskData = maskContext.getImageData(0, 0, mask.width, mask.height).data;
+        const sourceSpacing = width < 700 ? 11 : 9;
+        const scale = Math.min((width * 0.94) / mask.width, (height * 0.62) / mask.height);
+        const offsetX = (width - mask.width * scale) / 2;
+        const offsetY = height * 0.055;
         const next = [];
         let column = 0;
-        for (let x = spacing; x < width - spacing; x += spacing) {
+        for (let sourceX = 0; sourceX < mask.width; sourceX += sourceSpacing) {
           let row = 0;
-          for (let y = height * 0.07; y < height * 0.7; y += spacing) {
-            if (context.isPointInPath(path, x, y)) {
+          for (let sourceY = 0; sourceY < mask.height; sourceY += sourceSpacing) {
+            if (maskData[(Math.floor(sourceY) * mask.width + Math.floor(sourceX)) * 4 + 3] > 0) {
               const noise = hash(column, row);
-              next.push({ x, y, noise, phase: noise * Math.PI * 2, size: spacing * (0.34 + noise * 0.16) });
+              next.push({
+                x: offsetX + sourceX * scale,
+                y: offsetY + sourceY * scale,
+                noise,
+                phase: noise * Math.PI * 2,
+                size: sourceSpacing * scale * (0.4 + noise * 0.16)
+              });
             }
             row += 1;
           }
