@@ -326,3 +326,65 @@
   .mv-cta{padding-top:70px;padding-bottom:78px}
   .mv-cta h2{font-size:50px}
 }
+
+/* Publication masthead inspired by classic institutional research journals. */
+.mv-publication-head{
+  width:min(1500px,100%);
+  min-height:430px;
+  margin-inline:auto;
+  padding:90px 0 72px;
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(300px,.55fr);
+  gap:8vw;
+  align-items:end
+}
+.mv-publication-head>div>h2{
+  margin:32px 0 52px;
+  font-family:"Iowan Old Style","Baskerville","Times New Roman",serif;
+  font-size:clamp(76px,7.7vw,132px);
+  font-weight:400;
+  line-height:.86;
+  letter-spacing:-.06em
+}
+.mv-publication-head>div>p:last-child{
+  max-width:850px;
+  margin:0;
+  color:#343d42;
+  font-size:clamp(19px,1.45vw,25px);
+  line-height:1.45
+}
+.mv-publication-head>p{
+  align-self:center;
+  max-width:390px;
+  margin:92px 0 0;
+  color:#4e585d;
+  font-size:15px;
+  line-height:1.55
+}
+.mv-publication-head>p a{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  margin-top:10px;
+  padding-bottom:3px;
+  border-bottom:1px solid var(--mv-ink);
+  color:var(--mv-ink);
+  font-weight:750
+}
+.mv-publication-head>p a span{color:var(--mv-bright)}
+.mv-edition{min-height:58px}
+.mv-hero-grid{min-height:600px}
+
+@media(max-width:900px){
+  .mv-publication-head{min-height:0;padding:72px 0 58px;grid-template-columns:1fr;gap:42px}
+  .mv-publication-head>div>h2{margin:27px 0 38px}
+  .mv-publication-head>p{max-width:520px;margin:0}
+}
+
+@media(max-width:760px){
+  .mv-publication-head{padding:58px 0 46px;gap:32px}
+  .mv-publication-head>div>h2{margin:23px 0 30px;font-size:clamp(57px,17vw,78px)}
+  .mv-publication-head>div>p:last-child{font-size:18px}
+  .mv-publication-head>p{font-size:14px}
+  .mv-edition{min-height:72px}
+}
