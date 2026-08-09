@@ -61,26 +61,174 @@
   };
 
   const fallbackScenario = {
-    title: 'Frame the decision before optimizing the answer.',
-    summary: 'The question is useful, but the decision owner, evidence boundary, and commitment it may influence need to be explicit before the analysis can be relied upon.',
+    state: 'PUBLIC PREVIEW LIMIT REACHED',
+    title: 'That question needs the live SKAR AI model.',
+    summary: 'This public preview can answer calculations and demonstrate four business workflows. Open-ended answers require the secure server-side model and approved knowledge layer used in a deployed SKAR AI instance.',
     findings: [
-      'Name the decision owner and the commitment this analysis is intended to support.',
-      'Identify which evidence is approved, current, and material to the outcome.',
-      'Test the assumption most likely to change the recommendation.'
+      'Try a direct calculation such as “5 + 5” or “(24 × 3) / 2.”',
+      'Choose one of the four guided questions to inspect the business response flow.',
+      'A production deployment sends broader questions to a protected model endpoint without exposing credentials in the browser.'
     ],
-    sources: ['Decision brief required', 'Approved sources required'],
-    evidence: 'Context required',
-    control: 'Owner not yet named',
-    action: 'Define the decision boundary'
+    sources: ['Public preview capability boundary'],
+    evidence: 'No live model connected',
+    control: 'Credentials stay server-side',
+    action: 'Try a supported question'
+  };
+
+  const extractExpression = (input) => {
+    const expression = input
+      .trim()
+      .replace(/^(?:please\s+)?(?:what(?:'s| is)|calculate|compute|solve|evaluate)\s+/i, '')
+      .replace(/[=?]+\s*$/g, '')
+      .replace(/,/g, '')
+      .replace(/÷/g, '/')
+      .replace(/×/g, '*')
+      .replace(/(\d)\s*[xX]\s*(?=\d|\()/g, '$1*')
+      .trim();
+    if (!/\d/.test(expression) || !/[+\-*/%^]/.test(expression)) return null;
+    if (!/^[\d\s.+\-*/%^()]+$/.test(expression)) return null;
+    return expression;
+  };
+
+  const calculateExpression = (expression) => {
+    const tokens = [];
+    let position = 0;
+    while (position < expression.length) {
+      const rest = expression.slice(position);
+      const whitespace = rest.match(/^\s+/);
+      if (whitespace) { position += whitespace[0].length; continue; }
+      const number = rest.match(/^(?:\d+(?:\.\d*)?|\.\d+)/);
+      if (number) { tokens.push({ type: 'number', value: Number(number[0]) }); position += number[0].length; continue; }
+      const operator = rest[0];
+      if ('+-*/%^()'.includes(operator)) { tokens.push({ type: operator, value: operator }); position += 1; continue; }
+      throw new Error('Unsupported expression');
+    }
+
+    let cursor = 0;
+    const peek = (type) => tokens[cursor]?.type === type;
+    const take = (type) => {
+      if (!peek(type)) throw new Error('Invalid expression');
+      return tokens[cursor++];
+    };
+    const primary = () => {
+      if (peek('number')) return take('number').value;
+      if (peek('(')) {
+        take('(');
+        const value = expressionParser();
+        take(')');
+        return value;
+      }
+      throw new Error('Number expected');
+    };
+    const unary = () => {
+      if (peek('+')) { take('+'); return unary(); }
+      if (peek('-')) { take('-'); return -unary(); }
+      return primary();
+    };
+    const power = () => {
+      const left = unary();
+      if (!peek('^')) return left;
+      take('^');
+      return Math.pow(left, power());
+    };
+    const term = () => {
+      let value = power();
+      while (peek('*') || peek('/') || peek('%')) {
+        const operator = tokens[cursor++].type;
+        const right = power();
+        if ((operator === '/' || operator === '%') && right === 0) throw new Error('Division by zero');
+        if (operator === '*') value *= right;
+        if (operator === '/') value /= right;
+        if (operator === '%') value %= right;
+      }
+      return value;
+    };
+    const expressionParser = () => {
+      let value = term();
+      while (peek('+') || peek('-')) {
+        const operator = tokens[cursor++].type;
+        const right = term();
+        value = operator === '+' ? value + right : value - right;
+      }
+      return value;
+    };
+
+    const result = expressionParser();
+    if (cursor !== tokens.length || !Number.isFinite(result) || Math.abs(result) > 1e15) throw new Error('Result outside preview limits');
+    return result;
+  };
+
+  const formatResult = (value) => {
+    if (Number.isInteger(value)) return value.toLocaleString('en-US');
+    const rounded = Number(value.toPrecision(12));
+    return rounded.toLocaleString('en-US', { maximumFractionDigits: 10 });
+  };
+
+  const calculationScenario = (input) => {
+    const expression = extractExpression(input);
+    if (!expression) return null;
+    try {
+      const result = calculateExpression(expression);
+      const formatted = formatResult(result);
+      const displayExpression = expression.replace(/\*/g, ' × ').replace(/\//g, ' ÷ ').replace(/\s+/g, ' ').trim();
+      return {
+        kind: 'calculation',
+        state: 'ANSWER READY',
+        title: formatted,
+        summary: `${displayExpression} equals ${formatted}.`,
+        findings: [
+          'The expression was parsed and calculated directly in this browser.',
+          'No company information, external source, or model call was required.'
+        ],
+        sources: ['Local calculation · No external data'],
+        evidence: 'Direct calculation',
+        control: 'No approval required',
+        action: 'Ask a follow-up'
+      };
+    } catch (error) {
+      return {
+        ...fallbackScenario,
+        state: 'CALCULATION NEEDS REVIEW',
+        title: error.message === 'Division by zero' ? 'That expression divides by zero.' : 'I could not safely evaluate that expression.',
+        summary: 'Check the operators and parentheses, then try the calculation again.',
+        evidence: 'Expression rejected safely',
+        action: 'Correct the expression'
+      };
+    }
   };
 
   const chooseScenario = (input) => {
     const normalized = input.toLowerCase();
+    const calculation = calculationScenario(input);
+    if (calculation) return calculation;
     if (/capacity|supplier|operation|production|constraint|expansion/.test(normalized)) return promptLibrary.operations;
     if (/research|evidence|source|industry|market|trend|automation/.test(normalized)) return promptLibrary.research;
     if (/client|renewal|customer|account|service|pricing/.test(normalized)) return promptLibrary.client;
     if (/diligence|investment|risk|deal|acquisition|finance|assumption/.test(normalized)) return promptLibrary.diligence;
-    return fallbackScenario;
+    return null;
+  };
+
+  const requestModelScenario = async (prompt) => {
+    const endpoint = String(window.SKAR_AI_ENDPOINT || document.querySelector('meta[name="skar-ai-endpoint"]')?.content || '').trim();
+    if (!endpoint) return null;
+    const result = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    if (!result.ok) throw new Error(`SKAR AI endpoint returned ${result.status}`);
+    const data = await result.json();
+    if (!data || typeof data.title !== 'string' || typeof data.summary !== 'string') throw new Error('Invalid SKAR AI response');
+    return {
+      state: typeof data.state === 'string' ? data.state : 'ANSWER READY',
+      title: data.title,
+      summary: data.summary,
+      findings: Array.isArray(data.findings) ? data.findings.slice(0, 5).map(String) : [],
+      sources: Array.isArray(data.sources) ? data.sources.slice(0, 6).map(String) : ['SKAR AI secure endpoint'],
+      evidence: typeof data.evidence === 'string' ? data.evidence : 'Model response',
+      control: typeof data.control === 'string' ? data.control : 'Human review',
+      action: typeof data.action === 'string' ? data.action : 'Review the answer'
+    };
   };
 
   const demo = document.querySelector('[data-skar-ai-demo]');
@@ -143,7 +291,7 @@
       });
     });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const prompt = input.value.trim();
       if (!prompt) {
@@ -152,22 +300,35 @@
       }
 
       window.clearTimeout(timer);
-      const scenario = chooseScenario(prompt);
-      populateResponse(prompt, scenario);
       shell.dataset.demoState = 'thinking';
       response.setAttribute('aria-busy', 'true');
-      stateLabel.textContent = 'REVIEWING APPROVED CONTEXT';
+      stateLabel.textContent = 'UNDERSTANDING THE QUESTION';
       submit.disabled = true;
       if (submitLabel) submitLabel.textContent = 'Working…';
       shell.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
 
+      let scenario = chooseScenario(prompt);
+      try {
+        scenario = scenario || await requestModelScenario(prompt) || fallbackScenario;
+      } catch (error) {
+        scenario = {
+          ...fallbackScenario,
+          state: 'SECURE MODEL UNAVAILABLE',
+          title: 'The live model could not be reached.',
+          summary: 'The request was not sent again and no browser credential was exposed. Try a supported calculation or guided workflow while the secure endpoint is unavailable.',
+          evidence: 'Endpoint connection failed',
+          action: 'Try a supported question'
+        };
+      }
+      populateResponse(prompt, scenario);
+
       timer = window.setTimeout(() => {
         shell.dataset.demoState = 'ready';
         response.setAttribute('aria-busy', 'false');
-        stateLabel.textContent = 'BRIEF READY · HUMAN REVIEW REQUIRED';
+        stateLabel.textContent = scenario.state || 'BRIEF READY · HUMAN REVIEW REQUIRED';
         submit.disabled = false;
         if (submitLabel) submitLabel.textContent = 'Ask SKAR AI';
-      }, reducedMotion ? 80 : 1050);
+      }, reducedMotion ? 80 : scenario.kind === 'calculation' ? 360 : 900);
     });
 
     reset.addEventListener('click', () => {
