@@ -349,6 +349,164 @@
     }
   }
 
+  const marketCanvas = document.querySelector('[data-insights-market-signal]');
+  if (marketCanvas) {
+    const marketContext = marketCanvas.getContext('2d', { alpha: true });
+    if (marketContext) {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const streams = [
+        { color: [93, 181, 255], amplitude: 0.1, frequency: 1.7, offset: 0.34, speed: 0.72 },
+        { color: [93, 216, 196], amplitude: 0.13, frequency: 2.1, offset: 0.51, speed: -0.55 },
+        { color: [238, 202, 94], amplitude: 0.09, frequency: 1.45, offset: 0.66, speed: 0.42 }
+      ];
+      let width = 1;
+      let height = 1;
+      let ratio = 1;
+      let frame = 0;
+      let visible = true;
+      let pointerX = 0.72;
+      let pointerY = 0.46;
+      let targetX = pointerX;
+      let targetY = pointerY;
+
+      function resizeMarketSignal() {
+        const bounds = marketCanvas.parentElement.getBoundingClientRect();
+        width = Math.max(1, Math.round(bounds.width));
+        height = Math.max(1, Math.round(bounds.height));
+        ratio = Math.min(window.devicePixelRatio || 1, 2);
+        marketCanvas.width = Math.round(width * ratio);
+        marketCanvas.height = Math.round(height * ratio);
+        marketCanvas.style.width = `${width}px`;
+        marketCanvas.style.height = `${height}px`;
+        marketContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+        drawMarketSignal(0);
+      }
+
+      function streamY(stream, normalizedX, time) {
+        const phase = reducedMotion ? 0 : time * 0.00035 * stream.speed;
+        const envelope = Math.sin(normalizedX * Math.PI);
+        return height * (stream.offset + Math.sin(normalizedX * Math.PI * stream.frequency + phase * 7) * stream.amplitude * envelope);
+      }
+
+      function drawMarketSignal(time) {
+        pointerX += (targetX - pointerX) * 0.055;
+        pointerY += (targetY - pointerY) * 0.055;
+        marketContext.clearRect(0, 0, width, height);
+
+        marketContext.save();
+        marketContext.strokeStyle = 'rgba(127, 169, 205, .1)';
+        marketContext.lineWidth = 1;
+        for (let x = 0; x <= width; x += Math.max(28, width / 16)) {
+          marketContext.beginPath();
+          marketContext.moveTo(x, 0);
+          marketContext.lineTo(x, height);
+          marketContext.stroke();
+        }
+        for (let y = 0; y <= height; y += 32) {
+          marketContext.beginPath();
+          marketContext.moveTo(0, y);
+          marketContext.lineTo(width, y);
+          marketContext.stroke();
+        }
+        marketContext.restore();
+
+        streams.forEach((stream, streamIndex) => {
+          const [red, green, blue] = stream.color;
+          marketContext.save();
+          marketContext.beginPath();
+          for (let x = -4; x <= width + 4; x += 4) {
+            const normalizedX = x / width;
+            const y = streamY(stream, normalizedX, time);
+            if (x === -4) marketContext.moveTo(x, y);
+            else marketContext.lineTo(x, y);
+          }
+          marketContext.strokeStyle = `rgba(${red}, ${green}, ${blue}, .72)`;
+          marketContext.lineWidth = 1.35;
+          marketContext.shadowColor = `rgba(${red}, ${green}, ${blue}, .55)`;
+          marketContext.shadowBlur = 8;
+          marketContext.stroke();
+          marketContext.shadowBlur = 0;
+
+          const packetCount = 4;
+          for (let packet = 0; packet < packetCount; packet += 1) {
+            const progress = reducedMotion
+              ? (packet + 1) / (packetCount + 1)
+              : (time * 0.000055 * (1 + streamIndex * 0.12) + packet / packetCount + streamIndex * 0.17) % 1;
+            const packetX = progress * width;
+            const packetY = streamY(stream, progress, time);
+            marketContext.beginPath();
+            marketContext.fillStyle = `rgba(${red}, ${green}, ${blue}, .98)`;
+            marketContext.shadowColor = `rgba(${red}, ${green}, ${blue}, .9)`;
+            marketContext.shadowBlur = 12;
+            marketContext.arc(packetX, packetY, packet === 0 ? 3 : 2, 0, Math.PI * 2);
+            marketContext.fill();
+          }
+          marketContext.restore();
+        });
+
+        const nodes = [
+          [0.13, 0.37, 0], [0.28, 0.58, 1], [0.44, 0.42, 0], [0.59, 0.63, 2],
+          [0.72, 0.35, 1], [0.84, 0.55, 2], [0.93, 0.43, 0]
+        ];
+        nodes.forEach(([x, y, streamIndex], index) => {
+          const nodeX = x * width;
+          const nodeY = y * height;
+          const [red, green, blue] = streams[streamIndex].color;
+          const pulse = reducedMotion ? 0 : (Math.sin(time * 0.002 + index * 1.4) + 1) * 0.5;
+          marketContext.beginPath();
+          marketContext.strokeStyle = `rgba(${red}, ${green}, ${blue}, ${0.15 + pulse * 0.16})`;
+          marketContext.lineWidth = 1;
+          marketContext.arc(nodeX, nodeY, 7 + pulse * 5, 0, Math.PI * 2);
+          marketContext.stroke();
+          marketContext.beginPath();
+          marketContext.fillStyle = `rgb(${red} ${green} ${blue})`;
+          marketContext.arc(nodeX, nodeY, 2.3, 0, Math.PI * 2);
+          marketContext.fill();
+        });
+
+        const focusX = pointerX * width;
+        const focusY = pointerY * height;
+        marketContext.save();
+        marketContext.strokeStyle = 'rgba(200, 229, 252, .36)';
+        marketContext.lineWidth = 1;
+        marketContext.setLineDash([3, 7]);
+        marketContext.beginPath();
+        marketContext.arc(focusX, focusY, 24, 0, Math.PI * 2);
+        marketContext.stroke();
+        marketContext.beginPath();
+        marketContext.moveTo(focusX - 34, focusY);
+        marketContext.lineTo(focusX + 34, focusY);
+        marketContext.moveTo(focusX, focusY - 34);
+        marketContext.lineTo(focusX, focusY + 34);
+        marketContext.stroke();
+        marketContext.restore();
+      }
+
+      function animateMarketSignal(time) {
+        if (visible) drawMarketSignal(time);
+        frame = window.requestAnimationFrame(animateMarketSignal);
+      }
+
+      marketCanvas.parentElement.addEventListener('pointermove', (event) => {
+        if (reducedMotion) return;
+        const bounds = marketCanvas.parentElement.getBoundingClientRect();
+        targetX = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+        targetY = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+      }, { passive: true });
+
+      const marketVisibilityObserver = 'IntersectionObserver' in window
+        ? new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0.02 })
+        : null;
+      if (marketVisibilityObserver) marketVisibilityObserver.observe(marketCanvas);
+      const marketResizeObserver = 'ResizeObserver' in window ? new ResizeObserver(resizeMarketSignal) : null;
+      if (marketResizeObserver) marketResizeObserver.observe(marketCanvas.parentElement);
+      else window.addEventListener('resize', resizeMarketSignal, { passive: true });
+      resizeMarketSignal();
+      if (!reducedMotion) frame = window.requestAnimationFrame(animateMarketSignal);
+      window.addEventListener('pagehide', () => window.cancelAnimationFrame(frame), { once: true });
+    }
+  }
+
   const consoleElement = document.querySelector('[data-insights-console]');
   if (!consoleElement) return;
 
