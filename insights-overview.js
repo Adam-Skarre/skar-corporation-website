@@ -241,6 +241,118 @@
     }
   }
 
+  const heatmapCanvas = document.querySelector('[data-insights-heatmap]');
+  if (heatmapCanvas) {
+    const heatmapContext = heatmapCanvas.getContext('2d', { alpha: false });
+    if (heatmapContext) {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const palette = [
+        [4, 24, 49], [7, 54, 98], [12, 104, 177], [31, 177, 193],
+        [100, 211, 159], [239, 218, 91], [244, 123, 56], [202, 45, 43], [255, 241, 208]
+      ];
+      let width = 1;
+      let height = 1;
+      let ratio = 1;
+      let frame = 0;
+      let visible = true;
+      let pointerX = 0.7;
+      let pointerY = 0.38;
+
+      const mixColor = (value) => {
+        const scaled = Math.max(0, Math.min(0.999, value)) * (palette.length - 1);
+        const index = Math.floor(scaled);
+        const amount = scaled - index;
+        const first = palette[index];
+        const second = palette[Math.min(index + 1, palette.length - 1)];
+        return first.map((channel, channelIndex) => Math.round(channel + (second[channelIndex] - channel) * amount));
+      };
+
+      const gaussian = (x, y, centerX, centerY, spread, intensity) => {
+        const dx = x - centerX;
+        const dy = y - centerY;
+        return Math.exp(-(dx * dx + dy * dy) / spread) * intensity;
+      };
+
+      function resizeHeatmap() {
+        const bounds = heatmapCanvas.parentElement.getBoundingClientRect();
+        width = Math.max(1, Math.round(bounds.width));
+        height = Math.max(1, Math.round(bounds.height));
+        ratio = Math.min(window.devicePixelRatio || 1, 2);
+        heatmapCanvas.width = Math.round(width * ratio);
+        heatmapCanvas.height = Math.round(height * ratio);
+        heatmapCanvas.style.width = `${width}px`;
+        heatmapCanvas.style.height = `${height}px`;
+        heatmapContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+        drawHeatmap(0);
+      }
+
+      function drawHeatmap(time) {
+        const columns = width < 260 ? 34 : 46;
+        const rows = Math.max(22, Math.round(columns * height / width));
+        const cellWidth = width / columns;
+        const cellHeight = height / rows;
+        const phase = reducedMotion ? 0 : time * 0.00022;
+        heatmapContext.fillStyle = '#061b31';
+        heatmapContext.fillRect(0, 0, width, height);
+
+        for (let row = 0; row < rows; row += 1) {
+          const y = (row + 0.5) / rows;
+          for (let column = 0; column < columns; column += 1) {
+            const x = (column + 0.5) / columns;
+            const field =
+              gaussian(x, y, 0.21 + Math.sin(phase) * 0.035, 0.3, 0.028, 0.76) +
+              gaussian(x, y, 0.62, 0.24 + Math.cos(phase * 1.3) * 0.05, 0.018, 0.95) +
+              gaussian(x, y, 0.77 + Math.sin(phase * 0.7) * 0.04, 0.67, 0.036, 0.84) +
+              gaussian(x, y, 0.34, 0.74, 0.05, 0.58) +
+              gaussian(x, y, pointerX, pointerY, 0.022, 0.4) +
+              Math.sin(x * 18 + phase * 4) * Math.cos(y * 14 - phase * 3) * 0.055 + 0.08;
+            const color = mixColor(Math.min(1, field));
+            heatmapContext.fillStyle = `rgb(${color[0]} ${color[1]} ${color[2]})`;
+            heatmapContext.fillRect(column * cellWidth + 0.45, row * cellHeight + 0.45, Math.ceil(cellWidth - 0.9), Math.ceil(cellHeight - 0.9));
+          }
+        }
+
+        heatmapContext.save();
+        heatmapContext.globalCompositeOperation = 'screen';
+        heatmapContext.strokeStyle = 'rgba(225, 244, 255, .28)';
+        heatmapContext.lineWidth = 0.8;
+        [0.2, 0.42, 0.66].forEach((offset, index) => {
+          heatmapContext.beginPath();
+          for (let x = -8; x <= width + 8; x += 6) {
+            const y = height * offset + Math.sin(x * 0.035 + phase * 5 + index) * (10 + index * 5);
+            if (x === -8) heatmapContext.moveTo(x, y);
+            else heatmapContext.lineTo(x, y);
+          }
+          heatmapContext.stroke();
+        });
+        heatmapContext.restore();
+      }
+
+      function animateHeatmap(time) {
+        if (visible) drawHeatmap(time);
+        frame = window.requestAnimationFrame(animateHeatmap);
+      }
+
+      heatmapCanvas.parentElement.addEventListener('pointermove', (event) => {
+        if (reducedMotion) return;
+        const bounds = heatmapCanvas.parentElement.getBoundingClientRect();
+        pointerX = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+        pointerY = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+      }, { passive: true });
+
+      const heatmapVisibilityObserver = 'IntersectionObserver' in window
+        ? new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0.02 })
+        : null;
+      if (heatmapVisibilityObserver) heatmapVisibilityObserver.observe(heatmapCanvas);
+      const heatmapResizeObserver = 'ResizeObserver' in window ? new ResizeObserver(resizeHeatmap) : null;
+      if (heatmapResizeObserver) heatmapResizeObserver.observe(heatmapCanvas.parentElement);
+      else window.addEventListener('resize', resizeHeatmap, { passive: true });
+      resizeHeatmap();
+      if (!reducedMotion) frame = window.requestAnimationFrame(animateHeatmap);
+      window.addEventListener('pagehide', () => window.cancelAnimationFrame(frame), { once: true });
+    }
+  }
+
   const consoleElement = document.querySelector('[data-insights-console]');
   if (!consoleElement) return;
 
