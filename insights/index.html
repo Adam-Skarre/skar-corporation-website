@@ -12,12 +12,12 @@
   <meta property="og:image" content="https://skarcorporation.com/assets/insights-monolith-mountains.png">
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/refinement.css?v=20260802-4">
-    <link rel="stylesheet" href="/insights-overview.css?v=20260805-1">
+    <link rel="stylesheet" href="/insights-overview.css?v=20260809-2">
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <link rel="shortcut icon" href="/assets/skar-favicon.svg">
 <script src="/site-nav.js?v=20260802-3" defer></script>
 <script src="/math-art.js?v=20260729-1" defer></script>
-    <script src="/insights-overview.js?v=20260805-1" defer></script>
+    <script src="/insights-overview.js?v=20260809-2" defer></script>
 </head>
 <body class="insights-overview-page">
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -215,66 +215,19 @@
       </div>
 
       <div class="insights-work-grid">
-        <article class="insights-work-card insights-work-feature insights-work-inbox" data-insight-topic="models" aria-labelledby="decision-inbox-title">
-          <div class="insights-decision-shell" aria-label="Interactive AI decision workspace">
-            <div class="insights-decision-titlebar">
-              <span class="insights-decision-lights" aria-hidden="true"><i></i><i></i><i></i></span>
-              <strong>SKAR / Decision workspace</strong>
-              <span class="insights-decision-live"><i></i> Live</span>
-            </div>
-
-            <div class="insights-decision-app">
-              <aside class="insights-decision-rail" aria-label="Workspace tools">
-                <span class="insights-decision-mark">S</span>
-                <span class="is-active" title="Decision queue">01</span>
-                <span title="Evidence library">02</span>
-                <span title="Scenario studio">03</span>
-                <span class="insights-decision-rail-end" title="Settings">••</span>
-              </aside>
-
-              <div class="insights-decision-queue">
-                <header><small>Priority queue</small><strong>4 active decisions</strong></header>
-                <button class="insights-decision-item is-active" type="button" aria-pressed="true" data-decision-item data-title="Stage the capacity commitment" data-summary="Demand supports a phased expansion. Preserve an exit path until supplier lead times and capital costs clear the release threshold." data-owner="Operations council" data-coverage="82% evidence coverage" data-status="Review today">
-                  <span class="insights-decision-signal">01</span><span><strong>Q4 capacity decision</strong><small>Demand +18% · lead times expanding</small></span><em>Today</em>
-                </button>
-                <button class="insights-decision-item" type="button" aria-pressed="false" data-decision-item data-title="Hold the model for review" data-summary="Two edge cases remain outside the approved performance envelope. Keep the human gate in place and rerun the evaluation set." data-owner="AI governance" data-coverage="94.6% validated" data-status="2 exceptions">
-                  <span class="insights-decision-signal">02</span><span><strong>Model release threshold</strong><small>Evaluation pass rate 94.6%</small></span><em>2 flags</em>
-                </button>
-                <button class="insights-decision-item" type="button" aria-pressed="false" data-decision-item data-title="Open a second supply path" data-summary="Single-source exposure now exceeds the operating limit. A qualified alternative reduces schedule risk without changing the current design." data-owner="Engineering" data-coverage="7 dependencies traced" data-status="Escalated">
-                  <span class="insights-decision-signal">03</span><span><strong>Supplier concentration</strong><small>One dependency above limit</small></span><em>High</em>
-                </button>
-                <button class="insights-decision-item" type="button" aria-pressed="false" data-decision-item data-title="Protect margin before growth" data-summary="The price move restores contribution margin, but only if service levels remain inside the retention boundary during the next two cycles." data-owner="Commercial lead" data-coverage="11 signals connected" data-status="Ready">
-                  <span class="insights-decision-signal">04</span><span><strong>Pricing scenario</strong><small>Margin and retention tradeoff</small></span><em>Ready</em>
-                </button>
-              </div>
-
-              <section class="insights-decision-reader" aria-live="polite">
-                <div class="insights-decision-toolbar" aria-hidden="true"><span>Evidence</span><span>Scenarios</span><span>Controls</span><b>•••</b></div>
-                <p><span></span> AI brief · awaiting human review</p>
-                <h4 data-decision-title>Stage the capacity commitment</h4>
-                <div class="insights-decision-summary">
-                  <small>Decision summary</small>
-                  <p data-decision-summary>Demand supports a phased expansion. Preserve an exit path until supplier lead times and capital costs clear the release threshold.</p>
-                </div>
-                <dl>
-                  <div><dt>Evidence</dt><dd data-decision-coverage>82% evidence coverage</dd></div>
-                  <div><dt>Decision owner</dt><dd data-decision-owner>Operations council</dd></div>
-                  <div><dt>Control state</dt><dd data-decision-status>Review today</dd></div>
-                </dl>
-                <footer><span>Human approval required</span><b aria-hidden="true">→</b></footer>
-              </section>
-            </div>
-
-            <div class="insights-decision-command"><span aria-hidden="true">✦</span><p>Ask the decision workspace…</p><kbd>⌘ K</kbd></div>
+        <a class="insights-work-card insights-work-feature insights-work-bird" href="/artificial-intelligence/" data-insight-topic="models" data-insights-bird-stage aria-labelledby="decision-bird-title">
+          <div class="insights-bird-stage" role="img" aria-label="An interactive digital bird formed from pixels that shifts and disperses around the pointer.">
+            <canvas class="insights-bird-canvas" data-insights-bird aria-hidden="true"></canvas>
+            <div class="insights-bird-coordinate" aria-hidden="true"><span>DECISION / 01</span><b>Living signal study</b></div>
+            <div class="insights-bird-instruction" aria-hidden="true"><i></i><span>Move across the bird</span></div>
           </div>
-
-          <div class="insights-decision-copy">
+          <div class="insights-bird-copy">
             <small>Decision intelligence · AI-native workflow</small>
-            <h3 id="decision-inbox-title">Turn information into a decision.</h3>
-            <p>Prioritized evidence, traceable assumptions, and human approval in one observable workspace.</p>
-            <a class="insights-decision-link" href="/artificial-intelligence/">Explore applied AI <b aria-hidden="true">↗</b></a>
+            <h3 id="decision-bird-title">Turn information into a decision.</h3>
+            <p>Bring scattered signals into focus, reveal the pattern, and preserve human judgment at the point of action.</p>
+            <span class="insights-bird-link">Explore applied AI <b aria-hidden="true">↗</b></span>
           </div>
-        </article>
+        </a>
 
         <a class="insights-work-card insights-work-report" href="/report-industry-4-0/" data-insight-topic="research">
           <div class="insights-work-copy">
