@@ -4,41 +4,227 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Engineering | Skar Technologies</title>
-  <meta name="description" content="Engineering analysis and decision support for complex systems, products, and operations."><link rel="canonical" href="https://skarcorporation.com/engineering/"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="description" content="Systems engineering, modeling, verification, industrialization, and technical decision support for complex products and operations.">
+  <link rel="canonical" href="https://skartech.com/engineering/">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="theme-color" content="#061727">
+  <meta property="og:title" content="Engineering | Skar Technologies">
+  <meta property="og:description" content="Engineering clarity from requirement through operation.">
   <link rel="stylesheet" href="../site.css">
   <link rel="stylesheet" href="../refinement.css?v=20260802-4">
+  <link rel="stylesheet" href="../engineering.css?v=20260809-1">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
   <script src="../site-nav.js?v=20260802-3" defer></script>
-  <script src="../capability-art.js?v=20260728-20" defer></script>
+  <script src="../capability-art.js?v=20260802-2" defer></script>
+  <script src="../engineering.js?v=20260809-1" defer></script>
 </head>
-<body class="capability-page-engineering">
+<body class="capability-page-engineering engineering-page">
   <div class="utility">Knowledge · Vision · Engineering</div>
   <header class="site-header"></header>
+
   <main>
-    <section class="capability-hero">
-      <div class="capability-hero-copy">
-        <p class="eyebrow">Engineering</p>
-        <h1>Turn constraints into <span class="blue-type">clear direction.</span></h1>
-        <p>We bring analytical rigor to technical decisions—making requirements, interfaces, risks, and tradeoffs visible before they become expensive.</p>
+    <section class="eng-hero" aria-labelledby="eng-hero-title">
+      <div class="eng-hero-grid" aria-hidden="true"></div>
+      <div class="eng-hero-copy">
+        <p class="eng-kicker"><i></i> Engineering</p>
+        <h1 id="eng-hero-title">Turn constraints into <span>clear direction.</span></h1>
+        <p class="eng-hero-lede">We bring systems thinking, analytical rigor, and manufacturing reality to consequential technical decisions—from the first requirement through operation.</p>
+        <div class="eng-actions">
+          <a class="eng-primary-link" href="#engineering-system">Explore our approach <span>↓</span></a>
+          <a class="eng-secondary-link" href="../contact/">Discuss a technical challenge <span>↗</span></a>
+        </div>
+        <div class="eng-hero-meta" aria-label="Engineering scope">
+          <span><b>System</b> Architecture and interfaces</span>
+          <span><b>Evidence</b> Models, tests, and traceability</span>
+          <span><b>Outcome</b> Buildable, operable decisions</span>
+        </div>
       </div>
-      <div class="capability-art-wrap" aria-hidden="true"><canvas class="capability-art" data-capability-art="engineering"></canvas></div>
+      <div class="eng-hero-art" aria-label="Animated engineering model">
+        <canvas class="eng-hero-canvas" data-capability-art="engineering" aria-hidden="true"></canvas>
+        <div class="eng-art-status"><i></i> MODEL / CONVERGING</div>
+        <div class="eng-art-coordinates" aria-hidden="true"><span>X 04.82</span><span>Y 11.06</span><span>Z 02.17</span></div>
+        <div class="eng-art-caption"><span>MODEL 01</span><p>Requirements, loads, geometry, and operating conditions resolved inside one traceable technical basis.</p></div>
+      </div>
     </section>
-    <section class="editorial-system engineering-system">
-      <div class="editorial-system-head"><p class="eyebrow">Engineering basis</p><h2>Engineering decisions are systems decisions.</h2><p>A design rarely fails because one equation was missing. It fails when requirements, interfaces, uncertainty, and operating reality were considered separately. We create a traceable technical basis that holds them together.</p></div>
-      <div class="editorial-system-body">
-        <article class="editorial-system-primary"><small>Integrated technical reasoning</small><h3>A traceable path from requirement to consequence.</h3><p>Good engineering connects what the system must do, how it behaves, where it can fail, and which tradeoff remains defensible under real constraints.</p><a href="/contact/">Discuss an engineering decision <b>→</b></a></article>
-        <div class="editorial-system-stack">
-          <article><small>System definition</small><h3>Define the technical basis</h3><p>Requirements, interfaces, boundary conditions, acceptance criteria, and the assumptions that govern the work.</p></article>
-          <article><small>Analysis &amp; simulation</small><h3>Expose performance and failure</h3><p>Calculations, models, sensitivity studies, and structured comparison reveal governing variables and credible failure modes.</p></article>
-          <article><small>Decision record</small><h3>Make the tradeoff inspectable</h3><p>Alternatives are compared across performance, cost, schedule, risk, maintainability, and residual uncertainty.</p></article>
+
+    <section class="eng-scope-band" aria-label="Engineering services overview">
+      <article><span>01</span><h2>Define</h2><p>Requirements · boundaries · interfaces</p></article>
+      <article><span>02</span><h2>Model</h2><p>Behavior · scenarios · uncertainty</p></article>
+      <article><span>03</span><h2>Prove</h2><p>Verification · validation · evidence</p></article>
+      <article><span>04</span><h2>Deliver</h2><p>Industrialization · operation · learning</p></article>
+    </section>
+
+    <section class="eng-intro" aria-labelledby="eng-intro-title">
+      <div>
+        <p class="eyebrow">Engineering basis</p>
+        <h2 id="eng-intro-title">Engineering decisions are systems decisions.</h2>
+      </div>
+      <div class="eng-intro-copy">
+        <p>A product rarely fails because one equation was missing. It fails when requirements, interfaces, uncertainty, production, and operating reality were treated as separate conversations.</p>
+        <p>We build the technical basis that holds them together—so teams can see what governs performance, where risk concentrates, and which decision remains defensible when conditions change.</p>
+      </div>
+    </section>
+
+    <section class="eng-system" id="engineering-system" aria-labelledby="eng-system-title">
+      <div class="eng-system-copy">
+        <p class="eyebrow">The engineering system</p>
+        <h2 id="eng-system-title">One technical thread from intent to operation.</h2>
+        <p>Every important output connects backward to its evidence and forward to the decision or action it enables.</p>
+        <ul>
+          <li><span>01</span>Requirements remain linked to architecture and verification.</li>
+          <li><span>02</span>Models expose assumptions, ranges, and sensitivity.</li>
+          <li><span>03</span>Production and operating feedback refine the design basis.</li>
+        </ul>
+      </div>
+      <div class="eng-thread" aria-label="Integrated engineering technical thread diagram">
+        <div class="eng-thread-toolbar"><span><i></i> SYSTEM MODEL / ACTIVE</span><span>TRACEABILITY 94%</span></div>
+        <div class="eng-thread-stage">
+          <svg viewBox="0 0 1000 650" role="img" aria-label="A connected engineering model linking requirements, architecture, analysis, verification, production, and operation">
+            <defs>
+              <linearGradient id="engFlow" x1="0" x2="1"><stop stop-color="#67a6dc"/><stop offset="1" stop-color="#86d3c3"/></linearGradient>
+              <filter id="engGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <g class="eng-grid-lines"><path d="M0 130H1000M0 260H1000M0 390H1000M0 520H1000"/><path d="M166 0V650M332 0V650M498 0V650M664 0V650M830 0V650"/></g>
+            <g class="eng-orbits"><ellipse cx="500" cy="325" rx="390" ry="230"/><ellipse cx="500" cy="325" rx="280" ry="165"/><ellipse cx="500" cy="325" rx="165" ry="95"/></g>
+            <g class="eng-flow-lines"><path d="M190 182C310 105 388 186 500 325"/><path d="M190 468C330 530 406 434 500 325"/><path d="M810 182C684 112 603 190 500 325"/><path d="M810 468C680 536 598 438 500 325"/><path d="M500 325C515 221 517 154 500 78"/><path d="M500 325C486 432 486 502 500 574"/></g>
+            <g class="eng-node" transform="translate(104 128)"><rect width="180" height="108"/><text x="18" y="28">01 / INTENT</text><text class="node-title" x="18" y="60">Requirements</text><text class="node-sub" x="18" y="83">Needs · constraints</text></g>
+            <g class="eng-node" transform="translate(716 128)"><rect width="180" height="108"/><text x="18" y="28">02 / STRUCTURE</text><text class="node-title" x="18" y="60">Architecture</text><text class="node-sub" x="18" y="83">Functions · interfaces</text></g>
+            <g class="eng-node" transform="translate(104 414)"><rect width="180" height="108"/><text x="18" y="28">03 / BEHAVIOR</text><text class="node-title" x="18" y="60">Analysis</text><text class="node-sub" x="18" y="83">Loads · sensitivities</text></g>
+            <g class="eng-node" transform="translate(716 414)"><rect width="180" height="108"/><text x="18" y="28">04 / EVIDENCE</text><text class="node-title" x="18" y="60">Verification</text><text class="node-sub" x="18" y="83">Test · qualification</text></g>
+            <g class="eng-node eng-node-small" transform="translate(410 25)"><rect width="180" height="82"/><text x="18" y="28">05 / BUILD</text><text class="node-title" x="18" y="58">Production</text></g>
+            <g class="eng-node eng-node-small" transform="translate(410 543)"><rect width="180" height="82"/><text x="18" y="28">06 / LEARN</text><text class="node-title" x="18" y="58">Operation</text></g>
+            <g class="eng-core" transform="translate(500 325)"><circle r="92"/><circle r="62"/><circle r="32"/><text text-anchor="middle" y="-7">SYSTEM</text><text class="core-title" text-anchor="middle" y="20">BASIS</text></g>
+            <g class="eng-pulses" filter="url(#engGlow)"><circle cx="190" cy="182" r="5"/><circle cx="810" cy="182" r="5"/><circle cx="190" cy="468" r="5"/><circle cx="810" cy="468" r="5"/><circle cx="500" cy="78" r="5"/><circle cx="500" cy="574" r="5"/></g>
+          </svg>
+          <div class="eng-thread-legend"><span><i class="blue"></i>Evidence path</span><span><i class="mint"></i>Feedback loop</span><span><i class="white"></i>Human review</span></div>
         </div>
       </div>
     </section>
-    <section class="capability-proof">
-      <div><p class="eyebrow">The result</p><h2>A stronger basis for the next decision.</h2></div>
-      <p>Clear documentation, traceable reasoning, and recommendations designed to remain useful after the engagement ends.</p>
+
+    <section class="eng-questions" aria-labelledby="eng-questions-title">
+      <div class="eng-section-head">
+        <div><p class="eyebrow">Three governing questions</p><h2 id="eng-questions-title">Clarity begins before the calculation.</h2></div>
+        <p>We frame technical work around the questions that determine whether a system can perform, survive, and be delivered.</p>
+      </div>
+      <div class="eng-question-grid">
+        <article>
+          <span>01 / PURPOSE</span><h3>What must the system do?</h3><p>Translate stakeholder intent into measurable requirements, operating envelopes, interfaces, and acceptance criteria.</p>
+          <div class="eng-question-visual eng-requirement-visual" aria-hidden="true"><i></i><i></i><i></i><b>NEED</b><span>FUNCTION</span><span>MEASURE</span><span>LIMIT</span></div>
+        </article>
+        <article>
+          <span>02 / EXPOSURE</span><h3>Where can it fail?</h3><p>Identify governing loads, interface conflicts, degradation paths, and common-cause risks before they are embedded in the design.</p>
+          <div class="eng-question-visual eng-risk-visual" aria-hidden="true"><div class="heat h1"></div><div class="heat h2"></div><div class="heat h3"></div><svg viewBox="0 0 400 190"><path d="M12 135C76 106 96 147 150 101S240 29 298 63S342 105 390 35"/><path d="M12 155C68 154 112 119 171 132S262 153 390 92"/></svg><span>LOAD ENVELOPE</span></div>
+        </article>
+        <article>
+          <span>03 / PROOF</span><h3>How will we know it works?</h3><p>Build a verification strategy that connects every critical requirement to analysis, inspection, demonstration, or test.</p>
+          <div class="eng-question-visual eng-proof-visual" aria-hidden="true"><div><i>✓</i><span>Requirement</span></div><b></b><div><i>2</i><span>Method</span></div><b></b><div><i>3</i><span>Evidence</span></div></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="eng-capabilities" aria-labelledby="eng-capabilities-title">
+      <div class="eng-section-head eng-section-head-light">
+        <div><p class="eyebrow">Engineering capabilities</p><h2 id="eng-capabilities-title">Depth where the decision demands it.</h2></div>
+        <p>Disciplines work together around one technical basis—not as isolated deliverables passed from team to team.</p>
+      </div>
+      <div class="eng-capability-grid">
+        <article>
+          <div class="eng-cap-visual eng-architecture-visual" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span><svg viewBox="0 0 500 220"><path d="M76 110H424M250 36V184M76 110C155 27 344 27 424 110M76 110C155 193 344 193 424 110"/></svg></div>
+          <span>01 / SYSTEMS</span><h3>Architecture &amp; requirements</h3><p>Mission or business needs, functional decomposition, interfaces, trade spaces, requirements, and configuration logic.</p>
+        </article>
+        <article>
+          <div class="eng-cap-visual eng-model-visual" aria-hidden="true"><svg viewBox="0 0 500 220"><path class="mesh" d="M65 171L118 61L188 143L260 43L341 136L430 69M65 171L188 143L341 136L430 69M118 61L260 43L430 69"/><path class="accent" d="M65 171L260 43L430 69"/></svg><span>PARAMETRIC MODEL / 04</span></div>
+          <span>02 / MODELING</span><h3>Analysis &amp; simulation</h3><p>First-principles calculations, performance models, multiphysics reasoning, sensitivities, uncertainty, and scenario comparison.</p>
+        </article>
+        <article>
+          <div class="eng-cap-visual eng-test-visual" aria-hidden="true"><div class="dial"><i></i><b>87</b><span>margin</span></div><div class="bars"><i style="height:44%"></i><i style="height:67%"></i><i style="height:55%"></i><i style="height:81%"></i><i style="height:72%"></i></div></div>
+          <span>03 / VERIFICATION</span><h3>Test &amp; qualification</h3><p>Verification planning, test architecture, instrumentation logic, margin assessment, anomaly resolution, and evidence closure.</p>
+        </article>
+        <article>
+          <div class="eng-cap-visual eng-manufacturing-visual" aria-hidden="true"><span class="part p1"></span><span class="part p2"></span><span class="part p3"></span><i class="line l1"></i><i class="line l2"></i><i class="line l3"></i><b>BUILD SEQUENCE / 03</b></div>
+          <span>04 / INDUSTRIALIZATION</span><h3>Design for realization</h3><p>Make-buy logic, producibility, tolerance strategy, process definition, quality planning, supply constraints, and ramp readiness.</p>
+        </article>
+        <article>
+          <div class="eng-cap-visual eng-reliability-visual" aria-hidden="true"><span class="center">SYSTEM</span><span class="sat s1">FMEA</span><span class="sat s2">RAM</span><span class="sat s3">HAZARD</span><span class="sat s4">RECOVERY</span><svg viewBox="0 0 500 220"><circle cx="250" cy="110" r="72"/><ellipse cx="250" cy="110" rx="190" ry="78"/></svg></div>
+          <span>05 / ASSURANCE</span><h3>Reliability, safety &amp; resilience</h3><p>Failure modes, reliability allocation, hazard analysis, fault containment, degraded operation, recovery, and maintainability.</p>
+        </article>
+        <article>
+          <div class="eng-cap-visual eng-digital-visual" aria-hidden="true"><div><span>DESIGN</span><b>01</b></div><i></i><div><span>BUILD</span><b>02</b></div><i></i><div><span>OPERATE</span><b>03</b></div><i></i><div><span>LEARN</span><b>04</b></div></div>
+          <span>06 / DIGITAL THREAD</span><h3>Configuration &amp; lifecycle data</h3><p>Technical baselines, model-data continuity, change impact, decision records, operational feedback, and reusable knowledge.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="eng-team" aria-labelledby="eng-team-title">
+      <div class="eng-team-copy">
+        <p class="eyebrow">An integrated engineering team</p>
+        <h2 id="eng-team-title">Organized around the system, not the org chart.</h2>
+        <p>Complex programs need more than separate specialists. They need a shared model of the problem, explicit interface ownership, and the discipline to resolve cross-functional tradeoffs early.</p>
+        <a href="../contact/">Build the right technical team <span>↗</span></a>
+      </div>
+      <div class="eng-team-map" aria-label="Integrated engineering disciplines">
+        <div class="eng-team-core"><i></i><b>INTEGRATED<br>ENGINEERING</b><span>One technical basis</span></div>
+        <div class="eng-discipline d1"><span>01</span><b>Systems</b><small>Architecture · interfaces</small></div>
+        <div class="eng-discipline d2"><span>02</span><b>Mechanical &amp; physical</b><small>Performance · materials</small></div>
+        <div class="eng-discipline d3"><span>03</span><b>Controls &amp; software</b><small>Logic · autonomy · integration</small></div>
+        <div class="eng-discipline d4"><span>04</span><b>Manufacturing</b><small>Process · quality · supply</small></div>
+        <div class="eng-discipline d5"><span>05</span><b>Modeling &amp; data</b><small>Simulation · uncertainty</small></div>
+        <div class="eng-discipline d6"><span>06</span><b>Reliability &amp; safety</b><small>Risk · resilience · recovery</small></div>
+        <svg viewBox="0 0 900 670" aria-hidden="true"><ellipse cx="450" cy="335" rx="330" ry="232"/><ellipse cx="450" cy="335" rx="230" ry="158"/><path d="M450 335L178 165M450 335L450 92M450 335L722 165M450 335L722 505M450 335L450 578M450 335L178 505"/></svg>
+      </div>
+    </section>
+
+    <section class="eng-lifecycle" data-eng-lifecycle aria-labelledby="eng-lifecycle-title">
+      <div class="eng-section-head">
+        <div><p class="eyebrow">From uncertainty to evidence</p><h2 id="eng-lifecycle-title">A disciplined path through the engineering lifecycle.</h2></div>
+        <p>The emphasis changes by program. The need for traceability, explicit assumptions, and review does not.</p>
+      </div>
+      <div class="eng-lifecycle-shell" data-stage="frame">
+        <nav aria-label="Engineering lifecycle stages">
+          <button type="button" class="is-active" data-eng-stage="frame" aria-pressed="true"><span>01</span><b>Frame</b><small>Define the decision</small></button>
+          <button type="button" data-eng-stage="architect" aria-pressed="false"><span>02</span><b>Architect</b><small>Shape the system</small></button>
+          <button type="button" data-eng-stage="analyze" aria-pressed="false"><span>03</span><b>Analyze</b><small>Expose behavior</small></button>
+          <button type="button" data-eng-stage="verify" aria-pressed="false"><span>04</span><b>Verify</b><small>Build the evidence</small></button>
+          <button type="button" data-eng-stage="deliver" aria-pressed="false"><span>05</span><b>Deliver</b><small>Make it real</small></button>
+          <button type="button" data-eng-stage="learn" aria-pressed="false"><span>06</span><b>Learn</b><small>Improve in service</small></button>
+        </nav>
+        <div class="eng-lifecycle-view">
+          <div class="eng-stage-visual" aria-hidden="true">
+            <span class="eng-stage-ring r1"></span><span class="eng-stage-ring r2"></span><span class="eng-stage-ring r3"></span>
+            <i class="eng-stage-axis x"></i><i class="eng-stage-axis y"></i>
+            <b data-eng-graphic-label>01</b>
+            <small data-eng-graphic-status>DECISION BOUNDARY</small>
+          </div>
+          <div class="eng-stage-copy">
+            <span data-eng-index>01 / FRAME</span>
+            <h3 data-eng-title>Define the decision before defining the work.</h3>
+            <p data-eng-copy>Clarify the objective, operating context, decision owner, critical unknowns, and the evidence needed to move forward.</p>
+            <dl><div><dt>Primary output</dt><dd data-eng-output>Technical decision brief</dd></div><div><dt>Release question</dt><dd data-eng-gate>Is the problem bounded well enough to engineer?</dd></div></dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="eng-standard" aria-labelledby="eng-standard-title">
+      <div class="eng-section-head">
+        <div><p class="eyebrow">The standard of work</p><h2 id="eng-standard-title">Technical rigor that survives the meeting.</h2></div>
+        <p>The work product is designed to remain useful after the immediate decision—clear enough to review, update, transfer, and defend.</p>
+      </div>
+      <div class="eng-standard-grid">
+        <article><span>01</span><h3>Traceable</h3><p>Requirements, assumptions, models, evidence, and decisions remain connected.</p></article>
+        <article><span>02</span><h3>Inspectable</h3><p>Methods, inputs, ranges, and unresolved uncertainty are visible to reviewers.</p></article>
+        <article><span>03</span><h3>Buildable</h3><p>Recommendations account for production, supply, integration, and operational reality.</p></article>
+        <article><span>04</span><h3>Adaptable</h3><p>The technical basis can absorb new evidence without starting the reasoning over.</p></article>
+      </div>
+    </section>
+
+    <section class="eng-cta">
+      <p>Engineering</p>
+      <h2>Bring us the system<br>that has to work.</h2>
+      <div><a href="../contact/">Start the technical conversation <span>↗</span></a><p>Requirements, architecture, analysis, verification, industrialization, or an unresolved decision—we can begin wherever the system is constrained.</p></div>
     </section>
   </main>
+
   <footer class="footer"></footer>
 </body>
 </html>
