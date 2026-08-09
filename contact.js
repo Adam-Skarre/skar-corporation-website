@@ -4,7 +4,7 @@
 
   const status = form.querySelector('.form-status');
   const storageKey = 'skar-contact-inquiry';
-  const contactAddress = 'contact@skarcorporation.com';
+  const contactAddress = 'contact@skartech.com';
 
   function getValues() {
     return Object.fromEntries(new FormData(form).entries());
