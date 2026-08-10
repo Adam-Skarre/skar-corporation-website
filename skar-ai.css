@@ -72,6 +72,17 @@
 .sai-answer-shell[data-demo-state="thinking"] .sai-answer-main h3,.sai-answer-shell[data-demo-state="thinking"] .sai-answer-summary,.sai-answer-shell[data-demo-state="thinking"] .sai-answer-main ol,.sai-answer-shell[data-demo-state="thinking"] .sai-source-list,.sai-answer-shell[data-demo-state="thinking"] .sai-answer-rail{opacity:.2;filter:blur(2px)}
 .sai-demo-note{max-width:900px;margin:17px auto 0;color:#77858d;text-align:center;font-size:9px;line-height:1.55}
 
+/* Focused constraint-diagnostic product surface */
+.sai-demo{background:linear-gradient(145deg,#dfeaf2,#eef3f5)}
+.sai-demo .sai-answer-shell{border-color:#23465f;background:#071f34;box-shadow:0 34px 90px rgba(7,31,52,.2);color:#fff}
+.sai-demo .sai-answer-topbar{border-color:rgba(151,190,219,.2);background:#061a2c;color:#82a7c1}.sai-demo .sai-product-mark{color:#fff}
+.sai-demo .sai-ask-view{background:radial-gradient(circle at 72% 42%,rgba(44,112,168,.23),transparent 33%),linear-gradient(135deg,#071f34,#0b2d4a)}
+.sai-demo .sai-ask-heading p{color:#7bc9b9}.sai-demo .sai-ask-heading h3{color:#fff}.sai-demo .sai-ask-heading small{color:#9db4c5}.sai-demo .sai-symbol i{background:#79b2df}
+.sai-demo .sai-ask-form{border-color:rgba(143,188,226,.35);background:rgba(2,18,31,.62);box-shadow:0 18px 52px rgba(0,0,0,.18)}.sai-demo .sai-ask-form:focus-within{border-color:#79b6e3;box-shadow:0 18px 52px rgba(0,0,0,.26),0 0 0 1px rgba(121,182,227,.18)}
+.sai-demo .sai-ask-form textarea{min-height:180px;color:#edf6fc}.sai-demo .sai-ask-form textarea::placeholder{color:#7894a8}.sai-demo .sai-compose-footer>span{color:#7190a6}.sai-demo .sai-compose-footer button{background:#f4f8fb;color:#08223a}.sai-demo .sai-compose-footer button:hover{background:#dcecf7}
+.sai-demo .sai-prompt-list button{border-color:rgba(143,188,226,.25);background:rgba(11,49,81,.5);color:#c7d9e6}.sai-demo .sai-prompt-list button:hover{border-color:#6fa8d3;background:#123c5e}.sai-demo .sai-ask-assurance{color:#83a2b7}
+.sai-demo .sai-answer-view{border-color:rgba(151,190,219,.2);background:radial-gradient(circle at 68% 30%,rgba(44,112,168,.16),transparent 36%),#071f34}.sai-demo .sai-answer-progress{color:#6f8ca1}.sai-demo .sai-answer-progress i,.sai-demo .sai-answer-question,.sai-demo .sai-answer-main li,.sai-demo .sai-answer-rail,.sai-demo .sai-answer-rail>div{border-color:rgba(151,190,219,.2)}.sai-demo .sai-answer-progress span.is-active,.sai-demo .sai-answer-state{color:#79cbb9}.sai-demo .sai-answer-main h3{color:#fff}.sai-demo .sai-answer-question{color:#8fa9bc}.sai-demo .sai-answer-summary{color:#b7cad7}.sai-demo .sai-answer-main li{color:#d1dfe8}.sai-demo .sai-source-list span{background:#123852;color:#a9c8dc}.sai-demo .sai-answer-rail small{color:#7494aa}.sai-demo .sai-answer-rail strong{color:#e4eff6}.sai-demo .sai-answer-rail button{background:#f3f7fa;color:#08223a}
+
 /* Concrete product views */
 .sai-work{padding:clamp(105px,8.5vw,150px) max(6.5vw,42px);background:var(--sai-mist)}
 .sai-product-board{max-width:1500px;margin:0 auto 18px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,.75fr);border:1px solid var(--sai-line);background:#fff}

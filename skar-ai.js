@@ -2,247 +2,66 @@
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const promptLibrary = {
-    operations: {
-      prompt: 'Where is the proposed capacity expansion most exposed, and what requires human approval?',
-      title: 'Stage the commitment—and preserve an exit path.',
-      summary: 'The demand signal supports phased capacity. Supplier concentration and the timing of capital release make a single irreversible commitment unnecessarily exposed.',
-      findings: [
-        'Demand supports a staged release, with the second tranche tied to confirmed utilization.',
-        'Supplier lead time is the material constraint; the demand forecast is not the limiting factor.',
-        'Capital release and dependency concentration require named-owner approval before execution.'
-      ],
-      sources: ['Capacity plan · Q4', 'Supplier register', 'Demand forecast', 'Capital policy'],
-      evidence: '4 approved operating sources',
-      control: 'Capital gate · Operations lead',
-      action: 'Review the phased option'
+    onboarding: {
+      prompt: 'Customer onboarding takes 18 days. Security review owns 11 of them, requests often arrive incomplete, and one director approves every exception.',
+      state: 'BOTTLENECK IDENTIFIED', title: 'Security review is the limiting step.',
+      summary: 'The delay is not spread evenly across onboarding. A single approval queue absorbs most elapsed time and receives avoidable rework from incomplete submissions.',
+      findings: ['61% of total cycle time sits inside security review.', 'Incomplete intake creates a second pass through the same constrained queue.', 'One exception approver makes capacity fragile even when reviewer capacity is available.'],
+      sources: ['Onboarding timestamps', 'Security review queue', 'Exception log'], evidence: 'High · 3 signals agree', control: 'Security operations lead', action: 'Pilot a complete-intake gate for 10 cases'
     },
-    research: {
-      prompt: 'What forces are changing industrial automation, and which conclusions are facts versus assumptions?',
-      title: 'The direction is clear. The adoption curve is not.',
-      summary: 'Connected operations, labor constraints, and falling deployment friction support continued adoption. Integration capacity remains the main source of uncertainty.',
-      findings: [
-        'Primary evidence supports continued investment in connected and increasingly adaptive operations.',
-        'Labor availability and systems integration capacity constrain the rate of adoption.',
-        'Scenario ranges should remain visible instead of collapsing into one confident forecast.'
-      ],
-      sources: ['Industry survey', 'Capital tracker', 'Labor outlook', 'Deployment benchmarks'],
-      evidence: '6 reviewed source classes',
-      control: 'Citations retained',
-      action: 'Compare adoption scenarios'
+    production: {
+      prompt: 'Orders are arriving on time, but finished units keep missing ship dates. Inspection has a two-day queue and rework returns to the front of the line.',
+      state: 'BOTTLENECK IDENTIFIED', title: 'Final inspection is constraining throughput.',
+      summary: 'Upstream output is creating inventory faster than inspection can release it. Rework then competes with first-pass units for the same limited capacity.',
+      findings: ['Work-in-process accumulates immediately before final inspection.', 'Inspection capacity is below the arrival rate during peak production.', 'Rework has no separate priority rule and amplifies the queue.'],
+      sources: ['Production schedule', 'Inspection queue', 'Rework history'], evidence: 'High · flow pattern confirmed', control: 'Quality manager', action: 'Separate rework and first-pass queues for one week'
     },
-    client: {
-      prompt: 'What could put this client renewal at risk, based on account history, usage, and service events?',
-      title: 'Renewal is supportable—with two issues resolved first.',
-      summary: 'Core usage is durable and adoption is broadening. Two open service events and an out-of-policy pricing request create avoidable renewal risk.',
-      findings: [
-        'Usage expansion indicates durable value in the customer’s primary workflow.',
-        'Two unresolved reliability events are the strongest source of renewal friction.',
-        'The proposed pricing exception sits outside the approved commercial boundary.'
-      ],
-      sources: ['CRM history', 'Product usage', 'Service events', 'Commercial terms'],
-      evidence: '4 connected account systems',
-      control: 'Pricing approval · Account lead',
-      action: 'Resolve service risk first'
+    sales: {
+      prompt: 'Qualified opportunities stall after the technical demo. Sales waits several days for solution engineering, and discovery notes are inconsistent.',
+      state: 'LIKELY BOTTLENECK', title: 'The sales-to-engineering handoff is limiting conversion.',
+      summary: 'Demand is present, but incomplete discovery and a shared specialist queue delay the next customer step at the highest-intent point in the process.',
+      findings: ['Wait time begins immediately after the demo handoff.', 'Incomplete discovery increases clarification work for solution engineering.', 'The shared specialist pool has no prioritization based on deal readiness.'],
+      sources: ['CRM stage history', 'Demo notes', 'Specialist calendar'], evidence: 'Medium-high · one data gap', control: 'Revenue operations', action: 'Test a readiness score on the next 15 demos'
     },
-    diligence: {
-      prompt: 'Which assumptions carry this investment case, and what evidence would change the recommendation?',
-      title: 'The opportunity is plausible. Three assumptions carry the case.',
-      summary: 'The base case depends on stable customer concentration, a specific operating change, and an unproven recovery timeline in the downside scenario.',
-      findings: [
-        'The demand case depends on customer concentration remaining stable through the investment period.',
-        'Margin expansion is not supported without the modeled operating change being delivered on time.',
-        'The downside case lacks evidence for both recovery timing and interim liquidity needs.'
-      ],
-      sources: ['Investment memo', 'Customer cohort', 'Operating model', 'Downside case'],
-      evidence: '5 diligence files',
-      control: 'Investment committee',
-      action: 'Test the downside case'
+    support: {
+      prompt: 'Support volume is stable, but resolution time keeps rising. Tier 1 closes simple issues while escalations wait for a small group of product experts.',
+      state: 'BOTTLENECK IDENTIFIED', title: 'Expert escalation capacity is the constraint.',
+      summary: 'The backlog is concentrated in complex escalations, not general ticket volume. Expert knowledge is scarce and repeatedly consumed by similar issues.',
+      findings: ['Escalated tickets account for most open-ticket age.', 'A small expert group is assigned across multiple product areas.', 'Recurring escalation types are not converted into reusable resolution paths.'],
+      sources: ['Ticket aging', 'Escalation roster', 'Issue taxonomy'], evidence: 'High · backlog concentrated', control: 'Support director', action: 'Create a guided resolution for the top escalation type'
     }
   };
 
-  const fallbackScenario = {
-    state: 'PRODUCT PREVIEW',
-    title: 'This preview is focused on business work.',
-    summary: 'Try a calculation or one of the guided examples. A deployed SKAR AI instance can answer broader questions through approved models and company sources.',
-    findings: [
-      'Choose a guided example to see how evidence, uncertainty, and ownership remain visible.',
-      'Try a direct calculation such as “5 + 5” or ask for the capital of a major country.',
-      'Production deployments connect to a protected model endpoint without exposing credentials in the browser.'
-    ],
-    sources: ['Public preview capability'],
-    evidence: 'No company source connected',
-    control: 'Browser-only preview',
-    action: 'Choose a guided example'
-  };
-
-  const capitalScenario = (input) => {
-    const match = input.toLowerCase().match(/capital\s+of\s+(?:the\s+)?([a-z .'-]+)/i);
-    if (!match) return null;
-    const country = match[1].replace(/[?.!]+$/g, '').trim();
-    const capitals = {
-      'spain': 'Madrid', 'france': 'Paris', 'germany': 'Berlin', 'italy': 'Rome',
-      'portugal': 'Lisbon', 'united kingdom': 'London', 'uk': 'London', 'england': 'London',
-      'ireland': 'Dublin', 'netherlands': 'Amsterdam', 'belgium': 'Brussels',
-      'switzerland': 'Bern', 'austria': 'Vienna', 'denmark': 'Copenhagen',
-      'norway': 'Oslo', 'sweden': 'Stockholm', 'finland': 'Helsinki', 'poland': 'Warsaw',
-      'greece': 'Athens', 'turkey': 'Ankara', 'ukraine': 'Kyiv', 'russia': 'Moscow',
-      'united states': 'Washington, D.C.', 'united states of america': 'Washington, D.C.',
-      'us': 'Washington, D.C.', 'usa': 'Washington, D.C.', 'canada': 'Ottawa',
-      'mexico': 'Mexico City', 'brazil': 'Brasília', 'argentina': 'Buenos Aires',
-      'china': 'Beijing', 'japan': 'Tokyo', 'south korea': 'Seoul', 'india': 'New Delhi',
-      'pakistan': 'Islamabad', 'bangladesh': 'Dhaka', 'vietnam': 'Hanoi',
-      'thailand': 'Bangkok', 'indonesia': 'Jakarta', 'australia': 'Canberra',
-      'new zealand': 'Wellington', 'egypt': 'Cairo', 'nigeria': 'Abuja',
-      'kenya': 'Nairobi', 'south africa': 'Pretoria', 'morocco': 'Rabat',
-      'saudi arabia': 'Riyadh', 'united arab emirates': 'Abu Dhabi', 'uae': 'Abu Dhabi'
-    };
-    const capital = capitals[country];
-    if (!capital) return null;
-    const displayCountry = country.replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const fallbackScenario = (input) => {
+    const normalized = input.toLowerCase();
+    const hasApproval = /approv|sign.?off|director|manager|review/.test(normalized);
+    const hasQueue = /wait|queue|backlog|delay|days|weeks|late|slow|stall/.test(normalized);
+    const hasRework = /rework|incomplete|error|repeat|return|redo|clarif/.test(normalized);
+    const constraint = hasApproval ? 'The approval handoff is the likely constraint.' : hasQueue ? 'The longest waiting queue is the likely constraint.' : hasRework ? 'Rework is consuming the system’s effective capacity.' : 'The limiting step needs one more flow signal.';
     return {
-      state: 'ANSWER READY',
-      title: capital,
-      summary: `${capital} is the capital of ${displayCountry}.`,
-      findings: ['This common reference fact was answered directly in the public preview.', 'No company information or external model call was required.'],
-      sources: ['SKAR AI preview · Common reference data'],
-      evidence: 'Reference fact',
-      control: 'No approval required',
-      action: 'Ask a follow-up'
+      state: hasApproval || hasQueue || hasRework ? 'LIKELY BOTTLENECK' : 'MORE FLOW DATA NEEDED',
+      title: constraint,
+      summary: hasApproval || hasQueue || hasRework
+        ? 'The description points to a concentrated constraint rather than a system-wide capacity problem. Confirm it with timestamps before changing the broader process.'
+        : 'SKAR AI can diagnose the constraint once the process includes an entry point, a delayed outcome, and the step where work waits or returns.',
+      findings: [
+        hasQueue ? 'Waiting time appears concentrated at one handoff or queue.' : 'Add the longest wait or queue in the process.',
+        hasRework ? 'Rework is sending demand back through already limited capacity.' : 'Add whether work is returned, repeated, or arrives incomplete.',
+        hasApproval ? 'Decision rights are concentrated with a single approval role.' : 'Add who owns the final release or approval.'
+      ],
+      sources: ['Your process description', 'Heuristic constraint scan'],
+      evidence: hasApproval || hasQueue || hasRework ? 'Medium · needs timestamps' : 'Low · description incomplete',
+      control: 'Process owner',
+      action: hasApproval || hasQueue || hasRework ? 'Measure arrival rate and wait time for 10 cases' : 'Add queue, owner, and cycle-time detail'
     };
-  };
-
-  const extractExpression = (input) => {
-    const expression = input
-      .trim()
-      .replace(/^(?:please\s+)?(?:what(?:'s| is)|calculate|compute|solve|evaluate)\s+/i, '')
-      .replace(/[=?]+\s*$/g, '')
-      .replace(/,/g, '')
-      .replace(/÷/g, '/')
-      .replace(/×/g, '*')
-      .replace(/(\d)\s*[xX]\s*(?=\d|\()/g, '$1*')
-      .trim();
-    if (!/\d/.test(expression) || !/[+\-*/%^]/.test(expression)) return null;
-    if (!/^[\d\s.+\-*/%^()]+$/.test(expression)) return null;
-    return expression;
-  };
-
-  const calculateExpression = (expression) => {
-    const tokens = [];
-    let position = 0;
-    while (position < expression.length) {
-      const rest = expression.slice(position);
-      const whitespace = rest.match(/^\s+/);
-      if (whitespace) { position += whitespace[0].length; continue; }
-      const number = rest.match(/^(?:\d+(?:\.\d*)?|\.\d+)/);
-      if (number) { tokens.push({ type: 'number', value: Number(number[0]) }); position += number[0].length; continue; }
-      const operator = rest[0];
-      if ('+-*/%^()'.includes(operator)) { tokens.push({ type: operator, value: operator }); position += 1; continue; }
-      throw new Error('Unsupported expression');
-    }
-
-    let cursor = 0;
-    const peek = (type) => tokens[cursor]?.type === type;
-    const take = (type) => {
-      if (!peek(type)) throw new Error('Invalid expression');
-      return tokens[cursor++];
-    };
-    const primary = () => {
-      if (peek('number')) return take('number').value;
-      if (peek('(')) {
-        take('(');
-        const value = expressionParser();
-        take(')');
-        return value;
-      }
-      throw new Error('Number expected');
-    };
-    const unary = () => {
-      if (peek('+')) { take('+'); return unary(); }
-      if (peek('-')) { take('-'); return -unary(); }
-      return primary();
-    };
-    const power = () => {
-      const left = unary();
-      if (!peek('^')) return left;
-      take('^');
-      return Math.pow(left, power());
-    };
-    const term = () => {
-      let value = power();
-      while (peek('*') || peek('/') || peek('%')) {
-        const operator = tokens[cursor++].type;
-        const right = power();
-        if ((operator === '/' || operator === '%') && right === 0) throw new Error('Division by zero');
-        if (operator === '*') value *= right;
-        if (operator === '/') value /= right;
-        if (operator === '%') value %= right;
-      }
-      return value;
-    };
-    const expressionParser = () => {
-      let value = term();
-      while (peek('+') || peek('-')) {
-        const operator = tokens[cursor++].type;
-        const right = term();
-        value = operator === '+' ? value + right : value - right;
-      }
-      return value;
-    };
-
-    const result = expressionParser();
-    if (cursor !== tokens.length || !Number.isFinite(result) || Math.abs(result) > 1e15) throw new Error('Result outside preview limits');
-    return result;
-  };
-
-  const formatResult = (value) => {
-    if (Number.isInteger(value)) return value.toLocaleString('en-US');
-    const rounded = Number(value.toPrecision(12));
-    return rounded.toLocaleString('en-US', { maximumFractionDigits: 10 });
-  };
-
-  const calculationScenario = (input) => {
-    const expression = extractExpression(input);
-    if (!expression) return null;
-    try {
-      const result = calculateExpression(expression);
-      const formatted = formatResult(result);
-      const displayExpression = expression.replace(/\*/g, ' × ').replace(/\//g, ' ÷ ').replace(/\s+/g, ' ').trim();
-      return {
-        kind: 'calculation',
-        state: 'ANSWER READY',
-        title: formatted,
-        summary: `${displayExpression} equals ${formatted}.`,
-        findings: [
-          'The expression was parsed and calculated directly in this browser.',
-          'No company information, external source, or model call was required.'
-        ],
-        sources: ['Local calculation · No external data'],
-        evidence: 'Direct calculation',
-        control: 'No approval required',
-        action: 'Ask a follow-up'
-      };
-    } catch (error) {
-      return {
-        ...fallbackScenario,
-        state: 'CALCULATION NEEDS REVIEW',
-        title: error.message === 'Division by zero' ? 'That expression divides by zero.' : 'I could not safely evaluate that expression.',
-        summary: 'Check the operators and parentheses, then try the calculation again.',
-        evidence: 'Expression rejected safely',
-        action: 'Correct the expression'
-      };
-    }
   };
 
   const chooseScenario = (input) => {
     const normalized = input.toLowerCase();
-    const calculation = calculationScenario(input);
-    if (calculation) return calculation;
-    const capital = capitalScenario(input);
-    if (capital) return capital;
-    if (/capacity|supplier|operation|production|constraint|expansion/.test(normalized)) return promptLibrary.operations;
-    if (/research|evidence|source|industry|market|trend|automation/.test(normalized)) return promptLibrary.research;
-    if (/client|renewal|customer|account|service|pricing/.test(normalized)) return promptLibrary.client;
-    if (/diligence|investment|risk|deal|acquisition|finance|assumption/.test(normalized)) return promptLibrary.diligence;
+    if (/onboard|security review|implementation/.test(normalized)) return promptLibrary.onboarding;
+    if (/production|inspection|manufactur|ship|rework/.test(normalized)) return promptLibrary.production;
+    if (/sales|demo|opportunit|solution engineer|conversion/.test(normalized)) return promptLibrary.sales;
+    if (/support|ticket|escalat|resolution/.test(normalized)) return promptLibrary.support;
     return null;
   };
 
@@ -340,22 +159,22 @@
       window.clearTimeout(timer);
       shell.dataset.demoState = 'thinking';
       response.setAttribute('aria-busy', 'true');
-      stateLabel.textContent = 'UNDERSTANDING THE QUESTION';
+      stateLabel.textContent = 'MAPPING THE FLOW';
       submit.disabled = true;
       if (submitLabel) submitLabel.textContent = 'Working…';
       shell.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
 
       let scenario = chooseScenario(prompt);
       try {
-        scenario = scenario || await requestModelScenario(prompt) || fallbackScenario;
+        scenario = scenario || await requestModelScenario(prompt) || fallbackScenario(prompt);
       } catch (error) {
         scenario = {
-          ...fallbackScenario,
+          ...fallbackScenario(prompt),
           state: 'SECURE MODEL UNAVAILABLE',
-          title: 'The live model could not be reached.',
-          summary: 'The request was not sent again and no browser credential was exposed. Try a supported calculation or guided workflow while the secure endpoint is unavailable.',
+          title: 'The secure diagnostic model could not be reached.',
+          summary: 'The request was not sent again and no browser credential was exposed. Use a guided bottleneck scan while the secure endpoint is unavailable.',
           evidence: 'Endpoint connection failed',
-          action: 'Try a supported question'
+          action: 'Use a guided scan'
         };
       }
       populateResponse(prompt, scenario);
@@ -365,8 +184,8 @@
         response.setAttribute('aria-busy', 'false');
         stateLabel.textContent = scenario.state || 'BRIEF READY · HUMAN REVIEW REQUIRED';
         submit.disabled = false;
-        if (submitLabel) submitLabel.textContent = 'Ask SKAR AI';
-      }, reducedMotion ? 80 : scenario.kind === 'calculation' ? 360 : 900);
+        if (submitLabel) submitLabel.textContent = 'Run scan';
+      }, reducedMotion ? 80 : 850);
     });
 
     reset.addEventListener('click', () => {
