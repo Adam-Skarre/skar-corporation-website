@@ -24,11 +24,13 @@
 .sai-foundations article:last-child{border-right:0}.sai-foundations article>span{color:var(--sai-blue-strong);font-size:9px;font-weight:850;letter-spacing:.12em}
 .sai-foundations h2{margin:0 0 8px;font-size:clamp(20px,1.55vw,27px);letter-spacing:-.035em}.sai-foundations p{max-width:275px;margin:0;color:var(--sai-muted);font-size:13px;line-height:1.55}
 
-/* Supplied motion becomes a product stage, not a decorative image. */
+/* Premium motion becomes a product stage, not a replacement hero. */
 .sai-product-stage{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(430px,.82fr);min-height:min(880px,100svh);background:#dce9f3}
-.sai-stage-visual{position:relative;min-height:720px;overflow:hidden;background:var(--sai-navy)}
-.sai-stage-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,24,40,.06) 35%,rgba(6,24,40,.7) 100%);pointer-events:none}
-.sai-stage-visual video{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
+.sai-stage-visual{position:relative;min-height:720px;overflow:hidden;background:radial-gradient(circle at 50% 42%,rgba(74,55,159,.32),transparent 34%),radial-gradient(circle at 72% 58%,rgba(24,90,161,.28),transparent 35%),#030303}
+.sai-stage-visual:before{content:"";position:absolute;z-index:1;inset:0;background:radial-gradient(ellipse 70% 68% at 50% 48%,transparent 18%,rgba(3,3,3,.12) 52%,rgba(3,3,3,.74) 100%);pointer-events:none}
+.sai-stage-visual:after{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(180deg,rgba(3,3,3,.03) 35%,rgba(3,3,3,.72) 100%);pointer-events:none}
+.sai-tubes-canvas{position:absolute!important;z-index:0;inset:0;width:100%!important;height:100%!important;display:block;background:#030303}
+.sai-tubes-canvas.is-unavailable{opacity:0}
 .sai-stage-status{position:absolute;z-index:2;top:27px;left:30px;right:30px;display:flex;align-items:center;gap:11px;color:#d8e9f7;font-size:8px;font-weight:850;letter-spacing:.18em}
 .sai-stage-status i{width:7px;height:7px;border-radius:50%;background:#7dd1bf;box-shadow:0 0 0 5px rgba(125,209,191,.12),0 0 18px rgba(125,209,191,.55)}.sai-stage-status b{margin-left:auto;font-size:8px}
 .sai-stage-glass{position:absolute;z-index:3;left:30px;right:30px;bottom:30px;padding:25px 27px 22px;border-radius:14px;background:rgba(5,29,49,.5);background-blend-mode:luminosity;backdrop-filter:blur(14px);box-shadow:inset 0 1px 1px rgba(255,255,255,.22);color:#fff}
@@ -103,4 +105,4 @@
 }
 
 @media(max-width:420px){.sai-foundations{grid-template-columns:1fr}.sai-foundations article{min-height:0;border-right:0;border-bottom:1px solid var(--sai-line)}.sai-stage-glass>div{gap:8px}.sai-stage-glass>strong{margin-bottom:18px}.sai-prompt-list{grid-template-columns:1fr}.sai-compose-footer button{gap:12px}}
-@media(prefers-reduced-motion:reduce){.sai-compose-footer button,.sai-prompt-list button,.sai-ask-form{transition:none}}
+@media(prefers-reduced-motion:reduce){.sai-compose-footer button,.sai-prompt-list button,.sai-ask-form{transition:none}.sai-tubes-canvas{display:none}}

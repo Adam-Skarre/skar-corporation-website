@@ -21,11 +21,12 @@
   <meta name="twitter:image" content="https://www.skartech.com/assets/skar-intelligence-hero.png">
   <link rel="stylesheet" href="../site.css">
   <link rel="stylesheet" href="../refinement.css?v=20260809-5">
-  <link rel="stylesheet" href="../skar-ai.css?v=20260810-2">
+  <link rel="stylesheet" href="../skar-ai.css?v=20260810-3">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
   <script src="../site-nav.js?v=20260802-3" defer></script>
   <script src="../capability-art.js?v=20260802-2" defer></script>
   <script src="../skar-ai.js?v=20260809-4" defer></script>
+  <script type="module" src="../skar-ai-motion.js?v=20260810-1"></script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"SoftwareApplication","name":"SKAR AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"A governed intelligence layer for private company knowledge, research, analysis, and controlled workflows.","provider":{"@type":"Organization","name":"Skar Technologies","url":"https://www.skartech.com/"},"url":"https://www.skartech.com/artificial-intelligence/"}
   </script>
@@ -53,7 +54,7 @@
 
     <section class="sai-product-stage" aria-labelledby="sai-intro-title">
       <div class="sai-stage-visual">
-        <video autoplay loop muted playsinline preload="metadata" aria-label="Abstract red sphere animation representing SKAR AI decision modeling"><source src="https://strvid.nyc3.cdn.digitaloceanspaces.com/motionsite/bg-red-ball.mp4" type="video/mp4"></video>
+        <canvas id="skar-ai-tubes" class="sai-tubes-canvas" aria-label="Animated streams representing connected knowledge moving through SKAR AI"></canvas>
         <div class="sai-stage-status"><i></i><span>SKAR AI / CONTEXT ONLINE</span><b>PRIVATE SYSTEM</b></div>
         <div class="sai-stage-glass">
           <span>ONE INTELLIGENCE LAYER</span>
