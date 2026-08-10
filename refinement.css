@@ -5374,3 +5374,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .about-sky-motion:before,.about-sky-motion:after{animation:none}
   .about-mountain-stage{transition:none;transform:none!important;filter:none!important}
 }
+
+/* Preserve one semantic H1 on the rotating homepage hero while matching every slide visually. */
+.story-copy .story-title{margin:25px 0 28px;color:#fff;font-size:clamp(56px,6.2vw,92px);font-weight:650;line-height:.96;letter-spacing:-.057em;overflow-wrap:break-word}
+.story-copy .story-title .blue{background:linear-gradient(105deg,#84b5ff 0%,#3f73df 45%,#9ec8ff 72%,#4d7fe5 100%);background-size:180% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 22px rgba(78,132,240,.22);animation:skarShine 8s ease-in-out infinite}
+@media(max-width:760px){.story-copy .story-title{font-size:clamp(45px,13.5vw,58px)}}
+@media(max-width:390px){.story-copy .story-title{font-size:42px}}
+@media(max-width:650px),(prefers-reduced-motion:reduce){.story-copy .story-title .blue{animation:none}}
