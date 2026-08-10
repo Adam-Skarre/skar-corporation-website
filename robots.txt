@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://skartech.com/sitemap.xml
+Sitemap: https://www.skartech.com/sitemap.xml
