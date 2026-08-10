@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="../site.css">
   <link rel="stylesheet" href="../refinement.css?v=20260809-5">
   <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
-  <link rel="stylesheet" href="../skar-ai.css?v=20260810-6">
+  <link rel="stylesheet" href="../skar-ai.css?v=20260810-7">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
   <script src="../site-nav.js?v=20260802-3" defer></script>
   <script src="../capability-art.js?v=20260802-2" defer></script>
@@ -145,74 +145,50 @@
       <p class="sai-demo-note">This public preview demonstrates SKAR's constraint-diagnosis workflow. A deployed product connects to approved operational data, measures flow over time, and keeps final decisions with your team.</p>
     </section>
 
-    <section class="sai-work" aria-labelledby="sai-work-title">
-      <div class="sai-section-heading">
-        <div><p class="eyebrow">The bottleneck brief</p><h2 id="sai-work-title">A diagnosis your team can act on.</h2></div>
-        <p>One view shows the constraint, supporting signals, confidence, owner, and measure that determines whether the intervention worked.</p>
-      </div>
-      <div class="sai-product-board">
-        <div class="sai-product-visual" aria-label="Illustrative SKAR AI decision brief">
-          <div class="sai-product-toolbar"><span><i></i>ONBOARDING FLOW / LIVE</span><span>03 SIGNALS</span></div>
-          <div class="sai-product-screen">
-            <aside><span>BRIEF</span><span class="is-active">EVIDENCE</span><span>RISKS</span><span>ACTIONS</span></aside>
-            <div class="sai-brief"><small>PROCESS 07 · CONSTRAINT SCAN</small><h3>Security review is limiting onboarding throughput.</h3><p>Eleven of eighteen elapsed days sit inside one approval queue. Incomplete intake creates rework before the same constrained step.</p><div class="sai-evidence-row"><span>01</span><b>Cycle-time history</b><em>Verified</em></div><div class="sai-evidence-row"><span>02</span><b>Security queue</b><em>11 days</em></div><div class="sai-evidence-row"><span>03</span><b>Exception log</b><em>1 owner</em></div></div>
-            <div class="sai-brief-rail"><small>ACTION OWNER</small><strong>Security operations</strong><small>NEXT TEST</small><strong>Complete-intake gate</strong><div class="sai-mini-ring"><b>87</b><span>diagnostic<br>confidence</span></div></div>
+    <section class="sai-case" aria-labelledby="sai-case-title">
+      <header><p class="eyebrow">See the diagnosis happen</p><h2 id="sai-case-title">Eighteen days.<br>One hidden constraint.</h2><p>An illustrative onboarding scan shows how SKAR moves from event history to a focused intervention—without pretending every delay matters equally.</p></header>
+      <div class="sai-case-app">
+        <div class="sai-case-top"><span><i></i> ONBOARDING / PROCESS 07</span><b>LIVE DIAGNOSTIC</b><em>18.2 DAYS TOTAL</em></div>
+        <div class="sai-case-body">
+          <div class="sai-flow-map">
+            <div class="sai-flow-caption"><span>FLOW RECONSTRUCTION</span><b>42 cases · trailing 90 days</b></div>
+            <ol>
+              <li><span>01</span><div><small>INTAKE</small><strong>1.4 days</strong><i style="--flow:12%"></i></div></li>
+              <li class="is-constraint"><span>02</span><div><small>SECURITY REVIEW</small><strong>11.0 days</strong><i style="--flow:78%"></i><em>CONSTRAINT</em></div></li>
+              <li><span>03</span><div><small>LEGAL</small><strong>1.2 days</strong><i style="--flow:10%"></i></div></li>
+              <li><span>04</span><div><small>LAUNCH</small><strong>0.6 days</strong><i style="--flow:6%"></i></div></li>
+            </ol>
           </div>
+          <aside class="sai-diagnosis">
+            <p>SKAR AI / DIAGNOSIS</p><h3>Security review controls total throughput.</h3><div class="sai-confidence"><span><b>87</b>% confidence</span><i></i></div>
+            <dl><div><dt>WHY</dt><dd>61% of cycle time sits in one queue</dd></div><div><dt>AMPLIFIER</dt><dd>Incomplete intake creates repeat review</dd></div><div><dt>OWNER</dt><dd>Security operations lead</dd></div></dl>
+          </aside>
         </div>
-        <article class="sai-product-copy"><p class="eyebrow">Constraint detected</p><h3>Fix the limiting step—not the loudest symptom.</h3><p>SKAR AI ranks the likely causes, shows what evidence supports them, and gives one owner a measurable next move.</p><ul><li>Constraint and symptoms separated</li><li>Confidence and assumptions visible</li><li>Outcome measure defined</li></ul></article>
+        <div class="sai-case-action"><span>RECOMMENDED TEST / 01</span><strong>Add a complete-intake gate for the next ten cases.</strong><div><small>SUCCESS SIGNAL</small><b>Review time below 7 days</b></div><button type="button">Human approval required</button></div>
       </div>
-      <div class="sai-cinematic" aria-label="Three ways SKAR AI supports business decisions">
-        <video class="sai-cinematic-video" autoplay muted loop playsinline preload="metadata" poster="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_132328_5f9029c8-218f-4489-82b6-29ff2849920e.png" aria-hidden="true">
-          <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_133255_956f653f-5d80-4b06-abd5-0f46c98b60fa.mp4" type="video/mp4">
-        </video>
-        <div class="sai-cinematic-intro">
-          <p>SKAR AI / APPLIED INTELLIGENCE</p>
-          <h3>One constraint.<br>One accountable move.</h3>
-        </div>
-        <div class="sai-cinematic-capabilities">
-          <article><span>01 / FLOW</span><h4>See where work waits.</h4><p>Map queues, handoffs, rework, and release points.</p></article>
-          <article><span>02 / CAUSE</span><h4>Separate constraint from symptom.</h4><p>Rank the causes that can change total throughput.</p></article>
-          <article><span>03 / ACTION</span><h4>Test the smallest useful fix.</h4><p>Name an owner, intervention, and success measure.</p></article>
-        </div>
+      <p class="sai-case-disclaimer">Illustrative product scenario. Results shown demonstrate the diagnostic method, not a customer performance claim.</p>
+    </section>
+
+    <section class="sai-difference" aria-labelledby="sai-difference-title">
+      <div class="sai-difference-heading"><p class="eyebrow">Why SKAR is different</p><h2 id="sai-difference-title">Answers are not the product.<br>Improvement is.</h2></div>
+      <div class="sai-difference-grid">
+        <article><span>GENERAL AI</span><h3>Answers a question.</h3><p>Useful for drafting and exploration, but it does not continuously model how your operation moves.</p><em>Output → response</em></article>
+        <article><span>ANALYTICS</span><h3>Shows what happened.</h3><p>Dashboards surface measures and trends, while the team still determines the limiting cause and next test.</p><em>Output → report</em></article>
+        <article class="is-skar"><span>SKAR AI</span><h3>Changes the flow.</h3><p>Connects evidence to a constraint, a responsible owner, a bounded intervention, and a result to verify.</p><em>Output → measurable improvement</em></article>
       </div>
     </section>
 
-    <section class="sai-how" aria-labelledby="sai-how-title">
-      <div><p class="eyebrow">How SKAR AI works</p><h2 id="sai-how-title">From scattered signals to one tested improvement.</h2></div>
-      <ol><li><span>01</span><div><h3>Map the real workflow</h3><p>Connect timestamps, queues, handoffs, policies, and outcomes from the systems your team already uses.</p></div></li><li><span>02</span><div><h3>Diagnose the constraint</h3><p>Compare demand, capacity, wait time, rework, and dependencies to identify the step limiting total throughput.</p></div></li><li><span>03</span><div><h3>Run the smallest useful test</h3><p>Recommend one bounded intervention, name its owner, and measure whether flow improves before expanding automation.</p></div></li></ol>
-    </section>
-
-    <section class="sai-engine" aria-labelledby="sai-engine-title">
-      <div class="sai-engine-copy">
-        <p class="eyebrow">Inside the constraint engine</p>
-        <h2 id="sai-engine-title">Built to explain its diagnosis.</h2>
-        <p>SKAR AI combines process evidence, a constraint model, and bounded reasoning. It does not hide the path between an operational signal and a recommended action.</p>
-        <a href="../contact/">Discuss a private deployment <span>↗</span></a>
-      </div>
-      <div class="sai-engine-ui" aria-label="Diagram of the SKAR AI constraint engine">
-        <div class="sai-engine-bar"><span><i></i> SKAR AI / CONSTRAINT MODEL</span><b>TRACE VISIBLE</b></div>
-        <div class="sai-engine-map">
-          <div class="sai-engine-node is-source"><small>01 / EVIDENCE</small><strong>Operational signals</strong><span>Cycle time · queues · rework · outcomes</span></div>
-          <div class="sai-engine-path"><i></i><i></i><i></i></div>
-          <div class="sai-engine-core"><span>SKAR</span><b>Constraint<br>engine</b><em>87%</em></div>
-          <div class="sai-engine-path"><i></i><i></i><i></i></div>
-          <div class="sai-engine-node is-action"><small>03 / INTERVENTION</small><strong>One measurable move</strong><span>Owner · test · threshold · review</span></div>
-        </div>
-        <div class="sai-engine-foot">
-          <div><small>DIAGNOSIS</small><strong>Approval queue limits throughput</strong></div>
-          <div><small>ASSUMPTION</small><strong>Demand remains stable</strong></div>
-          <div><small>HUMAN CONTROL</small><strong>Release requires review</strong></div>
-        </div>
+    <section class="sai-built" aria-labelledby="sai-built-title">
+      <div class="sai-built-copy"><p class="eyebrow">A product, not a prompt wrapper</p><h2 id="sai-built-title">Four systems working as one.</h2><p>The model is only one component. SKAR combines governed evidence, process reconstruction, constraint reasoning, and an intervention loop designed for accountable operational work.</p></div>
+      <div class="sai-built-stack">
+        <article><span>04</span><div><small>INTERVENTION LOOP</small><h3>Test, measure, learn</h3></div><b>Owner + threshold</b></article>
+        <article><span>03</span><div><small>CONSTRAINT REASONING</small><h3>Cause before action</h3></div><b>Evidence trace</b></article>
+        <article><span>02</span><div><small>PROCESS MODEL</small><h3>Queues, handoffs, rework</h3></div><b>Flow state</b></article>
+        <article><span>01</span><div><small>GOVERNED CONTEXT</small><h3>Approved operational data</h3></div><b>Permissions</b></article>
       </div>
     </section>
 
-    <section class="capability-proof capability-proof-closing" aria-labelledby="sai-proof-title">
-      <div>
-        <p class="eyebrow">Designed for trust</p>
-        <h2 id="sai-proof-title">Useful enough to adopt. Controlled enough to trust.</h2>
-      </div>
-      <p>SKAR AI keeps approved knowledge, sources, and human authority visible from the first question through the final action.</p>
-    </section>
+    <section class="sai-final" aria-labelledby="sai-final-title"><p class="eyebrow">Start with one stubborn process</p><h2 id="sai-final-title">Find what is holding it back.</h2><p>Deploy SKAR AI around a real workflow, preserve human decision rights, and prove value through a measurable change in flow.</p><a href="../contact/">Discuss a private pilot <span>↗</span></a></section>
   </main>
 
   <footer class="footer"></footer>
