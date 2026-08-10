@@ -5212,10 +5212,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .page-hero-about{
   position:relative;
   isolation:isolate;
-  min-height:clamp(680px,74vw,780px);
+  min-height:clamp(560px,56vw,660px);
   display:block;
   overflow:hidden;
-  padding:clamp(70px,7.5vw,112px) 8vw;
+  padding:clamp(56px,5vw,78px) 8vw;
   background:#8fb6e6!important;
   background-image:none!important;
   color:#082c53;
@@ -5318,7 +5318,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .about-hero-copy{
   position:relative;
   z-index:3;
-  width:min(680px,52%);
+  width:min(640px,52%);
   pointer-events:none;
 }
 .page-hero-about .about-hero-copy .eyebrow{
@@ -5331,7 +5331,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .page-hero-about .about-hero-copy h1{
   margin:0;
   color:#fff;
-  font-size:clamp(64px,6.8vw,108px);
+  font-size:clamp(56px,5.4vw,86px);
   font-weight:600;
   line-height:.91;
   letter-spacing:-.067em;
@@ -5350,20 +5350,20 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   line-height:1.62;
 }
 @media(max-width:900px){
-  .page-hero-about{min-height:690px;padding:68px 6vw}
+  .page-hero-about{min-height:600px;padding:60px 6vw}
   .about-hero-copy{width:min(620px,68%)}
-  .page-hero-about .about-hero-copy h1{font-size:clamp(60px,9vw,84px)}
+  .page-hero-about .about-hero-copy h1{font-size:clamp(54px,8vw,76px)}
 }
 @media(max-width:650px){
   .page-hero-about{
-    min-height:660px;
-    padding:54px 24px;
+    min-height:560px;
+    padding:48px 24px;
     background:#8fb6e6!important;
   }
   .page-hero-about:after{inset:12px!important}
   .about-hero-copy{width:100%;max-width:510px}
   .page-hero-about .about-hero-copy .eyebrow{margin-bottom:20px;font-size:10px}
-  .page-hero-about .about-hero-copy h1{font-size:clamp(48px,13vw,66px);line-height:.94}
+  .page-hero-about .about-hero-copy h1{font-size:clamp(44px,12vw,58px);line-height:.94}
   .page-hero-about .about-hero-copy>p:last-child{max-width:90%;margin-top:24px;font-size:15px;line-height:1.55}
   .about-sky-motion:before{left:-28%;top:-16%;width:80%;height:27%;filter:blur(42px)}
   .about-sky-motion:after{left:28%;top:-21%;width:100%;height:59%}
