@@ -12,11 +12,11 @@
   <meta property="og:description" content="Apply intelligence with intent. SKAR AI connects trusted context, useful reasoning, and governed action.">
   <link rel="stylesheet" href="../site.css">
   <link rel="stylesheet" href="../refinement.css?v=20260809-5">
-  <link rel="stylesheet" href="../skar-ai.css?v=20260809-6">
+  <link rel="stylesheet" href="../skar-ai.css?v=20260809-7">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
   <script src="../site-nav.js?v=20260802-3" defer></script>
   <script src="../capability-art.js?v=20260802-2" defer></script>
-  <script src="../skar-ai.js?v=20260809-3" defer></script>
+  <script src="../skar-ai.js?v=20260809-4" defer></script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"SoftwareApplication","name":"SKAR AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"A governed intelligence layer for private company knowledge, research, analysis, and controlled workflows.","provider":{"@type":"Organization","name":"Skar Technologies","url":"https://www.skartech.com/"},"url":"https://www.skartech.com/artificial-intelligence/"}
   </script>
@@ -36,22 +36,35 @@
     </section>
 
     <section class="sai-foundations" aria-label="SKAR AI foundations">
-      <article><span>01</span><div><h2>Private by design</h2><p>Your context and permissions stay protected.</p></div></article>
-      <article><span>02</span><div><h2>Sources attached</h2><p>Useful answers stay connected to evidence.</p></div></article>
-      <article><span>03</span><div><h2>Human approval</h2><p>People remain responsible for every action.</p></div></article>
-      <article><span>04</span><div><h2>Built for real work</h2><p>Start with a workflow that matters to your team.</p></div></article>
+      <article><span>01</span><div><h2>Private</h2><p>Your knowledge and permissions stay protected.</p></div></article>
+      <article><span>02</span><div><h2>Sourced</h2><p>Every useful answer stays connected to evidence.</p></div></article>
+      <article><span>03</span><div><h2>Accountable</h2><p>People remain responsible for every decision.</p></div></article>
+      <article><span>04</span><div><h2>Purpose-built</h2><p>Each deployment starts with work that matters.</p></div></article>
     </section>
 
-    <section class="sai-reference-lead" aria-labelledby="sai-intro-title">
-      <div class="sai-reference-image"><video autoplay loop muted playsinline preload="metadata" aria-label="Abstract product design animation supplied for the SKAR AI experience"><source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4" type="video/mp4"></video><div class="sai-chip-caption"><span>SKAR AI · PRIVATE SYSTEM</span><b>Knowledge in. Useful work out.</b></div></div>
-      <div class="sai-reference-copy"><p class="eyebrow">Meet SKAR AI</p><h2 id="sai-intro-title">AI that works inside your business.</h2><p>General assistants know the internet. SKAR AI is built around your approved knowledge, your workflows, and the decisions your people need to make.</p><a href="#ask-skar-ai">Try the product preview <span>↓</span></a></div>
+    <section class="sai-product-stage" aria-labelledby="sai-intro-title">
+      <div class="sai-stage-visual">
+        <video autoplay loop muted playsinline preload="metadata" aria-label="Abstract product design animation supplied for the SKAR AI experience"><source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4" type="video/mp4"></video>
+        <div class="sai-stage-status"><i></i><span>SKAR AI / CONTEXT ONLINE</span><b>PRIVATE SYSTEM</b></div>
+        <div class="sai-stage-glass">
+          <span>ONE INTELLIGENCE LAYER</span>
+          <strong>Approved knowledge moves through a visible reasoning path before any action is proposed.</strong>
+          <div><em>KNOW</em><i></i><em>REASON</em><i></i><em>ACT</em></div>
+        </div>
+      </div>
+      <div class="sai-stage-copy">
+        <p class="eyebrow">Meet SKAR AI</p>
+        <h2 id="sai-intro-title">Your business already knows the answer.</h2>
+        <p>SKAR AI helps your people find it, understand it, and put it to work—with the source and the responsible person still visible.</p>
+        <ul><li>Search approved company knowledge</li><li>Prepare decisions and first drafts</li><li>Monitor changes that need attention</li></ul>
+        <a href="#ask-skar-ai">Try the product preview <span>↓</span></a>
+      </div>
     </section>
 
     <section class="sai-demo" id="ask-skar-ai" data-skar-ai-demo aria-labelledby="sai-demo-title">
-      <div class="sai-section-heading sai-section-heading-centered">
-        <p class="eyebrow">Interactive product preview</p>
-        <h2 id="sai-demo-title">Ask SKAR AI.</h2>
-        <p>Give it a business question. See how a response can remain concise, sourced, and ready for human judgment.</p>
+      <div class="sai-section-heading">
+        <div><p class="eyebrow">Interactive product preview</p><h2 id="sai-demo-title">Ask SKAR AI.</h2></div>
+        <p>Start with a business question. The preview shows how SKAR AI frames the answer, keeps evidence visible, and makes the next step clear.</p>
       </div>
 
       <div class="sai-answer-shell" data-demo-state="idle">
@@ -61,25 +74,26 @@
         </div>
 
         <div class="sai-ask-view">
-          <div class="sai-ask-heading">
-            <span class="sai-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-            <div><p>Good decisions begin with a better question.</p><h3>What would you like to understand?</h3></div>
-          </div>
-          <form class="sai-ask-form" data-skar-ai-form>
-            <label class="sr-only" for="skar-ai-prompt">Ask SKAR AI a business question</label>
-            <textarea id="skar-ai-prompt" data-skar-ai-input maxlength="320" rows="2" placeholder="Ask about a decision, risk, market, customer, or operating challenge…"></textarea>
-            <div class="sai-compose-footer">
-              <span><b data-ai-count>0</b> / 320</span>
-              <button type="submit" data-ai-submit aria-label="Ask SKAR AI"><span>Ask SKAR AI</span><i aria-hidden="true">↗</i></button>
+          <div class="sai-ask-grid">
+            <div class="sai-ask-heading">
+              <span class="sai-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <div><p>SKAR AI / READY</p><h3>What would you like to understand?</h3><small>Ask a question, compare a decision, or use one of the examples.</small></div>
             </div>
-          </form>
-          <div class="sai-prompt-list" aria-label="Suggested questions">
-            <button type="button" data-ai-prompt="operations"><span>01</span>Where is the capacity decision most exposed?</button>
-            <button type="button" data-ai-prompt="research"><span>02</span>What forces are changing industrial automation?</button>
-            <button type="button" data-ai-prompt="client"><span>03</span>What could put this client renewal at risk?</button>
-            <button type="button" data-ai-prompt="diligence"><span>04</span>Which assumptions carry this investment case?</button>
+            <div class="sai-ask-console">
+              <form class="sai-ask-form" data-skar-ai-form>
+                <label class="sr-only" for="skar-ai-prompt">Ask SKAR AI a business question</label>
+                <textarea id="skar-ai-prompt" data-skar-ai-input maxlength="320" rows="3" placeholder="Ask about a decision, risk, market, customer, or operating challenge…"></textarea>
+                <div class="sai-compose-footer"><span><b data-ai-count>0</b> / 320 · ⌘ ENTER</span><button type="submit" data-ai-submit aria-label="Ask SKAR AI"><span>Ask SKAR AI</span><i aria-hidden="true">↗</i></button></div>
+              </form>
+              <div class="sai-prompt-list" aria-label="Suggested questions">
+                <button type="button" data-ai-prompt="operations"><span>01</span>Capacity risk</button>
+                <button type="button" data-ai-prompt="research"><span>02</span>Market change</button>
+                <button type="button" data-ai-prompt="client"><span>03</span>Renewal risk</button>
+                <button type="button" data-ai-prompt="diligence"><span>04</span>Investment case</button>
+              </div>
+              <p class="sai-ask-assurance"><i></i> No prompt data is retained in this public preview.</p>
+            </div>
           </div>
-          <p class="sai-ask-assurance"><i></i> Production deployments connect only to approved private sources and secure model endpoints.</p>
         </div>
 
         <div class="sai-answer-view" data-ai-response aria-live="polite" aria-busy="false">
@@ -104,22 +118,35 @@
           </div>
         </div>
       </div>
-      <p class="sai-demo-note">This public preview answers supported calculations locally and demonstrates SKAR AI workflows with prepared business examples. A production instance connects through a secure server-side model endpoint to approved company knowledge, tools, and controls.</p>
+      <p class="sai-demo-note">The public preview demonstrates supported calculations and prepared business workflows. Production deployments connect securely to approved company knowledge and models.</p>
     </section>
 
-    <section class="sai-applications" aria-labelledby="sai-work-title">
-      <header><p class="eyebrow">Where SKAR AI goes to work</p><h2 id="sai-work-title">One product.<br>Four useful applications.</h2><p>Start where your team already spends time finding information, preparing work, or responding to change.</p></header>
-      <div class="sai-application-grid">
-        <article><span>01 / KNOWLEDGE</span><h3>Find answers in company knowledge.</h3><p>Search approved documents and records, with the source kept beside the answer.</p></article>
-        <article><span>02 / DECISIONS</span><h3>Prepare decisions and briefs.</h3><p>Bring the facts, risks, and open questions into one clear first draft.</p></article>
-        <article><span>03 / OPERATIONS</span><h3>Monitor changes and exceptions.</h3><p>See what changed, why it matters, and who needs to respond.</p></article>
-        <article><span>04 / WORKFLOWS</span><h3>Build focused AI workflows.</h3><p>Connect models, approved information, and business tools around a specific job.</p></article>
+    <section class="sai-work" aria-labelledby="sai-work-title">
+      <div class="sai-section-heading">
+        <div><p class="eyebrow">Where SKAR AI goes to work</p><h2 id="sai-work-title">One product. Three valuable jobs.</h2></div>
+        <p>Begin where people lose time searching, assembling context, or deciding what deserves attention.</p>
+      </div>
+      <div class="sai-product-board">
+        <div class="sai-product-visual" aria-label="Illustrative SKAR AI decision brief">
+          <div class="sai-product-toolbar"><span><i></i>CUSTOMER BRIEF / LIVE</span><span>06 SOURCES</span></div>
+          <div class="sai-product-screen">
+            <aside><span>BRIEF</span><span class="is-active">EVIDENCE</span><span>RISKS</span><span>ACTIONS</span></aside>
+            <div class="sai-brief"><small>ACCOUNT 2048 · RENEWAL REVIEW</small><h3>Expansion is supportable after two service issues are resolved.</h3><p>Usage is durable and adoption is broadening. Open reliability events and a pricing exception remain material to the renewal.</p><div class="sai-evidence-row"><span>01</span><b>Product usage</b><em>Verified</em></div><div class="sai-evidence-row"><span>02</span><b>Service history</b><em>2 open</em></div><div class="sai-evidence-row"><span>03</span><b>Commercial terms</b><em>Review</em></div></div>
+            <div class="sai-brief-rail"><small>DECISION OWNER</small><strong>Account lead</strong><small>NEXT CONTROL</small><strong>Pricing review</strong><div class="sai-mini-ring"><b>82</b><span>evidence<br>coverage</span></div></div>
+          </div>
+        </div>
+        <article class="sai-product-copy"><p class="eyebrow">Decision briefs</p><h3>Prepare the work before the meeting starts.</h3><p>Bring history, live signals, risks, and approval requirements into one clear brief.</p><ul><li>Evidence attached</li><li>Open assumptions visible</li><li>Decision owner named</li></ul></article>
+      </div>
+      <div class="sai-usecase-grid">
+        <article><div class="sai-card-visual sai-search-visual"><span class="sai-search-bar">Search approved knowledge <i>⌘ K</i></span><span>Policy library <b>12 results</b></span><span>Technical record <b>08 results</b></span><span>Client history <b>05 results</b></span></div><span>01 / KNOWLEDGE</span><h3>Find the answer—and its source.</h3><p>Search approved documents and records without losing the evidence behind the response.</p></article>
+        <article><div class="sai-card-visual sai-route-visual"><svg viewBox="0 0 420 180" aria-hidden="true"><path d="M40 112 C115 112 122 46 210 46 S310 112 380 112"/><path d="M40 142 C132 142 142 88 210 88 S305 142 380 142"/></svg><em class="node a">SIGNAL</em><em class="node b">SKAR AI</em><em class="node c">OWNER</em></div><span>02 / OPERATIONS</span><h3>Turn exceptions into a coordinated response.</h3><p>See what changed, why it matters, and who should decide what happens next.</p></article>
+        <article><div class="sai-card-visual sai-scenario-visual"><span><i>Base case</i><b style="width:68%"></b><em>68</em></span><span><i>Downside</i><b style="width:42%"></b><em>42</em></span><span><i>Upside</i><b style="width:81%"></b><em>81</em></span><div>ASSUMPTIONS REMAIN VISIBLE</div></div><span>03 / ANALYSIS</span><h3>Challenge the first answer.</h3><p>Compare scenarios, surface the assumptions carrying the case, and preserve uncertainty.</p></article>
       </div>
     </section>
 
     <section class="sai-how" aria-labelledby="sai-how-title">
-      <div><p class="eyebrow">How we build it</p><h2 id="sai-how-title">Start with one job worth improving.</h2></div>
-      <ol><li><span>01</span><div><h3>Choose the workflow</h3><p>Define what should improve and who owns the result.</p></div></li><li><span>02</span><div><h3>Connect approved information</h3><p>Give the system only the sources and tools it needs.</p></div></li><li><span>03</span><div><h3>Test it with real work</h3><p>Measure answer quality, safety, speed, and usefulness before launch.</p></div></li></ol>
+      <div><p class="eyebrow">How we build it</p><h2 id="sai-how-title">Start small. Prove value. Expand with control.</h2></div>
+      <ol><li><span>01</span><div><h3>Choose one useful job</h3><p>Define the work, the user, and what a better outcome looks like.</p></div></li><li><span>02</span><div><h3>Connect only what it needs</h3><p>Add the approved knowledge, tools, and permissions required for that job.</p></div></li><li><span>03</span><div><h3>Test it with real people</h3><p>Measure usefulness, accuracy, and control before expanding the system.</p></div></li></ol>
     </section>
 
     <section class="capability-proof capability-proof-closing" aria-labelledby="sai-proof-title">

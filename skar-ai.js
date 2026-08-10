@@ -61,18 +61,54 @@
   };
 
   const fallbackScenario = {
-    state: 'PUBLIC PREVIEW LIMIT REACHED',
-    title: 'That question needs the live SKAR AI model.',
-    summary: 'This public preview can answer calculations and demonstrate four business workflows. Open-ended answers require the secure server-side model and approved knowledge layer used in a deployed SKAR AI instance.',
+    state: 'PRODUCT PREVIEW',
+    title: 'This preview is focused on business work.',
+    summary: 'Try a calculation or one of the guided examples. A deployed SKAR AI instance can answer broader questions through approved models and company sources.',
     findings: [
-      'Try a direct calculation such as “5 + 5” or “(24 × 3) / 2.”',
-      'Choose one of the four guided questions to inspect the business response flow.',
-      'A production deployment sends broader questions to a protected model endpoint without exposing credentials in the browser.'
+      'Choose a guided example to see how evidence, uncertainty, and ownership remain visible.',
+      'Try a direct calculation such as “5 + 5” or ask for the capital of a major country.',
+      'Production deployments connect to a protected model endpoint without exposing credentials in the browser.'
     ],
-    sources: ['Public preview capability boundary'],
-    evidence: 'No live model connected',
-    control: 'Credentials stay server-side',
-    action: 'Try a supported question'
+    sources: ['Public preview capability'],
+    evidence: 'No company source connected',
+    control: 'Browser-only preview',
+    action: 'Choose a guided example'
+  };
+
+  const capitalScenario = (input) => {
+    const match = input.toLowerCase().match(/capital\s+of\s+(?:the\s+)?([a-z .'-]+)/i);
+    if (!match) return null;
+    const country = match[1].replace(/[?.!]+$/g, '').trim();
+    const capitals = {
+      'spain': 'Madrid', 'france': 'Paris', 'germany': 'Berlin', 'italy': 'Rome',
+      'portugal': 'Lisbon', 'united kingdom': 'London', 'uk': 'London', 'england': 'London',
+      'ireland': 'Dublin', 'netherlands': 'Amsterdam', 'belgium': 'Brussels',
+      'switzerland': 'Bern', 'austria': 'Vienna', 'denmark': 'Copenhagen',
+      'norway': 'Oslo', 'sweden': 'Stockholm', 'finland': 'Helsinki', 'poland': 'Warsaw',
+      'greece': 'Athens', 'turkey': 'Ankara', 'ukraine': 'Kyiv', 'russia': 'Moscow',
+      'united states': 'Washington, D.C.', 'united states of america': 'Washington, D.C.',
+      'us': 'Washington, D.C.', 'usa': 'Washington, D.C.', 'canada': 'Ottawa',
+      'mexico': 'Mexico City', 'brazil': 'Brasília', 'argentina': 'Buenos Aires',
+      'china': 'Beijing', 'japan': 'Tokyo', 'south korea': 'Seoul', 'india': 'New Delhi',
+      'pakistan': 'Islamabad', 'bangladesh': 'Dhaka', 'vietnam': 'Hanoi',
+      'thailand': 'Bangkok', 'indonesia': 'Jakarta', 'australia': 'Canberra',
+      'new zealand': 'Wellington', 'egypt': 'Cairo', 'nigeria': 'Abuja',
+      'kenya': 'Nairobi', 'south africa': 'Pretoria', 'morocco': 'Rabat',
+      'saudi arabia': 'Riyadh', 'united arab emirates': 'Abu Dhabi', 'uae': 'Abu Dhabi'
+    };
+    const capital = capitals[country];
+    if (!capital) return null;
+    const displayCountry = country.replace(/\b\w/g, (letter) => letter.toUpperCase());
+    return {
+      state: 'ANSWER READY',
+      title: capital,
+      summary: `${capital} is the capital of ${displayCountry}.`,
+      findings: ['This common reference fact was answered directly in the public preview.', 'No company information or external model call was required.'],
+      sources: ['SKAR AI preview · Common reference data'],
+      evidence: 'Reference fact',
+      control: 'No approval required',
+      action: 'Ask a follow-up'
+    };
   };
 
   const extractExpression = (input) => {
@@ -201,6 +237,8 @@
     const normalized = input.toLowerCase();
     const calculation = calculationScenario(input);
     if (calculation) return calculation;
+    const capital = capitalScenario(input);
+    if (capital) return capital;
     if (/capacity|supplier|operation|production|constraint|expansion/.test(normalized)) return promptLibrary.operations;
     if (/research|evidence|source|industry|market|trend|automation/.test(normalized)) return promptLibrary.research;
     if (/client|renewal|customer|account|service|pricing/.test(normalized)) return promptLibrary.client;
