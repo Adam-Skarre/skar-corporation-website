@@ -507,6 +507,103 @@
     }
   }
 
+  const oceanCard = document.querySelector('[data-insights-ocean]');
+  const oceanCanvas = document.querySelector('[data-insights-ocean-particles]');
+  if (oceanCard && oceanCanvas) {
+    const oceanContext = oceanCanvas.getContext('2d', { alpha: true });
+    if (oceanContext) {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const oceanMedia = oceanCard.querySelector('.insights-ocean-media');
+      const particleCount = 20;
+      let width = 1;
+      let height = 1;
+      let ratio = 1;
+      let particles = [];
+      let frame = 0;
+      let visible = true;
+
+      function createOceanParticles() {
+        particles = Array.from({ length: particleCount }, (_, index) => ({
+          x: ((index * 47.7) % 100) / 100,
+          y: ((index * 31.9 + 17) % 100) / 100,
+          radius: 0.8 + (index % 5) * 0.42,
+          speed: 0.000012 + (index % 4) * 0.000006,
+          sway: 4 + (index % 6) * 2.2,
+          phase: index * 0.91,
+          alpha: 0.24 + (index % 5) * 0.1
+        }));
+      }
+
+      function resizeOceanParticles() {
+        if (!oceanMedia) return;
+        const bounds = oceanMedia.getBoundingClientRect();
+        width = Math.max(1, Math.round(bounds.width));
+        height = Math.max(1, Math.round(bounds.height));
+        ratio = Math.min(window.devicePixelRatio || 1, 2);
+        oceanCanvas.width = Math.round(width * ratio);
+        oceanCanvas.height = Math.round(height * ratio);
+        oceanCanvas.style.width = `${width}px`;
+        oceanCanvas.style.height = `${height}px`;
+        oceanContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+        drawOceanParticles(0);
+      }
+
+      function drawOceanParticles(time) {
+        oceanContext.clearRect(0, 0, width, height);
+        particles.forEach((particle) => {
+          const drift = reducedMotion ? 0 : time * particle.speed;
+          const normalizedY = (particle.y - drift + 1) % 1;
+          const x = particle.x * width + Math.sin(time * 0.00042 + particle.phase) * particle.sway;
+          const y = normalizedY * height;
+          const glow = oceanContext.createRadialGradient(x, y, 0, x, y, particle.radius * 5.2);
+          glow.addColorStop(0, `rgba(245, 252, 255, ${particle.alpha})`);
+          glow.addColorStop(0.24, `rgba(182, 226, 250, ${particle.alpha * 0.72})`);
+          glow.addColorStop(1, 'rgba(116, 202, 246, 0)');
+          oceanContext.beginPath();
+          oceanContext.fillStyle = glow;
+          oceanContext.arc(x, y, particle.radius * 5.2, 0, Math.PI * 2);
+          oceanContext.fill();
+          oceanContext.beginPath();
+          oceanContext.fillStyle = `rgba(248, 253, 255, ${Math.min(.92, particle.alpha + .22)})`;
+          oceanContext.arc(x, y, particle.radius, 0, Math.PI * 2);
+          oceanContext.fill();
+        });
+      }
+
+      function animateOceanParticles(time) {
+        if (visible) drawOceanParticles(time);
+        frame = window.requestAnimationFrame(animateOceanParticles);
+      }
+
+      oceanCard.addEventListener('pointermove', (event) => {
+        if (reducedMotion || !oceanMedia) return;
+        const bounds = oceanMedia.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) return;
+        const horizontal = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const vertical = (event.clientY - bounds.top) / bounds.height - 0.5;
+        oceanCard.style.setProperty('--ocean-x', `${horizontal * -30}px`);
+        oceanCard.style.setProperty('--ocean-y', `${vertical * -30}px`);
+      }, { passive: true });
+
+      oceanCard.addEventListener('pointerleave', () => {
+        oceanCard.style.setProperty('--ocean-x', '0px');
+        oceanCard.style.setProperty('--ocean-y', '0px');
+      }, { passive: true });
+
+      const oceanVisibilityObserver = 'IntersectionObserver' in window
+        ? new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0.02 })
+        : null;
+      if (oceanVisibilityObserver) oceanVisibilityObserver.observe(oceanCard);
+      const oceanResizeObserver = 'ResizeObserver' in window ? new ResizeObserver(resizeOceanParticles) : null;
+      if (oceanResizeObserver && oceanMedia) oceanResizeObserver.observe(oceanMedia);
+      else window.addEventListener('resize', resizeOceanParticles, { passive: true });
+      createOceanParticles();
+      resizeOceanParticles();
+      if (!reducedMotion) frame = window.requestAnimationFrame(animateOceanParticles);
+      window.addEventListener('pagehide', () => window.cancelAnimationFrame(frame), { once: true });
+    }
+  }
+
   const consoleElement = document.querySelector('[data-insights-console]');
   if (!consoleElement) return;
 
