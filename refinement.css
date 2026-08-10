@@ -1491,6 +1491,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .dashboard-note{max-width:920px;margin:22px 0 0;color:#708aa3;font-size:11px;line-height:1.6}
 .capability-proof>div:first-child{padding-right:7vw}
 .capability-proof>p{display:flex;align-items:center;margin:0;padding:clamp(70px,7vw,110px) 0 clamp(70px,7vw,110px) 7vw;border-left:1px solid #d6e0e8}
+.capability-proof-closing{border-top:72px solid #071f34}
 @media(max-width:900px){
   .capability-hero-copy{width:68vw}
   .capability-intro>.eyebrow,.capability-intro>h2,.capability-intro>p:last-child{grid-column:1}
