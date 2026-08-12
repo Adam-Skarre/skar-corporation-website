@@ -258,3 +258,24 @@
   .insights-work-rail .insights-work-market{grid-template-rows:220px auto}
   .insights-work-rail .insights-ocean-media{min-height:300px}
 }
+
+/* Sticky correction: the rail establishes section height; the feature itself pins. */
+.insights-overview-page main{overflow:visible}
+.insights-current,.insights-work-grid,.insights-featured-column{height:auto;overflow:visible}
+.insights-work-grid{align-items:start}
+.insights-featured-column{align-self:stretch;min-height:0;max-height:none}
+.insights-featured-column .insights-work-bird{position:sticky;top:110px;height:calc(100vh - 140px);min-height:560px;max-height:760px}
+.insights-work-rail>.insights-work-card{min-height:650px}
+
+@media(min-width:901px){
+  .insights-work-grid{grid-template-columns:minmax(0,2.1fr) minmax(360px,1fr)}
+  .insights-work-rail{display:flex;flex-direction:column}
+  .insights-work-rail .insights-work-ocean{grid-column:auto}
+}
+@media(max-width:900px){
+  .insights-work-grid{grid-template-columns:1fr}
+  .insights-featured-column{align-self:auto}
+  .insights-featured-column .insights-work-bird{position:relative;top:auto;height:620px;min-height:0;max-height:none}
+  .insights-work-rail{display:flex;flex-direction:column}
+  .insights-work-rail>.insights-work-card{min-height:520px}
+}
