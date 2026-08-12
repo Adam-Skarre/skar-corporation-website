@@ -765,7 +765,7 @@
     constructor(canvas) {
       this.canvas = canvas;
       this.kind = canvas.dataset.shaderStudy;
-      this.gl = canvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'high-performance' });
+      this.gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: 'high-performance' });
       if (!this.gl) {
         this.fallback();
         return;
@@ -853,7 +853,8 @@
             color+=mix(vec3(.18,.47,.78),vec3(.87,.96,1.),clamp(R*.3+q.y*.12,0.,1.))*depth;
           }
           color=1.-exp(-color*.82);
-          gl_FragColor=vec4(color,1.);
+          float alpha=clamp(max(max(color.r,color.g),color.b)*1.55,0.,.92);
+          gl_FragColor=vec4(color,alpha);
         }
       `;
     }
@@ -873,18 +874,25 @@
         void main(){
           vec2 r=u_resolution,FC=gl_FragCoord.xy;
           float t=u_time,i=0.,g=0.,e=0.;
-          vec3 p=vec3(0.),q=vec3(0.),color=vec3(0.);
+          vec3 p=vec3(0.),q=vec3(0.),energy=vec3(0.);
           for(int ray=0;ray<23;ray++){
             i+=1.;
-            color+=exp(-e*9e2)*vec3(.22,.55,1.05)*.3;
+            float emission=exp(-abs(e)*9e2);
+            energy+=emission*vec3(.24,.66,1.18)*.52;
             p=vec3((FC.xy-.5*r)/r.y*2.5,g*g-1.);
             p+=snoise3D(p*2.+vec3(0.,-sin(t),cos(t))*.3)*.01;
             q=cos(p*5.5);
             e=max((length(p)-.8)-e,(distance(q,p*2.)*snoise3D(p*i+vec3(0.,0.,cos(t)*.2))/359.)+5e-3);
             g+=e;
           }
-          color=1.-exp(-max(color,0.)*1.6);
-          gl_FragColor=vec4(color,1.);
+          float field=max(max(energy.r,energy.g),energy.b);
+          vec3 color=1.-exp(-max(energy,0.)*2.35);
+          float hot=smoothstep(.34,1.15,field);
+          color=mix(color,vec3(.92,.98,1.),hot*.78);
+          float halo=smoothstep(.0,.38,field)*(1.-smoothstep(.38,1.5,field));
+          color+=vec3(.08,.25,.4)*halo*.42;
+          float alpha=clamp(field*2.8,0.,.96);
+          gl_FragColor=vec4(color,alpha);
         }
       `;
     }

@@ -44,6 +44,7 @@
 .form-studies{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 .form-study{display:grid;grid-template-rows:auto 1fr;border:1px solid rgba(143,183,219,.19);background:linear-gradient(145deg,rgba(13,48,78,.75),rgba(4,21,37,.78));overflow:hidden}
 .form-study-visual{height:420px;border-bottom:1px solid rgba(143,183,219,.16);background:radial-gradient(circle at 50% 50%,rgba(46,132,170,.1),transparent 63%)}
+.form-canvas[data-shader-study]{background:radial-gradient(circle at 50% 50%,rgba(54,145,187,.16),rgba(17,72,105,.07) 50%,rgba(3,15,27,0) 100%)}
 .form-study-copy{display:flex;padding:34px 36px 40px;flex-direction:column}
 .form-study-copy small{color:#79a8e9;font-size:9px;font-weight:800;letter-spacing:.14em}.form-study-copy h3{margin:17px 0 14px;font-size:34px;letter-spacing:-.035em}.form-study-copy p{margin:0;color:#afbfcc;font-size:15px;line-height:1.7}
 .form-study-equation{margin-top:auto;padding-top:24px;border-top:1px solid rgba(143,183,219,.15);color:#78a7c8;font:500 11px/1.5 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:.035em}
