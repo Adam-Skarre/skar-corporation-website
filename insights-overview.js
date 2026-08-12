@@ -520,42 +520,51 @@
       attribute vec2 position;
       void main(){ gl_Position = vec4(position, 0.0, 1.0); }
     `;
-    // Adapted from the supplied compact GLSL study. The logarithmic radial
-    // transform makes forward camera travel reveal new self-similar terrain.
+    // SPDX-License-Identifier: MIT
+    // Copyright (c) 2026 @YoheiNishitsuji
+    // Source: https://twigl.app/?ol=true&ss=-OzjqHL-O-83wXo5OU7B
+    // Adapted only for standard WebGL uniform and output names.
     const fragmentSource = `
       precision highp float;
-      uniform vec2 resolution;
-      uniform float time;
+      uniform vec2 u_resolution;
+      uniform float u_time;
+
+      vec3 hsv(float h, float s, float v){
+        vec4 t = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
+        vec3 p = abs(fract(vec3(h) + t.xyz) * 6.0 - vec3(t.w));
+        return v * mix(vec3(t.x), clamp(p - vec3(t.x), 0.0, 1.0), s);
+      }
+
+      mat2 rotate2D(float a){
+        return mat2(cos(a), -sin(a), sin(a), cos(a));
+      }
+
       void main(){
-        vec2 r = resolution;
-        vec2 fc = gl_FragCoord.xy;
-        float i = 0.0;
-        float e = 1.0;
-        float R = 1.0;
-        float s = 1.0;
-        float light = 0.0;
-        vec3 q;
-        vec3 p;
-        vec3 d = vec3((fc - 0.5 * r) / r.y + vec2(cos(time) * 0.04, 1.0), 0.5);
-        q = vec3(0.0, -1.0, -1.0);
-        for(int step = 0; step < 99; step++){
-          light += min(e * s, 0.8 - e) / 50.0;
-          s = 1.0;
-          p = q += d * e * R * 0.4 - e;
-          R = max(length(p), 0.0001);
-          p = vec3(log(R) - time, exp(-p.z / R + 0.6), abs(atan(p.x, p.y)));
-          e = --p.y;
-          for(int octave = 0; octave < 10; octave++){
-            e += 0.06 - abs(dot(cos(p.zzx * s), 0.3 - cos(p * s))) / s * 0.3;
+        vec2 r = u_resolution;
+        vec2 FC = gl_FragCoord.xy;
+        float t = u_time;
+        vec4 o = vec4(0.0, 0.0, 0.0, 1.0);
+        float i = 0.0, e = 0.0, R = 0.0, s = 0.0;
+        vec3 q = vec3(0.0), p = vec3(0.0);
+        vec3 d = vec3((FC.xy - 0.5 * r) / r.x * 0.4 + vec2(0.0, 0.85), 0.5);
+
+        q.zy -= 1.0;
+        for(int rayStep = 0; rayStep < 67; rayStep++){
+          i += 1.0;
+          o.rgb += hsv(0.1, e, min(e * s, 1.0) / 64.0);
+          s = 3.0;
+          p = q += d * e * R * 0.5 + 1e-4;
+          R = max(length(p), 1e-5);
+          p = vec3(log(R) - t * 0.3, exp(-p.z / R) + 0.2, atan(p.y, p.x));
+          p.y -= 1.0;
+          e = p.y;
+          for(int octave = 0; octave < 9; octave++){
+            if(s >= 1e3) break;
+            e += sin(dot(cos(p.zyy * s), 0.5 + cos(p.xxz * s))) / s * 0.3;
             s += s;
           }
-          if(abs(e) < 0.00045) break;
         }
-        float ridge = smoothstep(-0.08, 0.86, light);
-        float glow = pow(max(ridge, 0.0), 0.72);
-        vec3 color = vec3(glow * 1.08);
-        color *= 0.9 + 0.1 * cos(time * 0.24 + gl_FragCoord.y / r.y * 3.14159);
-        gl_FragColor = vec4(color, 1.0);
+        gl_FragColor = o;
       }
     `;
 
@@ -582,8 +591,8 @@
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
         const position = gl.getAttribLocation(program, 'position');
-        const resolution = gl.getUniformLocation(program, 'resolution');
-        const time = gl.getUniformLocation(program, 'time');
+        const resolution = gl.getUniformLocation(program, 'u_resolution');
+        const time = gl.getUniformLocation(program, 'u_time');
         gl.useProgram(program); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
         const resizeMountain = () => {

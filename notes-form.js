@@ -286,9 +286,6 @@
       ctx.letterSpacing = `${1.6 * this.dpr}px`;
       ctx.fillText(`SAMPLES  ${String(Math.round(count * eased)).padStart(4, '0')}`, w * .06, h * .1);
       ctx.fillText(`CONVERGENCE  ${(eased * 100).toFixed(1)}%`, w * .06, h * .88);
-      ctx.fillStyle = 'rgba(111,157,185,.62)';
-      ctx.font = `${Math.max(7, 7.5 * this.dpr)}px Inter, Arial, sans-serif`;
-      ctx.fillText(eased > .985 ? 'STABLE DISTRIBUTION' : 'ITERATIVE RESOLUTION', w * .06, h * .925);
       this.finish();
     }
 
@@ -764,5 +761,155 @@
     }
   }
 
+  class ShaderStudy {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.kind = canvas.dataset.shaderStudy;
+      this.gl = canvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'high-performance' });
+      if (!this.gl) {
+        this.fallback();
+        return;
+      }
+      this.visible = true;
+      this.start = performance.now();
+      this.frame = this.frame.bind(this);
+      this.resize = this.resize.bind(this);
+      if (!this.buildProgram()) {
+        this.fallback();
+        return;
+      }
+      new ResizeObserver(this.resize).observe(canvas);
+      new IntersectionObserver(([entry]) => { this.visible = entry.isIntersecting; }, { rootMargin: '120px' }).observe(canvas);
+      this.resize();
+      requestAnimationFrame(this.frame);
+    }
+
+    fallback() {
+      const replacement = this.canvas.cloneNode(false);
+      replacement.removeAttribute('data-shader-study');
+      replacement.dataset.formStudy = this.kind;
+      this.canvas.replaceWith(replacement);
+      this.gl = null;
+      new FormStudy(replacement);
+    }
+
+    compile(type, source) {
+      const shader = this.gl.createShader(type);
+      this.gl.shaderSource(shader, source);
+      this.gl.compileShader(shader);
+      if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+        this.gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    }
+
+    buildProgram() {
+      const gl = this.gl;
+      const vertex = this.compile(gl.VERTEX_SHADER, 'attribute vec2 position;void main(){gl_Position=vec4(position,0.,1.);}');
+      const fragment = this.compile(gl.FRAGMENT_SHADER, this.kind === 'golden-bloom' ? this.bloomSource() : this.sphereSource());
+      if (!vertex || !fragment) return false;
+      const program = gl.createProgram();
+      gl.attachShader(program, vertex);
+      gl.attachShader(program, fragment);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return false;
+      gl.useProgram(program);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
+      const position = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+      this.resolution = gl.getUniformLocation(program, 'u_resolution');
+      this.time = gl.getUniformLocation(program, 'u_time');
+      return true;
+    }
+
+    bloomSource() {
+      return `
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        void main(){
+          vec2 r=u_resolution,FC=gl_FragCoord.xy;
+          float t=u_time,i=0.,e=0.,R=0.,s=0.;
+          vec3 q=vec3(0.),p=vec3(0.);
+          vec3 d=vec3(FC.xy/r*.4+vec2(-.2,.8),1.);
+          vec3 color=vec3(0.);
+          q.zy-=1.;
+          for(int ray=0;ray<130;ray++){
+            i+=1.;s=13.;p=q+=d*e*R*.1;
+            R=max(length(p),1e-5);
+            p=vec3(log(R)-t*.3,exp(R-p.z*.5),atan(p.y,p.x)+t*.3);
+            p.y-=1.;e=p.y;
+            for(int octave=0;octave<7;octave++){
+              if(s>=1e3)break;
+              e+=dot(cos(p.xzz*s),sin(p.zzx*s+.5))/s;
+              s+=s;
+            }
+            float glow=max(0.,.007-e)*3.;
+            float depth=clamp(glow,0.,1.);
+            color+=mix(vec3(.18,.47,.78),vec3(.87,.96,1.),clamp(R*.3+q.y*.12,0.,1.))*depth;
+          }
+          color=1.-exp(-color*.82);
+          gl_FragColor=vec4(color,1.);
+        }
+      `;
+    }
+
+    sphereSource() {
+      return `
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        float hash31(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453123);}
+        float snoise3D(vec3 p){
+          vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+          float n000=hash31(i),n100=hash31(i+vec3(1,0,0)),n010=hash31(i+vec3(0,1,0)),n110=hash31(i+vec3(1,1,0));
+          float n001=hash31(i+vec3(0,0,1)),n101=hash31(i+vec3(1,0,1)),n011=hash31(i+vec3(0,1,1)),n111=hash31(i+vec3(1,1,1));
+          return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y),mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y),f.z)*2.-1.;
+        }
+        void main(){
+          vec2 r=u_resolution,FC=gl_FragCoord.xy;
+          float t=u_time,i=0.,g=0.,e=0.;
+          vec3 p=vec3(0.),q=vec3(0.),color=vec3(0.);
+          for(int ray=0;ray<23;ray++){
+            i+=1.;
+            color+=exp(-e*9e2)*vec3(.22,.55,1.05)*.3;
+            p=vec3((FC.xy-.5*r)/r.y*2.5,g*g-1.);
+            p+=snoise3D(p*2.+vec3(0.,-sin(t),cos(t))*.3)*.01;
+            q=cos(p*5.5);
+            e=max((length(p)-.8)-e,(distance(q,p*2.)*snoise3D(p*i+vec3(0.,0.,cos(t)*.2))/359.)+5e-3);
+            g+=e;
+          }
+          color=1.-exp(-max(color,0.)*1.6);
+          gl_FragColor=vec4(color,1.);
+        }
+      `;
+    }
+
+    resize() {
+      if (!this.gl) return;
+      const rect = this.canvas.getBoundingClientRect();
+      const mobile = matchMedia('(max-width:760px)').matches;
+      const dpr = Math.min(devicePixelRatio || 1, mobile ? .9 : 1.15);
+      this.canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      this.canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    frame(now) {
+      if (this.gl && !document.hidden && this.visible) {
+        const t = reducedMotion ? 1.5 : (now-this.start)*.00032;
+        this.gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);
+        this.gl.uniform1f(this.time,t);
+        this.gl.drawArrays(this.gl.TRIANGLES,0,6);
+      }
+      if (!reducedMotion) requestAnimationFrame(this.frame);
+    }
+  }
+
   document.querySelectorAll('[data-form-study]').forEach(canvas => new FormStudy(canvas));
+  document.querySelectorAll('[data-shader-study]').forEach(canvas => new ShaderStudy(canvas));
 })();
