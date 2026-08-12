@@ -204,3 +204,50 @@
   .insights-closing{padding:75px 24px 85px;grid-template-columns:1fr}.insights-closing h2{font-size:51px}.insights-closing>a{width:100%}
 }
 @media(prefers-reduced-motion:reduce){.insights-engraving,.insights-system-map:before,.map-field>ellipse,.map-field>path,.map-flow-lines path,.map-core-orbit,.map-core-ring,.map-node,.map-node-halo,.insights-bird-instruction i,.insights-report-heatmap:after,.insights-work-inbox:before,.insights-decision-live i,.insights-decision-reader.is-updating h4,.insights-decision-reader.is-updating .insights-decision-summary,.insights-decision-reader.is-updating dl,.insights-report-trace span,.insights-market-field span,.insights-way-line:before,.insights-way-line:after,.insights-way-line span{animation:none!important}.map-signal-packets,.insights-load-motion video{display:none}.insights-work-card,.insights-primary-action,.insights-decision-item,.insights-ocean-media video{transition:none}}
+
+/* Open editorial showcase: a persistent feature beside a scrolling story rail. */
+.insights-current{padding:clamp(82px,8vw,125px) max(32px,4vw) 145px}
+.insights-current-heading,.insights-work-grid{max-width:1760px}
+.insights-work-grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(370px,.58fr);grid-auto-rows:auto;gap:24px;align-items:start}
+.insights-featured-column{position:sticky;top:110px;height:calc(100vh - 140px);min-height:620px;max-height:840px}
+.insights-featured-column .insights-work-bird{width:100%;height:100%;min-height:0}
+.insights-featured-column .insights-bird-copy{padding:clamp(130px,17vh,210px) clamp(34px,4vw,64px) clamp(38px,5vw,64px)}
+.insights-featured-column .insights-bird-copy h3{max-width:760px;font-size:clamp(48px,4.6vw,78px)}
+.insights-featured-column .insights-bird-copy p{max-width:600px;font-size:16px}
+.insights-featured-column .insights-bird-link{right:clamp(34px,4vw,64px);bottom:clamp(42px,5vw,66px)}
+.insights-work-rail{display:flex;min-width:0;flex-direction:column;gap:24px}
+.insights-work-rail>.insights-work-card{width:100%;min-height:570px;transform:none}
+.insights-work-rail>.insights-work-card:hover{transform:none;box-shadow:0 18px 45px rgba(9,40,70,.12)}
+.insights-work-rail .insights-work-copy{padding:34px}
+.insights-work-rail .insights-work-copy h3{margin:28px 0 16px;font-size:clamp(32px,2.45vw,43px)}
+.insights-work-rail .insights-work-report{display:grid;grid-template-rows:285px auto;background:#f9f5ed}
+.insights-work-rail .insights-work-report .insights-work-copy{grid-row:2;width:100%;padding:34px}
+.insights-work-rail .insights-report-heatmap{position:relative;grid-row:1;right:auto;top:auto;bottom:auto;width:100%;height:285px;border:0;border-bottom:1px solid rgba(29,73,111,.25)}
+.insights-work-rail .insights-work-market{grid-template-rows:285px auto}
+.insights-work-rail .insights-work-energy{display:grid;grid-template-rows:285px auto}
+.insights-work-rail .insights-work-energy .insights-work-copy{grid-row:2;padding:34px}
+.insights-work-rail .insights-load-motion{position:relative;grid-row:1;right:auto;top:auto;bottom:auto;width:100%;height:285px}
+.insights-work-rail .insights-work-ocean{display:grid;grid-template-columns:1fr;min-height:0}
+.insights-work-rail .insights-ocean-media{min-height:310px}
+.insights-work-rail .insights-ocean-copy{min-height:390px;padding:38px 34px;border-left:0;border-top:1px solid rgba(147,198,230,.18)}
+.insights-work-rail .insights-ocean-copy h3{margin:52px 0 20px;font-size:clamp(40px,3vw,54px)}
+.insights-work-rail .insights-ocean-copy p{font-size:15px}
+.insights-work-rail .insights-ocean-copy .insights-work-link{margin-top:46px}
+
+@media(max-width:1100px){
+  .insights-work-grid{grid-template-columns:1fr}
+  .insights-featured-column{position:relative;top:auto;height:680px;min-height:0;max-height:none}
+  .insights-work-rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .insights-work-rail>.insights-work-card{min-height:570px}
+  .insights-work-rail .insights-work-ocean{grid-column:1/-1}
+}
+@media(max-width:720px){
+  .insights-current{padding:78px 18px 88px}
+  .insights-featured-column{height:620px}
+  .insights-work-rail{display:flex}
+  .insights-work-rail>.insights-work-card{min-height:0}
+  .insights-work-rail .insights-work-report,.insights-work-rail .insights-work-energy{grid-template-rows:220px auto}
+  .insights-work-rail .insights-report-heatmap,.insights-work-rail .insights-load-motion{height:220px}
+  .insights-work-rail .insights-work-market{grid-template-rows:220px auto}
+  .insights-work-rail .insights-ocean-media{min-height:300px}
+}
