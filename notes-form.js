@@ -286,9 +286,6 @@
       ctx.letterSpacing = `${1.6 * this.dpr}px`;
       ctx.fillText(`SAMPLES  ${String(Math.round(count * eased)).padStart(4, '0')}`, w * .06, h * .1);
       ctx.fillText(`CONVERGENCE  ${(eased * 100).toFixed(1)}%`, w * .06, h * .88);
-      ctx.fillStyle = 'rgba(111,157,185,.62)';
-      ctx.font = `${Math.max(7, 7.5 * this.dpr)}px Inter, Arial, sans-serif`;
-      ctx.fillText(eased > .985 ? 'STABLE DISTRIBUTION' : 'ITERATIVE RESOLUTION', w * .06, h * .925);
       this.finish();
     }
 
