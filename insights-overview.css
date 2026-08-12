@@ -106,7 +106,7 @@
 .insights-work-bird{display:block;isolation:isolate;background:#86afe0;color:#fff;min-height:500px;cursor:crosshair;transform:translateZ(0)}
 .insights-work-bird:hover{transform:none;box-shadow:0 22px 54px rgba(5,34,61,.2)}
 .insights-bird-stage{position:absolute;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 34%,rgba(232,245,255,.24),transparent 32%),linear-gradient(145deg,#75a5dc,#8eb8e5 58%,#76a7dd)}
-.insights-bird-stage:before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(244,250,255,.7) 0 1px,transparent 1.4px);background-size:42px 42px;opacity:.28;-webkit-mask-image:linear-gradient(to bottom,#000,transparent 72%);mask-image:linear-gradient(to bottom,#000,transparent 72%)}
+.insights-bird-stage:before{content:none}
 .insights-bird-stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(4,26,50,.94) 0,rgba(7,38,68,.58) 24%,transparent 57%),radial-gradient(ellipse at 50% 40%,transparent 28%,rgba(20,67,112,.16) 76%,rgba(7,35,63,.34) 100%)}
 .insights-bird-canvas{position:absolute;z-index:1;inset:0;width:100%;height:100%}
 .insights-bird-coordinate{position:absolute;z-index:3;left:34px;top:32px;display:flex;align-items:center;gap:13px;color:rgba(241,248,255,.8);font-size:9px;letter-spacing:.16em;text-transform:uppercase}.insights-bird-coordinate:before{content:"";width:28px;height:1px;background:#f1f8ff}.insights-bird-coordinate span{font-weight:850;color:#fff}.insights-bird-coordinate b{font-weight:650}
