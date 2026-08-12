@@ -258,7 +258,6 @@
   .insights-work-rail .insights-work-market{grid-template-rows:220px auto}
   .insights-work-rail .insights-ocean-media{min-height:300px}
 }
-
 /* Sticky correction: the rail establishes section height; the feature itself pins. */
 .insights-overview-page main{overflow:visible}
 .insights-current,.insights-work-grid,.insights-featured-column{height:auto;overflow:visible}
