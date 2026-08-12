@@ -850,7 +850,7 @@
             }
             float glow=max(0.,.007-e)*3.;
             float depth=clamp(glow,0.,1.);
-            color+=mix(vec3(.18,.47,.78),vec3(.87,.96,1.),clamp(R*.3+q.y*.12,0.,1.))*depth;
+            color+=mix(vec3(.25,.52,.67),vec3(.86,.94,.97),clamp(R*.3+q.y*.12,0.,1.))*depth;
           }
           color=1.-exp(-color*.82);
           float alpha=clamp(max(max(color.r,color.g),color.b)*1.55,0.,.92);
@@ -871,6 +871,11 @@
           float n001=hash31(i+vec3(0,0,1)),n101=hash31(i+vec3(1,0,1)),n011=hash31(i+vec3(0,1,1)),n111=hash31(i+vec3(1,1,1));
           return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y),mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y),f.z)*2.-1.;
         }
+        float fbm(vec3 p){
+          float n=0.,a=.56;
+          for(int octave=0;octave<4;octave++){n+=a*snoise3D(p);p=p*2.03+vec3(7.1,3.7,5.9);a*=.5;}
+          return n;
+        }
         void main(){
           vec2 r=u_resolution,FC=gl_FragCoord.xy;
           float t=u_time,i=0.,g=0.,e=0.;
@@ -885,13 +890,35 @@
             e=max((length(p)-.8)-e,(distance(q,p*2.)*snoise3D(p*i+vec3(0.,0.,cos(t)*.2))/359.)+5e-3);
             g+=e;
           }
+          vec2 uv=(FC-.5*r)/r.y*2.5;
+          float rr=dot(uv,uv),sphere=smoothstep(.67,.61,rr);
+          float z=sqrt(max(0.,.68-rr));
+          vec3 normal=normalize(vec3(uv,z));
+          float spin=t*.72;
+          mat2 rot=mat2(cos(spin),-sin(spin),sin(spin),cos(spin));
+          normal.xz=rot*normal.xz;
+          float texture=fbm(normal*7.+vec3(t*.22,-t*.16,t*.12));
+          float fine=fbm(normal*18.-vec3(t*.11,t*.19,0.));
+          vec3 h1=normalize(vec3(sin(t*.83)*.62,cos(t*.57)*.48,.72));
+          vec3 h2=normalize(vec3(cos(t*.41+2.1)*.72,sin(t*.76+1.4)*.58,.54));
+          vec3 h3=normalize(vec3(sin(t*.35+4.)*.48,-.7,cos(t*.51)*.58));
+          float hot1=pow(max(0.,dot(normal,h1)),34.);
+          float hot2=pow(max(0.,dot(normal,h2)),42.);
+          float hot3=pow(max(0.,dot(normal,h3)),48.);
+          float veins=smoothstep(.18,.72,texture*.74+fine*.42+.18);
+          float limb=pow(max(z,0.),.34);
+          float surface=sphere*(.11+.22*limb+.25*veins);
+          float illumination=sphere*(hot1*1.85+hot2*1.4+hot3*1.1+veins*.24);
           float field=max(max(energy.r,energy.g),energy.b);
-          vec3 color=1.-exp(-max(energy,0.)*2.35);
-          float hot=smoothstep(.34,1.15,field);
-          color=mix(color,vec3(.92,.98,1.),hot*.78);
-          float halo=smoothstep(.0,.38,field)*(1.-smoothstep(.38,1.5,field));
-          color+=vec3(.08,.25,.4)*halo*.42;
-          float alpha=clamp(field*2.8,0.,.96);
+          vec3 color=vec3(.17,.42,.57)*surface;
+          color+=vec3(.44,.76,.88)*sphere*veins*.18;
+          color+=mix(vec3(.38,.76,.94),vec3(.96,.99,1.),smoothstep(.2,.9,illumination))*illumination;
+          color+=1.-exp(-max(energy,0.)*1.15);
+          float rim=sphere*pow(1.-clamp(z/.82,0.,1.),3.2);
+          color+=vec3(.28,.65,.83)*rim*.5;
+          float halo=smoothstep(.82,.62,rr)-sphere;
+          color+=vec3(.13,.4,.58)*halo*.34;
+          float alpha=clamp(surface*1.65+illumination*1.45+field*1.4+rim*.55+halo*.28,0.,.96);
           gl_FragColor=vec4(color,alpha);
         }
       `;
