@@ -16,6 +16,7 @@
 .skar-ai-page main{overflow:hidden}.skar-ai-page *{box-sizing:border-box}.skar-ai-page button,.skar-ai-page textarea{font:inherit}
 .skar-ai-page .eyebrow{margin:0;color:var(--sai-blue-strong);font-size:10px;font-weight:850;letter-spacing:.2em;text-transform:uppercase}
 .skar-ai-page.capability-page-ai .capability-hero .eyebrow{color:#82b2ef}.skar-ai-page.capability-page-ai .capability-hero h1{color:#fff}.skar-ai-page.capability-page-ai .capability-hero p{color:#c5d1dc}
+.sai-hero-demo-link{display:inline-flex;align-items:center;gap:24px;margin-top:30px;padding:13px 0 8px;border-bottom:1px solid rgba(139,190,237,.66);color:#fff;font-size:11px;font-weight:850;letter-spacing:.03em}.sai-hero-demo-link span{color:#83baf0;transition:transform .2s ease}.sai-hero-demo-link:hover span,.sai-hero-demo-link:focus-visible span{transform:translate(3px,-3px)}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
 /* Product principles */

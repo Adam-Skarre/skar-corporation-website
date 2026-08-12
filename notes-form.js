@@ -50,6 +50,8 @@
         else if (this.kind === 'infinite') this.drawInfinite(t);
         else if (this.kind === 'transport') this.drawTransport(t);
         else if (this.kind === 'torus-knot') this.drawTorusKnot(t);
+        else if (this.kind === 'golden-bloom') this.drawGoldenBloom(t);
+        else if (this.kind === 'molten-sphere') this.drawMoltenSphere(t);
       }
       requestAnimationFrame(this.frame);
     }
@@ -658,6 +660,106 @@
         ctx.strokeStyle = 'rgba(187,222,218,.24)';
         ctx.stroke();
       }
+      this.finish();
+    }
+
+    drawGoldenBloom(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .55;
+      const scale = Math.min(w, h) * .37;
+      const petals = this.mobile ? 94 : 148;
+      const strands = this.mobile ? 3 : 5;
+      this.prepare(cx, cy, scale * 1.45);
+
+      const halo = ctx.createRadialGradient(cx, cy, scale * .06, cx, cy, scale * 1.08);
+      halo.addColorStop(0, 'rgba(255,187,54,.2)');
+      halo.addColorStop(.46, 'rgba(205,112,20,.07)');
+      halo.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, 0, w, h);
+
+      for (let p = 0; p < petals; p++) {
+        const u = p / petals;
+        const angle = p * 2.399963 + t * .24;
+        const band = .18 + .82 * Math.sqrt(u);
+        const lift = Math.sin(u * Math.PI) ** .7;
+        const curl = .4 + .5 * Math.sin(p * 1.71 + t * 2.2);
+        for (let strand = 0; strand < strands; strand++) {
+          const offset = (strand / Math.max(1, strands - 1) - .5) * .055;
+          ctx.beginPath();
+          for (let i = 0; i <= 34; i++) {
+            const s = i / 34;
+            const open = Math.sin(s * Math.PI);
+            const radial = (.1 + band * (.28 + s * .72)) * (1 + .075 * Math.sin(t * 2.6 + p * .23));
+            const sweep = angle + (.48 + curl * .34) * s + offset * open * 5;
+            const x = Math.cos(sweep) * radial;
+            const y = Math.sin(sweep) * radial * .7 - lift * open * (.56 + .2 * u) + .13 * s;
+            const px = cx + x * scale;
+            const py = cy + y * scale;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          const shimmer = .5 + .5 * Math.sin(p * .43 + strand * 1.9 - t * 5.4);
+          ctx.strokeStyle = `rgba(${202 + shimmer * 53},${104 + shimmer * 123},${18 + shimmer * 68},${.08 + shimmer * .34})`;
+          ctx.lineWidth = Math.max(.52, this.dpr * (.38 + shimmer * .32));
+          ctx.shadowColor = 'rgba(255,157,31,.28)';
+          ctx.shadowBlur = shimmer * 5 * this.dpr;
+          ctx.stroke();
+        }
+      }
+      this.finish();
+    }
+
+    drawMoltenSphere(t) {
+      const ctx = this.ctx;
+      const w = this.width, h = this.height;
+      const cx = w * .5, cy = h * .5;
+      const radius = Math.min(w, h) * .31;
+      const count = this.mobile ? 4100 : 7200;
+      this.prepare(cx, cy, radius * 1.7);
+
+      const aura = ctx.createRadialGradient(cx, cy, radius * .42, cx, cy, radius * 1.55);
+      aura.addColorStop(0, 'rgba(255,117,23,.2)');
+      aura.addColorStop(.55, 'rgba(164,54,8,.055)');
+      aura.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = aura;
+      ctx.fillRect(0, 0, w, h);
+
+      const rotation = t * .58;
+      for (let i = 0; i < count; i++) {
+        const z = 1 - 2 * (i + .5) / count;
+        const ring = Math.sqrt(Math.max(0, 1 - z * z));
+        const phi = i * 2.399963 + rotation;
+        const sx = Math.cos(phi) * ring;
+        const sy = z;
+        const sz = Math.sin(phi) * ring;
+        if (sz < -.12) continue;
+        const noise = Math.sin(sx * 19 + t * 2.7) * Math.sin(sy * 23 - t * 2.1) +
+          .55 * Math.sin((sx + sy) * 43 + sz * 17 - t * 3.3);
+        const fissure = Math.max(0, Math.abs(noise) - .67) / .88;
+        const light = Math.max(0, .3 + sx * -.38 + sy * -.45 + sz * .76);
+        const rim = Math.max(0, 1 - sz) ** 2;
+        const heat = Math.min(1, light * .72 + fissure * 1.35 + .12 * Math.sin(i * .071 + t * 4));
+        const perspective = .94 + sz * .07;
+        const px = cx + sx * radius * perspective;
+        const py = cy + sy * radius * perspective;
+        const red = 90 + heat * 165;
+        const green = 26 + heat * 112;
+        const blue = 7 + heat * 26;
+        const alpha = Math.max(.05, .22 + light * .56 - rim * .16);
+        const size = (.48 + light * .82 + fissure * .9) * this.dpr;
+        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha})`;
+        ctx.fillRect(px, py, size, size);
+      }
+
+      const edge = ctx.createRadialGradient(cx - radius * .16, cy - radius * .2, radius * .1, cx, cy, radius * 1.03);
+      edge.addColorStop(0, 'rgba(255,178,74,.055)');
+      edge.addColorStop(.8, 'rgba(160,55,10,.035)');
+      edge.addColorStop(1, 'rgba(0,0,0,.54)');
+      ctx.fillStyle = edge;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 1.015, 0, TAU);
+      ctx.fill();
       this.finish();
     }
   }
