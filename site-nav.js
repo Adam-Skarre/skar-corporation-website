@@ -181,6 +181,11 @@
   const footer = document.querySelector('.footer');
   if (footer) {
     footer.innerHTML = `
+      <a class="footer-signature" href="/contact/" aria-label="Solve with SKAR — start a conversation">
+        <span>Solve with</span>
+        <img src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR">
+        <i aria-hidden="true">↗</i>
+      </a>
       <div class="footer-grid">
         <div class="footer-identity">
           <a class="brand" href="/" aria-label="Skar Technologies home"><img class="brand-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
