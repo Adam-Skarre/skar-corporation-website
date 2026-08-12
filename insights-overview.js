@@ -507,6 +507,112 @@
     }
   }
 
+  const mountainCanvas = document.querySelector('[data-insights-mountain-loop]');
+  if (mountainCanvas) {
+    const gl = mountainCanvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'high-performance' });
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const container = mountainCanvas.parentElement;
+    let mountainFrame = 0;
+    let mountainVisible = true;
+    let mountainStart = performance.now();
+
+    const vertexSource = `
+      attribute vec2 position;
+      void main(){ gl_Position = vec4(position, 0.0, 1.0); }
+    `;
+    // Adapted from the supplied compact GLSL study. The logarithmic radial
+    // transform makes forward camera travel reveal new self-similar terrain.
+    const fragmentSource = `
+      precision highp float;
+      uniform vec2 resolution;
+      uniform float time;
+      void main(){
+        vec2 r = resolution;
+        vec2 fc = gl_FragCoord.xy;
+        float i = 0.0;
+        float e = 1.0;
+        float R = 1.0;
+        float s = 1.0;
+        float light = 0.0;
+        vec3 q;
+        vec3 p;
+        vec3 d = vec3((fc - 0.5 * r) / r.y + vec2(cos(time) * 0.04, 1.0), 0.5);
+        q = vec3(0.0, -1.0, -1.0);
+        for(int step = 0; step < 99; step++){
+          light += min(e * s, 0.8 - e) / 50.0;
+          s = 1.0;
+          p = q += d * e * R * 0.4 - e;
+          R = max(length(p), 0.0001);
+          p = vec3(log(R) - time, exp(-p.z / R + 0.6), abs(atan(p.x, p.y)));
+          e = --p.y;
+          for(int octave = 0; octave < 10; octave++){
+            e += 0.06 - abs(dot(cos(p.zzx * s), 0.3 - cos(p * s))) / s * 0.3;
+            s += s;
+          }
+          if(abs(e) < 0.00045) break;
+        }
+        float ridge = smoothstep(-0.08, 0.86, light);
+        float glow = pow(max(ridge, 0.0), 0.72);
+        vec3 color = vec3(glow * 1.08);
+        color *= 0.9 + 0.1 * cos(time * 0.24 + gl_FragCoord.y / r.y * 3.14159);
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `;
+
+    const compile = (type, source) => {
+      const shader = gl?.createShader(type);
+      if (!gl || !shader) return null;
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) { gl.deleteShader(shader); return null; }
+      return shader;
+    };
+
+    const vertex = gl && compile(gl.VERTEX_SHADER, vertexSource);
+    const fragment = gl && compile(gl.FRAGMENT_SHADER, fragmentSource);
+    const program = gl && vertex && fragment ? gl.createProgram() : null;
+    if (!gl || !program || !vertex || !fragment) {
+      container?.classList.add('is-fallback');
+    } else {
+      gl.attachShader(program, vertex); gl.attachShader(program, fragment); gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        container?.classList.add('is-fallback');
+      } else {
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
+        const position = gl.getAttribLocation(program, 'position');
+        const resolution = gl.getUniformLocation(program, 'resolution');
+        const time = gl.getUniformLocation(program, 'time');
+        gl.useProgram(program); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+        const resizeMountain = () => {
+          const bounds = container.getBoundingClientRect();
+          const ratio = Math.min(window.devicePixelRatio || 1, bounds.width < 700 ? 1.35 : 1.6);
+          mountainCanvas.width = Math.max(1, Math.round(bounds.width * ratio));
+          mountainCanvas.height = Math.max(1, Math.round(bounds.height * ratio));
+          gl.viewport(0, 0, mountainCanvas.width, mountainCanvas.height);
+        };
+        const drawMountain = now => {
+          if (mountainVisible) {
+            const elapsed = reducedMotion ? 1.8 : (now - mountainStart) * 0.00018;
+            gl.uniform2f(resolution, mountainCanvas.width, mountainCanvas.height);
+            gl.uniform1f(time, elapsed);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+          }
+          if (!reducedMotion) mountainFrame = window.requestAnimationFrame(drawMountain);
+        };
+        const resizeObserver = 'ResizeObserver' in window ? new ResizeObserver(resizeMountain) : null;
+        if (resizeObserver) resizeObserver.observe(container); else window.addEventListener('resize', resizeMountain, { passive: true });
+        const visibilityObserver = 'IntersectionObserver' in window ? new IntersectionObserver(([entry]) => { mountainVisible = entry.isIntersecting; }, { threshold: 0.02 }) : null;
+        if (visibilityObserver) visibilityObserver.observe(container);
+        mountainCanvas.addEventListener('webglcontextlost', event => { event.preventDefault(); window.cancelAnimationFrame(mountainFrame); container.classList.add('is-fallback'); });
+        resizeMountain(); drawMountain(performance.now());
+        window.addEventListener('pagehide', () => window.cancelAnimationFrame(mountainFrame), { once: true });
+      }
+    }
+  }
+
   const oceanCard = document.querySelector('[data-insights-ocean]');
   const oceanCanvas = document.querySelector('[data-insights-ocean-particles]');
   if (oceanCard && oceanCanvas) {
