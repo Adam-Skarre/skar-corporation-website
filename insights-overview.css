@@ -203,6 +203,13 @@
   .insights-method-title{margin-bottom:45px}.insights-method-field{grid-template-columns:1fr}.insights-method-field article,.insights-method-field article:nth-child(3),.insights-method-field article:nth-child(4){min-height:260px;padding:28px 0;border-right:0;border-bottom:1px solid var(--insights-line)}.insights-method-field article:last-child{border-bottom:0}
   .insights-closing{padding:75px 24px 85px;grid-template-columns:1fr}.insights-closing h2{font-size:51px}.insights-closing>a{width:100%}
 }
+
+/* The former About terrain field now leads the featured insight. */
+.insights-work-terrain{cursor:crosshair}
+.insights-work-terrain .insights-bird-stage{background:linear-gradient(145deg,#75a5dc,#8eb8e5 58%,#76a7dd)}
+.insights-work-terrain .insights-terrain-canvas{z-index:1;opacity:.84;mix-blend-mode:screen;-webkit-mask-image:linear-gradient(to bottom,transparent 10%,rgba(0,0,0,.45) 31%,#000 56%);mask-image:linear-gradient(to bottom,transparent 10%,rgba(0,0,0,.45) 31%,#000 56%)}
+.insights-work-terrain.is-mountain-active .insights-terrain-canvas{opacity:1}
+@media(max-width:720px){.insights-work-terrain .insights-terrain-canvas{opacity:.72;-webkit-mask-image:linear-gradient(to bottom,transparent 22%,#000 52%);mask-image:linear-gradient(to bottom,transparent 22%,#000 52%)}}
 @media(prefers-reduced-motion:reduce){.insights-engraving,.insights-system-map:before,.map-field>ellipse,.map-field>path,.map-flow-lines path,.map-core-orbit,.map-core-ring,.map-node,.map-node-halo,.insights-bird-instruction i,.insights-report-heatmap:after,.insights-work-inbox:before,.insights-decision-live i,.insights-decision-reader.is-updating h4,.insights-decision-reader.is-updating .insights-decision-summary,.insights-decision-reader.is-updating dl,.insights-report-trace span,.insights-market-field span,.insights-way-line:before,.insights-way-line:after,.insights-way-line span{animation:none!important}.map-signal-packets,.insights-load-motion video{display:none}.insights-work-card,.insights-primary-action,.insights-decision-item,.insights-ocean-media video{transition:none}}
 
 /* Open editorial showcase: a persistent feature beside a scrolling story rail. */
@@ -250,4 +257,24 @@
   .insights-work-rail .insights-report-heatmap,.insights-work-rail .insights-load-motion{height:220px}
   .insights-work-rail .insights-work-market{grid-template-rows:220px auto}
   .insights-work-rail .insights-ocean-media{min-height:300px}
+}
+/* Sticky correction: the rail establishes section height; the feature itself pins. */
+.insights-overview-page main{overflow:visible}
+.insights-current,.insights-work-grid,.insights-featured-column{height:auto;overflow:visible}
+.insights-work-grid{align-items:start}
+.insights-featured-column{align-self:stretch;min-height:0;max-height:none}
+.insights-featured-column .insights-work-bird{position:sticky;top:110px;height:calc(100vh - 140px);min-height:560px;max-height:760px}
+.insights-work-rail>.insights-work-card{min-height:650px}
+
+@media(min-width:901px){
+  .insights-work-grid{grid-template-columns:minmax(0,2.1fr) minmax(360px,1fr)}
+  .insights-work-rail{display:flex;flex-direction:column}
+  .insights-work-rail .insights-work-ocean{grid-column:auto}
+}
+@media(max-width:900px){
+  .insights-work-grid{grid-template-columns:1fr}
+  .insights-featured-column{align-self:auto}
+  .insights-featured-column .insights-work-bird{position:relative;top:auto;height:620px;min-height:0;max-height:none}
+  .insights-work-rail{display:flex;flex-direction:column}
+  .insights-work-rail>.insights-work-card{min-height:520px}
 }

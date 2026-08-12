@@ -474,6 +474,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
   .about-mountain-particles{opacity:.58;-webkit-mask-image:linear-gradient(to bottom,transparent 28%,#000 55%);mask-image:linear-gradient(to bottom,transparent 28%,#000 55%)}
 }
 @media(prefers-reduced-motion:reduce){.about-mountain-particles{opacity:.44}}
+
+/* About hero: user-supplied atmospheric mountain photograph. */
+.page-hero-about:before{background-image:url("/assets/about-atmospheric-mountain.jpeg");background-position:center 62%;transform:scale(1.025);animation:aboutMountainZoom 30s ease-in-out infinite alternate}
+.page-hero-about:after{background:linear-gradient(90deg,rgba(4,17,31,.8) 0%,rgba(4,17,31,.48) 48%,rgba(4,17,31,.12) 100%),linear-gradient(0deg,rgba(4,17,31,.35),transparent 58%)}
+@media(max-width:760px){.page-hero-about:before{background-position:58% center}.page-hero-about:after{background:linear-gradient(90deg,rgba(4,17,31,.7),rgba(4,17,31,.28)),linear-gradient(0deg,rgba(4,17,31,.38),transparent 62%)}}
 .page-hero-careers:before{
   animation:careerPathForward 9s cubic-bezier(.25,.1,.25,1) infinite;
 }
@@ -5381,3 +5386,12 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(max-width:760px){.story-copy .story-title{font-size:clamp(45px,13.5vw,58px)}}
 @media(max-width:390px){.story-copy .story-title{font-size:42px}}
 @media(max-width:650px),(prefers-reduced-motion:reduce){.story-copy .story-title .blue{animation:none}}
+
+/* Final About hero treatment: atmospheric source photograph with editorial contrast. */
+.page-hero-about{background:#496d91!important;color:#fff}
+.page-hero-about:before{content:"";position:absolute;z-index:0!important;inset:-3%!important;background:url("/assets/about-atmospheric-mountain.jpeg") center 62%/cover no-repeat!important;transform:scale(1.025)!important;animation:aboutMountainZoom 30s ease-in-out infinite alternate!important;will-change:transform}
+.page-hero-about:after{content:"";position:absolute;z-index:1!important;inset:0!important;border:0;background:linear-gradient(90deg,rgba(5,24,43,.78) 0%,rgba(5,24,43,.44) 48%,rgba(5,24,43,.1) 100%),linear-gradient(0deg,rgba(5,24,43,.34),transparent 60%)!important;pointer-events:none}
+.page-hero-about .about-hero-copy{z-index:2;color:#fff}
+.page-hero-about .about-hero-copy .eyebrow,.page-hero-about .about-hero-copy h1,.page-hero-about .about-hero-copy h1 .blue-type,.page-hero-about .about-hero-copy>p:last-child{color:#fff}
+@media(max-width:650px){.page-hero-about{background:#496d91!important}.page-hero-about:before{background-position:58% center!important}.page-hero-about:after{inset:0!important;background:linear-gradient(90deg,rgba(5,24,43,.72),rgba(5,24,43,.25)),linear-gradient(0deg,rgba(5,24,43,.4),transparent 62%)!important}}
+@media(prefers-reduced-motion:reduce){.page-hero-about:before{animation:none!important;transform:scale(1.02)!important}}
