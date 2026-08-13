@@ -140,7 +140,7 @@
 
   header.innerHTML = `
     <a class="nav-brand" href="/" aria-label="Skar Technologies home">
-      <img class="nav-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR">
+      <img class="nav-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR — Skar Technologies">
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="skar-mobile-navigation" aria-label="Open navigation">
       <span></span><span></span><span></span><b>Menu</b>
@@ -161,7 +161,7 @@
     <div class="mobile-nav-shell" role="dialog" aria-modal="true" aria-label="Site navigation">
       <div class="mobile-nav-head">
         <a class="mobile-nav-brand" href="/" aria-label="Skar Technologies home">
-          <img src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR">
+          <img src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR — Skar Technologies">
         </a>
         <button class="mobile-nav-close" type="button" aria-label="Close navigation"><span aria-hidden="true"></span></button>
       </div>
@@ -183,7 +183,8 @@
     footer.innerHTML = `
       <div class="footer-grid">
         <div class="footer-identity">
-          <a class="brand" href="/" aria-label="Skar Technologies home"><img class="brand-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
+          <a class="brand" href="/" aria-label="Skar Technologies home"><img class="brand-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR — Skar Technologies"></a>
+          <strong class="footer-company-name">Skar Technologies</strong>
           <p>Knowledge. Vision. Engineering.</p>
         </div>
         <div class="footer-section"><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
@@ -194,9 +195,9 @@
         <div class="copyright">© 2026 Skar Technologies Inc. All rights reserved.</div>
         <div class="footer-follow" aria-label="Follow SKAR">
           <span>Follow SKAR</span>
-          <a href="https://x.com/SkarTechInc" target="_blank" rel="noopener noreferrer" aria-label="Follow Skar Technologies on X at @SkarTechInc"><b class="footer-social-x" aria-hidden="true">X</b></a>
-          <a href="https://www.linkedin.com/company/skar-corp" target="_blank" rel="noopener noreferrer" aria-label="Follow SKAR on LinkedIn"><b class="footer-social-linkedin" aria-hidden="true">in</b></a>
-          <a href="https://www.instagram.com/skartechnologies/" target="_blank" rel="noopener noreferrer" aria-label="Follow Skar Technologies on Instagram at @skartechnologies">
+          <a href="https://x.com/SkarTechInc" target="_blank" rel="me noopener noreferrer" aria-label="Follow Skar Technologies on X at @SkarTechInc"><b class="footer-social-x" aria-hidden="true">X</b></a>
+          <a href="https://www.linkedin.com/company/skar-corp" target="_blank" rel="me noopener noreferrer" aria-label="Follow Skar Technologies on LinkedIn"><b class="footer-social-linkedin" aria-hidden="true">in</b></a>
+          <a href="https://www.instagram.com/skartechnologies/" target="_blank" rel="me noopener noreferrer" aria-label="Follow Skar Technologies on Instagram at @skartechnologies">
             <svg class="footer-social-instagram" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <rect x="3.25" y="3.25" width="17.5" height="17.5" rx="5"></rect>
               <circle cx="12" cy="12" r="4.1"></circle>
