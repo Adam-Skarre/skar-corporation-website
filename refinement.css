@@ -5381,3 +5381,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .page-hero-about .about-hero-copy .eyebrow,.page-hero-about .about-hero-copy h1,.page-hero-about .about-hero-copy h1 .blue-type,.page-hero-about .about-hero-copy>p:last-child{color:#fff}
 @media(max-width:650px){.page-hero-about{background:#496d91!important}.page-hero-about:before{background-position:58% center!important}.page-hero-about:after{inset:0!important;background:linear-gradient(90deg,rgba(5,24,43,.72),rgba(5,24,43,.25)),linear-gradient(0deg,rgba(5,24,43,.4),transparent 62%)!important}}
 @media(prefers-reduced-motion:reduce){.page-hero-about:before{animation:none!important;transform:scale(1.02)!important}}
+
+/* About hero: live mathematical sunrise and wave field. */
+.page-hero-about{background:#020305!important}
+.page-hero-about:before{content:none!important;background:none!important;animation:none!important}
+.page-hero-about .about-sunrise-canvas{position:absolute;z-index:0;inset:0;display:block;width:100%;height:100%}
+.page-hero-about:after{z-index:1!important;background:linear-gradient(90deg,rgba(1,7,13,.88) 0%,rgba(2,9,16,.69) 38%,rgba(2,7,11,.12) 70%,rgba(0,0,0,.08) 100%),linear-gradient(0deg,rgba(1,8,14,.5),transparent 54%)!important}
+.page-hero-about .about-hero-copy{position:relative;z-index:2}
+@media(max-width:650px){.page-hero-about{background:#020305!important}.page-hero-about:after{background:linear-gradient(90deg,rgba(1,7,13,.8),rgba(2,8,14,.28)),linear-gradient(0deg,rgba(1,7,13,.55),transparent 62%)!important}}
