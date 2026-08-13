@@ -1,28 +1,19 @@
 (() => {
   const app = document.querySelector('[data-ai-app]'); if (!app) return;
-  const key = 'skar-ai-demo-threads-v2', list = app.querySelector('[data-thread-list]'), conversation = app.querySelector('[data-conversation]'), form = app.querySelector('[data-composer]'), input = app.querySelector('[data-input]'), counter = app.querySelector('[data-count]'), send = app.querySelector('[data-send]');
+  const key = 'skar-ai-threads-v3', list = app.querySelector('[data-thread-list]'), conversation = app.querySelector('[data-conversation]'), form = app.querySelector('[data-composer]'), input = app.querySelector('[data-input]'), counter = app.querySelector('[data-count]'), send = app.querySelector('[data-send]');
   let threads = [], activeId = null, thinking = false;
   try { threads = JSON.parse(localStorage.getItem(key) || '[]'); } catch (_) { threads = []; }
   if (!Array.isArray(threads)) threads = [];
   const active = () => threads.find(thread => thread.id === activeId);
   const save = () => localStorage.setItem(key, JSON.stringify(threads.slice(0, 24)));
   const title = text => text.replace(/\s+/g, ' ').trim().split(' ').slice(0, 7).join(' ') || 'New conversation';
-  const diagnose = prompt => {
-    const text = prompt.toLowerCase(), quote = /quote|proposal|estimate/.test(text), rework = /rework|redo|error|return|defect|fabrication/.test(text), approval = /approv|review|sign.?off|manager|director/.test(text), queue = /queue|wait|delay|days|late|slow|stall|backlog/.test(text), measure = /measure|prove|metric|worked|verify/.test(text);
-    if (measure) return 'Start with one flow metric and one outcome metric.\n\nFlow: measure end-to-end lead time, wait time at the suspected constraint, and work-in-process immediately before it.\n\nOutcome: choose the result the process exists to produce—on-time delivery, first-pass yield, conversion, or resolution time.\n\nRecord a baseline, change one operating rule, and compare the next 10–20 cases. A change worked only if the system-level outcome improves without moving the queue somewhere else.';
-    if (quote) return 'The nine-day total is probably not nine days of work. It is likely a short amount of active estimating surrounded by waiting at handoffs.\n\nLikely constraint: technical or commercial approval after the quote is drafted.\n\nSeparate elapsed time into request intake, active estimating, technical review, pricing approval, and customer-ready release. For the next 10 quotes, timestamp entry and exit at each step.\n\nNext action: identify the step with the longest median wait—not the longest touch time—and test a complete-intake gate before adding capacity.';
-    if (rework) return 'Rework is acting like hidden demand: every returned unit consumes capacity twice and competes with first-pass work.\n\nLikely constraint: the inspection or correction loop, especially if returned work re-enters the front of a shared queue.\n\nTrack first-pass yield, hours spent on repeat work, and queue age by reason code. Then separate first-pass and rework priority for one controlled week.\n\nSuccess signal: higher throughput and shorter total lead time without a rise in escaped defects.';
-    if (approval) return 'The description points to concentrated decision rights rather than broad capacity loss.\n\nLikely constraint: a review or approval queue owned by too few people.\n\nMeasure arrival rate, median wait, exception frequency, and the percentage of submissions returned incomplete. Then define which decisions can be pre-approved, delegated, or accepted by rule.\n\nNext action: pilot a complete-intake checklist and delegated threshold on the next 10 cases.';
-    if (queue) return 'Waiting appears concentrated, but the delayed step needs to be named before changing the process.\n\nMap five timestamps: work enters, active work begins, active work ends, approval begins, and the outcome is released. The largest gap is your first constraint candidate.\n\nNext action: sample 10 recent cases and calculate wait time versus touch time at every handoff. Improve the step controlling total throughput, not the busiest-looking team.';
-    return 'I can help find the constraint, but I need three pieces of operating context:\n\n1. What enters the process?\n2. Where does work wait, repeat, or require approval?\n3. Which outcome is late, expensive, or unreliable?\n\nAdd rough volumes and elapsed times if you have them. Estimates are enough for a first diagnostic.';
-  };
-  const requestResponse = async prompt => {
+  const requestResponse = async messages => {
     const endpoint = String(window.SKAR_AI_ENDPOINT || document.querySelector('meta[name="skar-ai-endpoint"]')?.content || '').trim();
-    if (!endpoint) return diagnose(prompt);
-    const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, threadId: activeId }) });
-    if (!response.ok) throw new Error(`SKAR AI endpoint returned ${response.status}`);
+    if (!endpoint) throw new Error('SKAR AI endpoint is not configured');
+    const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages }) });
     const payload = await response.json();
-    const text = payload.answer || payload.message || payload.output;
+    if (!response.ok) throw new Error(payload.error || `SKAR AI endpoint returned ${response.status}`);
+    const text = payload.answer;
     if (typeof text !== 'string' || !text.trim()) throw new Error('SKAR AI returned an invalid response');
     return text.trim();
   };
@@ -32,7 +23,7 @@
   const render = () => { renderThreads(); renderConversation(); };
   const updateInput = () => { input.style.height = 'auto'; input.style.height = `${Math.min(170, input.scrollHeight)}px`; counter.textContent = `${input.value.length} / 4000`; };
   const closeSidebar = () => app.classList.remove('sidebar-open');
-  const submit = async prompt => { if (!prompt || thinking) return; let thread = active(); if (!thread) { thread = { id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`, title: title(prompt), messages: [] }; threads.unshift(thread); activeId = thread.id; } thread.messages.push({ role: 'user', text: prompt }); if (thread.messages.filter(item => item.role === 'user').length === 1) thread.title = title(prompt); input.value = ''; updateInput(); thinking = true; send.disabled = true; save(); render(); try { const answer = await requestResponse(prompt); const current = active(); if (current) current.messages.push({ role: 'assistant', text: answer }); } catch (error) { const current = active(); if (current) current.messages.push({ role: 'assistant', text: 'I could not reach the SKAR AI service. Your message remains in this browser and was not sent again.', error: true, prompt }); } finally { thinking = false; send.disabled = false; save(); render(); input.focus(); } };
+  const submit = async prompt => { if (!prompt || thinking) return; let thread = active(); if (!thread) { thread = { id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`, title: title(prompt), messages: [] }; threads.unshift(thread); activeId = thread.id; } thread.messages.push({ role: 'user', text: prompt }); if (thread.messages.filter(item => item.role === 'user').length === 1) thread.title = title(prompt); input.value = ''; updateInput(); thinking = true; send.disabled = true; save(); render(); try { const answer = await requestResponse(thread.messages.filter(message => !message.error)); const current = active(); if (current) current.messages.push({ role: 'assistant', text: answer }); } catch (error) { const current = active(); if (current) current.messages.push({ role: 'assistant', text: `SKAR AI is not available yet. ${error.message || 'The secure service could not be reached.'}`, error: true, prompt }); } finally { thinking = false; send.disabled = false; save(); render(); input.focus(); } };
   form.addEventListener('submit', event => { event.preventDefault(); submit(input.value.trim()); });
   input.addEventListener('input', updateInput); input.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); } });
   app.querySelectorAll('[data-starter]').forEach(button => button.addEventListener('click', () => submit(button.dataset.starter)));
