@@ -366,15 +366,17 @@
 
   function updateHeaderFromScroll() {
     scrollTicking = false;
-    if (!mobileQuery.matches || menuOpen) {
+    const desktopMenuOpen = desktopGroups.some((group) => group.classList.contains('open'));
+    if (menuOpen || desktopMenuOpen) {
+      showHeader();
       lastScrollY = Math.max(0, window.scrollY);
       return;
     }
     const currentY = Math.max(0, window.scrollY);
     const delta = currentY - lastScrollY;
-    if (currentY <= 8 || delta < -1) {
+    if (currentY <= 8 || delta < -2) {
       showHeader();
-    } else if (delta > 2 && currentY > header.offsetHeight + 12) {
+    } else if (delta > 3 && currentY > header.offsetHeight + 12) {
       header.classList.add('is-hidden');
     }
     lastScrollY = currentY;
