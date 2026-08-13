@@ -139,8 +139,7 @@
 
   header.innerHTML = `
     <a class="nav-brand" href="/" aria-label="Skar Technologies home">
-      <span class="nav-emblem" aria-hidden="true"></span>
-      <img class="nav-wordmark" src="/assets/skar-logotype.png" alt="">
+      <img class="nav-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR">
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="skar-mobile-navigation" aria-label="Open navigation">
       <span></span><span></span><span></span><b>Menu</b>
@@ -161,7 +160,7 @@
     <div class="mobile-nav-shell" role="dialog" aria-modal="true" aria-label="Site navigation">
       <div class="mobile-nav-head">
         <a class="mobile-nav-brand" href="/" aria-label="Skar Technologies home">
-          <img src="/assets/skar-logotype.png" alt="">
+          <img src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR">
         </a>
         <button class="mobile-nav-close" type="button" aria-label="Close navigation"><span aria-hidden="true"></span></button>
       </div>
