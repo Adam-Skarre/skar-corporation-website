@@ -44,6 +44,7 @@
 .form-studies{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 .form-study{display:grid;grid-template-rows:auto 1fr;border:1px solid rgba(143,183,219,.19);background:linear-gradient(145deg,rgba(13,48,78,.75),rgba(4,21,37,.78));overflow:hidden}
 .form-study-visual{height:420px;border-bottom:1px solid rgba(143,183,219,.16);background:radial-gradient(circle at 50% 50%,rgba(46,132,170,.1),transparent 63%)}
+.form-study-visual.shader-visual{background:#020202}
 .form-canvas[data-shader-study]{background:transparent}
 .form-study-copy{display:flex;padding:34px 36px 40px;flex-direction:column}
 .form-study-copy small{color:#79a8e9;font-size:9px;font-weight:800;letter-spacing:.14em}.form-study-copy h3{margin:17px 0 14px;font-size:34px;letter-spacing:-.035em}.form-study-copy p{margin:0;color:#afbfcc;font-size:15px;line-height:1.7}

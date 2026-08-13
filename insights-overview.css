@@ -227,9 +227,9 @@
 /* The former About terrain field now leads the featured insight. */
 .insights-work-terrain{cursor:crosshair}
 .insights-work-terrain .insights-bird-stage{background:linear-gradient(145deg,#75a5dc,#8eb8e5 58%,#76a7dd)}
-.insights-work-terrain .insights-terrain-canvas{z-index:1;opacity:.92;mix-blend-mode:screen;transform:scale(1.2);transform-origin:50% 72%;-webkit-mask-image:linear-gradient(to bottom,transparent 2%,rgba(0,0,0,.58) 19%,#000 42%);mask-image:linear-gradient(to bottom,transparent 2%,rgba(0,0,0,.58) 19%,#000 42%)}
+.insights-work-terrain .insights-terrain-canvas{z-index:1;opacity:1;mix-blend-mode:screen;transform:translate3d(0,-3%,0) scale(1.48);transform-origin:50% 72%;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.72) 13%,#000 34%);mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.72) 13%,#000 34%)}
 .insights-work-terrain.is-mountain-active .insights-terrain-canvas{opacity:1}
-@media(max-width:720px){.insights-work-terrain .insights-terrain-canvas{opacity:.82;transform:scale(1.12);-webkit-mask-image:linear-gradient(to bottom,transparent 12%,#000 42%);mask-image:linear-gradient(to bottom,transparent 12%,#000 42%)}}
+@media(max-width:720px){.insights-work-terrain .insights-terrain-canvas{opacity:.94;transform:translate3d(0,-2%,0) scale(1.28);-webkit-mask-image:linear-gradient(to bottom,transparent 7%,#000 34%);mask-image:linear-gradient(to bottom,transparent 7%,#000 34%)}}
 @media(prefers-reduced-motion:reduce){.insights-engraving,.insights-system-map:before,.map-field>ellipse,.map-field>path,.map-flow-lines path,.map-core-orbit,.map-core-ring,.map-node,.map-node-halo,.insights-bird-instruction i,.insights-report-heatmap:after,.insights-work-inbox:before,.insights-decision-live i,.insights-decision-reader.is-updating h4,.insights-decision-reader.is-updating .insights-decision-summary,.insights-decision-reader.is-updating dl,.insights-report-trace span,.insights-market-field span,.insights-way-line:before,.insights-way-line:after,.insights-way-line span{animation:none!important}.map-signal-packets,.insights-load-motion video{display:none}.insights-work-card,.insights-primary-action,.insights-decision-item,.insights-ocean-media video{transition:none}}
 
 /* Open editorial showcase: a persistent feature beside a scrolling story rail. */
