@@ -667,6 +667,8 @@
       const scale = Math.min(w, h) * .37;
       const petals = this.mobile ? 58 : 92;
       const strands = this.mobile ? 2 : 3;
+      ctx.fillStyle = '#020202';
+      ctx.fillRect(0, 0, w, h);
       this.prepare(cx, cy, scale * 1.45);
 
       for (let p = 0; p < petals; p++) {
@@ -690,7 +692,7 @@
             if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
           }
           const shimmer = .5 + .5 * Math.sin(p * .43 + strand * 1.9 - t * 5.4);
-          ctx.strokeStyle = `rgba(${158 + shimmer * 58},${199 + shimmer * 29},${218 + shimmer * 25},${.07 + shimmer * .24})`;
+          ctx.strokeStyle = `rgba(${210 + shimmer * 45},${88 + shimmer * 142},${8 + shimmer * 32},${.12 + shimmer * .52})`;
           ctx.lineWidth = Math.max(.45, this.dpr * (.32 + shimmer * .22));
           ctx.stroke();
         }
@@ -704,6 +706,8 @@
       const cx = w * .5, cy = h * .5;
       const radius = Math.min(w, h) * .31;
       const count = this.mobile ? 2100 : 3900;
+      ctx.fillStyle = '#020202';
+      ctx.fillRect(0, 0, w, h);
       this.prepare(cx, cy, radius * 1.7);
 
       const rotation = t * .58;
@@ -726,10 +730,10 @@
         const strength = Math.max(contour, latitude * .55);
         const alpha = .08 + strength * .5;
         const size = (.42 + strength * .58) * this.dpr;
-        ctx.fillStyle = `rgba(${154 + strength * 64},${198 + strength * 31},${220 + strength * 24},${alpha})`;
+        ctx.fillStyle = `rgba(${178 + strength * 77},${48 + strength * 145},${3 + strength * 34},${alpha})`;
         ctx.fillRect(px, py, size, size);
       }
-      ctx.strokeStyle = 'rgba(197,225,237,.38)';
+      ctx.strokeStyle = 'rgba(255,146,34,.5)';
       ctx.lineWidth = Math.max(.5, this.dpr * .55);
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, TAU);
@@ -808,36 +812,33 @@
         precision highp float;
         uniform vec2 u_resolution;
         uniform float u_time;
-        float field(vec2 p,float t){
-          float R=max(length(p),1e-4);
-          vec3 q=vec3(log(R)-t*.3,exp(R-.5/R)+.2,atan(p.y,p.x)+t*.3);
-          float e=q.y-1.;
-          float s=3.;
-          for(int octave=0;octave<7;octave++){
-            e+=dot(cos(q.xzz*s),sin(q.zzx*s+.5))/s*.3;
-            s+=s;
-          }
-          return e;
+        float hash21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+        float noise(vec2 p){
+          vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+          return mix(mix(hash21(i),hash21(i+vec2(1,0)),f.x),mix(hash21(i+vec2(0,1)),hash21(i+vec2(1)),f.x),f.y);
         }
         void main(){
-          vec2 uv=(gl_FragCoord.xy-.5*u_resolution)/u_resolution.y;
-          uv*=2.35;
+          vec2 uv=(gl_FragCoord.xy-.5*u_resolution)/u_resolution.y*2.15;
+          uv.y+=.12;
           float t=u_time;
-          float f=field(uv,t);
-          vec2 px=vec2(2.35/u_resolution.y,0.);
-          float fx=field(uv+px,t)-field(uv-px,t);
-          float fy=field(uv+px.yx,t)-field(uv-px.yx,t);
-          float slope=length(vec2(fx,fy));
-          float contours=1.-smoothstep(.028,.095,abs(fract(f*10.)-.5));
-          float filaments=1.-smoothstep(.012,.055,abs(f));
-          float spokes=1.-smoothstep(.012,.042,abs(sin(atan(uv.y,uv.x)*17.+log(max(length(uv),.03))*4.-t*1.2)));
-          float radial=smoothstep(1.18,.18,length(uv))*smoothstep(.05,.16,length(uv));
-          float sparse=max(contours*.34,filaments)*mix(.28,1.,spokes)*radial;
-          float particles=step(.972,fract(sin(dot(floor(uv*105.),vec2(12.9898,78.233)))*43758.5453));
-          particles*=step(.63,fract(f*19.+t*.12))*radial;
-          float alpha=clamp(sparse*(.48+slope*14.)+particles*.52,0.,.78);
-          vec3 color=mix(vec3(.43,.64,.76),vec3(.88,.95,.98),clamp(filaments+particles,0.,1.));
-          gl_FragColor=vec4(color*alpha,alpha);
+          float r=length(uv*vec2(1.,1.12));
+          float a=atan(uv.y,uv.x);
+          float dome=smoothstep(1.02,.18,r)*smoothstep(-.82,-.48,uv.y);
+          float curl=a*18.+log(max(r,.035))*8.-t*.7;
+          float veins=pow(max(0.,cos(curl)),18.);
+          float fine=pow(max(0.,cos(a*37.-r*28.+t*.45)),24.);
+          float ribs=pow(max(0.,cos(a*11.+r*18.-t*.32)),10.);
+          float layered=1.-smoothstep(.035,.12,abs(fract((r+sin(a*9.)*.035)*13.)-.5));
+          float texture=.55+.45*noise(vec2(a*8.,r*30.-t*.6));
+          float glow=(veins*1.35+fine*.75+ribs*.42+layered*.22)*dome*texture;
+          float core=smoothstep(.28,.02,r)*(.7+.3*sin(a*23.-t));
+          glow+=core;
+          vec3 amber=vec3(1.,.34,.025);
+          vec3 gold=vec3(1.,.92,.18);
+          vec3 color=mix(amber,gold,clamp(veins+fine+core,0.,1.));
+          color*=glow*(1.15+.75*(1.-r));
+          color+=vec3(1.,.16,.01)*pow(max(0.,glow-.58),2.)*1.4;
+          gl_FragColor=vec4(color,1.);
         }
       `;
     }
@@ -860,33 +861,35 @@
           return n;
         }
         void main(){
-          vec2 uv=(gl_FragCoord.xy-.5*u_resolution)/u_resolution.y*2.5;
+          vec2 uv=(gl_FragCoord.xy-.5*u_resolution)/u_resolution.y*2.25;
           float t=u_time,rr=dot(uv,uv);
-          float radius=.8;
-          if(rr>radius*radius){gl_FragColor=vec4(0.);return;}
+          float radius=.82;
+          if(rr>radius*radius){gl_FragColor=vec4(0.,0.,0.,1.);return;}
           float z=sqrt(max(0.,radius*radius-rr));
           vec3 p=normalize(vec3(uv,z));
-          float spin=t*.58;
+          float spin=t*.42;
           mat2 rot=mat2(cos(spin),-sin(spin),sin(spin),cos(spin));
           p.xz=rot*p.xz;
-          float noise=fbm(p*3.7+vec3(0.,-sin(t),cos(t))*.3);
-          float fine=fbm(p*8.2+vec3(t*.08,-t*.11,t*.06));
-          float displaced=length(vec3(uv,z)*(1.+noise*.035))-.8;
-          float latitude=abs(fract((asin(clamp(p.y,-1.,1.))/3.1415926+.5)*18.+noise*.8)-.5);
-          float longitude=abs(fract((atan(p.z,p.x)/6.2831853+.5)*28.+fine*.38)-.5);
-          float scalar=abs(fract((noise*.72+fine*.28+t*.035)*9.)-.5);
-          float latLine=1.-smoothstep(.035,.105,latitude);
-          float lonLine=1.-smoothstep(.025,.09,longitude);
-          float contour=1.-smoothstep(.035,.105,scalar);
-          float rim=1.-smoothstep(.008,.045,abs(sqrt(rr)-radius));
-          float grid=max(latLine*.42,lonLine*.34);
-          float shell=max(grid,contour*.72);
-          float points=step(.965,fract(sin(dot(floor((p.xy+noise*.025)*115.),vec2(12.9898,78.233)))*43758.5453));
-          points*=step(.42,z/radius)*(.45+.55*contour);
-          float pulse=.72+.12*sin(t*2.2+noise*7.);
-          float alpha=clamp((shell*pulse+points*.72+rim*.48)*smoothstep(0.,.12,z)+abs(displaced)*3.,0.,.76);
-          vec3 color=mix(vec3(.43,.62,.73),vec3(.86,.94,.97),clamp(contour+points,0.,1.));
-          gl_FragColor=vec4(color*alpha,alpha);
+          float broad=fbm(p*3.25+vec3(0.,-sin(t*.5),cos(t*.5))*.22);
+          float medium=fbm(p*8.5+vec3(t*.07,-t*.09,t*.04));
+          float fine=fbm(p*19.+vec3(-t*.12,t*.08,t*.05));
+          float cells=abs(fract((broad*.58+medium*.32+fine*.1)*8.)-.5);
+          float fissure=1.-smoothstep(.045,.18,cells);
+          float granules=smoothstep(.5,.92,fbm(p*30.+fine));
+          vec3 lightDir=normalize(vec3(-.42,.55,.72));
+          float diffuse=max(.08,dot(normalize(vec3(uv,z)),lightDir));
+          float rim=pow(1.-z/radius,2.4);
+          float heat=clamp(.48+broad*.54+medium*.34,0.,1.);
+          vec3 dark=vec3(.16,.025,.004);
+          vec3 copper=vec3(.88,.19,.018);
+          vec3 orange=vec3(1.,.49,.055);
+          vec3 color=mix(dark,copper,heat);
+          color=mix(color,orange,clamp(fissure*.72+granules*.38,0.,1.));
+          color*=.38+diffuse*1.28;
+          color+=orange*fissure*fissure*(.45+diffuse*.8);
+          color*=1.-rim*.62;
+          float edge=smoothstep(radius,radius-.022,sqrt(rr));
+          gl_FragColor=vec4(color*edge,1.);
         }
       `;
     }

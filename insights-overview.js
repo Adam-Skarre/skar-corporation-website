@@ -243,9 +243,11 @@
     if (heatmapContext) {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const palette = [
-        [4, 24, 49], [7, 54, 98], [12, 104, 177], [31, 177, 193],
-        [100, 211, 159], [239, 218, 91], [244, 123, 56], [202, 45, 43], [255, 241, 208]
+        [5, 22, 40], [8, 49, 78], [14, 82, 112], [30, 119, 137],
+        [74, 153, 146], [151, 178, 123], [220, 174, 84], [223, 119, 58], [191, 67, 42]
       ];
+      const fieldCanvas = document.createElement('canvas');
+      const fieldContext = fieldCanvas.getContext('2d', { alpha: false });
       let width = 1;
       let height = 1;
       let ratio = 1;
@@ -283,13 +285,15 @@
       }
 
       function drawHeatmap(time) {
-        const columns = width < 260 ? 34 : 46;
-        const rows = Math.max(22, Math.round(columns * height / width));
-        const cellWidth = width / columns;
-        const cellHeight = height / rows;
+        const columns = width < 260 ? 72 : 116;
+        const rows = Math.max(44, Math.round(columns * height / width));
         const phase = reducedMotion ? 0 : time * 0.00022;
         heatmapContext.fillStyle = '#061b31';
         heatmapContext.fillRect(0, 0, width, height);
+
+        fieldCanvas.width = columns;
+        fieldCanvas.height = rows;
+        const image = fieldContext.createImageData(columns, rows);
 
         for (let row = 0; row < rows; row += 1) {
           const y = (row + 0.5) / rows;
@@ -301,21 +305,48 @@
               gaussian(x, y, 0.77 + Math.sin(phase * 0.7) * 0.04, 0.67, 0.036, 0.84) +
               gaussian(x, y, 0.34, 0.74, 0.05, 0.58) +
               gaussian(x, y, pointerX, pointerY, 0.022, 0.4) +
-              Math.sin(x * 18 + phase * 4) * Math.cos(y * 14 - phase * 3) * 0.055 + 0.08;
-            const color = mixColor(Math.min(1, field));
-            heatmapContext.fillStyle = `rgb(${color[0]} ${color[1]} ${color[2]})`;
-            heatmapContext.fillRect(column * cellWidth + 0.45, row * cellHeight + 0.45, Math.ceil(cellWidth - 0.9), Math.ceil(cellHeight - 0.9));
+              gaussian(x, y, 0.51, 0.5, 0.12, 0.18) +
+              Math.sin(x * 14 + phase * 3) * Math.cos(y * 11 - phase * 2) * 0.035 + 0.055;
+            const normalized = Math.min(1, Math.max(0, Math.pow(field, 0.88)));
+            const color = mixColor(normalized);
+            const pixel = (row * columns + column) * 4;
+            image.data[pixel] = color[0];
+            image.data[pixel + 1] = color[1];
+            image.data[pixel + 2] = color[2];
+            image.data[pixel + 3] = 255;
           }
         }
+        fieldContext.putImageData(image, 0, 0);
+        heatmapContext.imageSmoothingEnabled = true;
+        heatmapContext.imageSmoothingQuality = 'high';
+        heatmapContext.drawImage(fieldCanvas, 0, 0, width, height);
+
+        heatmapContext.save();
+        heatmapContext.strokeStyle = 'rgba(194, 222, 229, .105)';
+        heatmapContext.lineWidth = 0.55;
+        const grid = Math.max(12, Math.round(width / 34));
+        for (let x = 0; x <= width; x += grid) {
+          heatmapContext.beginPath();
+          heatmapContext.moveTo(x + 0.5, 0);
+          heatmapContext.lineTo(x + 0.5, height);
+          heatmapContext.stroke();
+        }
+        for (let y = 0; y <= height; y += grid) {
+          heatmapContext.beginPath();
+          heatmapContext.moveTo(0, y + 0.5);
+          heatmapContext.lineTo(width, y + 0.5);
+          heatmapContext.stroke();
+        }
+        heatmapContext.restore();
 
         heatmapContext.save();
         heatmapContext.globalCompositeOperation = 'screen';
-        heatmapContext.strokeStyle = 'rgba(225, 244, 255, .28)';
-        heatmapContext.lineWidth = 0.8;
-        [0.2, 0.42, 0.66].forEach((offset, index) => {
+        heatmapContext.strokeStyle = 'rgba(219, 236, 236, .23)';
+        heatmapContext.lineWidth = 0.7;
+        [0.19, 0.38, 0.59, 0.78].forEach((offset, index) => {
           heatmapContext.beginPath();
-          for (let x = -8; x <= width + 8; x += 6) {
-            const y = height * offset + Math.sin(x * 0.035 + phase * 5 + index) * (10 + index * 5);
+          for (let x = -8; x <= width + 8; x += 4) {
+            const y = height * offset + Math.sin(x * 0.024 + phase * 3.5 + index * 1.35) * (8 + index * 3) + Math.sin(x * 0.008 - phase) * 8;
             if (x === -8) heatmapContext.moveTo(x, y);
             else heatmapContext.lineTo(x, y);
           }

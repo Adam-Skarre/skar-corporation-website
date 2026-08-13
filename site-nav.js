@@ -366,7 +366,7 @@
 
   function updateHeaderFromScroll() {
     scrollTicking = false;
-    if (!mobileQuery.matches || menuOpen) {
+    if (menuOpen) {
       lastScrollY = Math.max(0, window.scrollY);
       return;
     }
