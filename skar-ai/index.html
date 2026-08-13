@@ -1,16 +1,75 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>SKAR AI Demo | Find the Constraint</title><meta name="description" content="Try SKAR AI, a demonstration assistant for finding operational constraints and defining the next measurable action.">
-<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#071f34">
-<link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg"><link rel="stylesheet" href="../skar-ai-demo.css?v=20260812-3"><script src="../skar-ai-demo.js?v=20260812-1" defer></script>
-</head><body><div class="ai-app" data-ai-app>
-<aside class="ai-sidebar"><div class="ai-brand"><a href="/" aria-label="Skar Technologies home"><img src="../assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a><button data-sidebar-close aria-label="Close analyses">×</button></div><div class="ai-product-name"><i></i><span>SKAR AI</span><small>Constraint intelligence</small></div><button class="ai-new" data-new-thread><span aria-hidden="true">＋</span> New conversation</button><nav class="ai-recents" aria-label="Recent conversations"><p>Recents</p><div data-thread-list></div></nav><div class="ai-sidebar-foot"><a href="/artificial-intelligence/">About SKAR AI <span>↗</span></a><p>Private demonstration<br>Conversations remain on this device.</p></div></aside>
-<main class="ai-main"><header class="ai-topbar"><button class="ai-menu" data-sidebar-open aria-label="Open conversations"><i></i><i></i></button><div><i class="ai-status"></i> Private system</div><a href="/artificial-intelligence/">SKAR Technologies ↗</a></header>
-<section class="ai-welcome"><div class="ai-system-emblem" aria-hidden="true"><i></i><i></i><i></i></div><p class="ai-kicker">SKAR AI · DECISION INTELLIGENCE</p><h1>What are we solving today?</h1><p class="ai-lede">Describe the work, the queue, or the decision. SKAR finds the constraint, explains the reasoning, and names the next measurable action.</p><div class="ai-starters">
-<button data-starter="Our quotes take 9 days end to end. Where is the time actually going?"><span>01</span>Our quotes take 9 days end to end. Where is the time actually going?</button>
-<button data-starter="Help me size a bottleneck with only rough numbers."><span>02</span>Help me size a bottleneck with only rough numbers.</button>
-<button data-starter="Draft a one-page plan to cut rework on a fabrication line."><span>03</span>Draft a one-page plan to cut rework on a fabrication line.</button>
-<button data-starter="What should I measure to prove a process change worked?"><span>04</span>What should I measure to prove a process change worked?</button></div></section>
-<section class="ai-conversation" data-conversation aria-live="polite"></section>
-<div class="ai-composer-wrap"><form class="ai-composer" data-composer><label class="sr-only" for="ai-message">Message SKAR AI</label><textarea id="ai-message" data-input rows="1" maxlength="1600" placeholder="Message SKAR AI…"></textarea><div class="ai-compose-meta"><span data-count>0 / 1600</span><span>⌘ Enter to send</span></div><button type="submit" data-send aria-label="Send message to SKAR AI">↗</button></form><p>SKAR AI can be wrong. Verify important decisions before acting.</p></div></main><button class="ai-scrim" data-scrim aria-label="Close conversations"></button></div></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>SKAR AI | Skar Technologies</title>
+  <meta name="description" content="Use SKAR AI to diagnose operational constraints and define the next measurable action.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f7f8fa">
+  <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
+  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260812-5">
+  <script src="../skar-ai-demo.js?v=20260812-3" defer></script>
+</head>
+<body>
+<div class="ai-app" data-ai-app>
+  <aside class="ai-sidebar" aria-label="Conversation history">
+    <div class="ai-sidebar-head">
+      <a class="ai-brand" href="/" aria-label="Skar Technologies home"><img src="../assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
+      <button class="ai-icon-button ai-close" data-sidebar-close aria-label="Close sidebar">×</button>
+    </div>
+    <button class="ai-new" data-new-thread><span aria-hidden="true">＋</span><span>New chat</span></button>
+    <nav class="ai-recents" aria-label="Recent chats"><p>Chats</p><div data-thread-list></div></nav>
+    <div class="ai-sidebar-foot">
+      <button class="ai-account" data-open-auth><span class="ai-account-avatar">A</span><span><strong>Sign in</strong><small>Save and sync your chats</small></span><i>›</i></button>
+      <a href="/artificial-intelligence/">About SKAR AI <span>↗</span></a>
+    </div>
+  </aside>
+
+  <main class="ai-main">
+    <header class="ai-topbar">
+      <button class="ai-icon-button ai-menu" data-sidebar-open aria-label="Open sidebar"><span></span><span></span></button>
+      <div class="ai-model">SKAR AI</div>
+      <div class="ai-top-actions"><a href="/">Skar Technologies</a><button class="ai-signin" data-open-auth>Sign in</button></div>
+    </header>
+
+    <section class="ai-welcome">
+      <div class="ai-glyph" aria-hidden="true">S</div>
+      <h1>What can we solve?</h1>
+      <p>Describe a process, queue, or decision. SKAR AI will find the likely constraint and frame the next measurable action.</p>
+      <div class="ai-starters">
+        <button data-starter="Our quotes take 9 days end to end. Where is the time actually going?"><strong>Find a bottleneck</strong><span>Locate where elapsed time accumulates</span></button>
+        <button data-starter="Help me size a bottleneck with only rough numbers."><strong>Size a constraint</strong><span>Work from estimates and incomplete data</span></button>
+        <button data-starter="Draft a one-page plan to cut rework on a fabrication line."><strong>Reduce rework</strong><span>Turn repeat work into a testable plan</span></button>
+        <button data-starter="What should I measure to prove a process change worked?"><strong>Choose measures</strong><span>Define a baseline and success signal</span></button>
+      </div>
+    </section>
+
+    <section class="ai-conversation" data-conversation aria-live="polite"></section>
+
+    <div class="ai-composer-wrap">
+      <form class="ai-composer" data-composer>
+        <label class="sr-only" for="ai-message">Message SKAR AI</label>
+        <textarea id="ai-message" data-input rows="1" maxlength="4000" placeholder="Message SKAR AI"></textarea>
+        <span class="ai-count" data-count>0 / 4000</span>
+        <button class="ai-send" type="submit" data-send aria-label="Send message">↑</button>
+      </form>
+      <p>SKAR AI can make mistakes. Verify important decisions.</p>
+    </div>
+  </main>
+  <button class="ai-scrim" data-scrim aria-label="Close sidebar"></button>
+
+  <dialog class="ai-auth" data-auth-dialog>
+    <button class="ai-auth-close" data-close-auth aria-label="Close sign in">×</button>
+    <div class="ai-auth-mark">S</div>
+    <h2>Sign in to SKAR AI</h2>
+    <p>Save your conversations and continue them from any device.</p>
+    <button class="ai-google" data-google-signin><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285f4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4z"/><path fill="#34a853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.5-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#fbbc05" d="M6.5 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9.1L6.5 14z"/><path fill="#ea4335" d="M12 6a5.4 5.4 0 0 1 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 3.1 7.5l3.4 2.6A5.9 5.9 0 0 1 12 6z"/></svg>Continue with Google</button>
+    <p class="ai-auth-feedback" data-auth-feedback hidden></p>
+    <div class="ai-auth-divider"><span>or</span></div>
+    <button class="ai-guest" data-continue-guest>Continue without an account</button>
+    <small>By continuing, you agree to use SKAR AI responsibly.</small>
+  </dialog>
+</div>
+</body>
+</html>
