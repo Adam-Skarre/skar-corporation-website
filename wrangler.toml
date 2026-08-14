@@ -5,6 +5,9 @@ compatibility_date = "2026-08-13"
 [vars]
 OPENAI_MODEL = "gpt-5.6"
 
+[secrets]
+required = ["OPENAI_API_KEY"]
+
 [[routes]]
 pattern = "api.skartech.com"
 custom_domain = true
