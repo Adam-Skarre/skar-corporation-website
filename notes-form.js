@@ -812,32 +812,28 @@
         precision highp float;
         uniform vec2 u_resolution;
         uniform float u_time;
-        float hash21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-        float noise(vec2 p){
-          vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
-          return mix(mix(hash21(i),hash21(i+vec2(1,0)),f.x),mix(hash21(i+vec2(0,1)),hash21(i+vec2(1)),f.x),f.y);
-        }
         void main(){
-          vec2 uv=(gl_FragCoord.xy-.5*u_resolution)/u_resolution.y*2.15;
-          uv.y+=.12;
-          float t=u_time;
-          float r=length(uv*vec2(1.,1.12));
-          float a=atan(uv.y,uv.x);
-          float dome=smoothstep(1.02,.18,r)*smoothstep(-.82,-.48,uv.y);
-          float curl=a*18.+log(max(r,.035))*8.-t*.7;
-          float veins=pow(max(0.,cos(curl)),18.);
-          float fine=pow(max(0.,cos(a*37.-r*28.+t*.45)),24.);
-          float ribs=pow(max(0.,cos(a*11.+r*18.-t*.32)),10.);
-          float layered=1.-smoothstep(.035,.12,abs(fract((r+sin(a*9.)*.035)*13.)-.5));
-          float texture=.55+.45*noise(vec2(a*8.,r*30.-t*.6));
-          float glow=(veins*1.35+fine*.75+ribs*.42+layered*.22)*dome*texture;
-          float core=smoothstep(.28,.02,r)*(.7+.3*sin(a*23.-t));
-          glow+=core;
-          vec3 amber=vec3(1.,.34,.025);
-          vec3 gold=vec3(1.,.92,.18);
-          vec3 color=mix(amber,gold,clamp(veins+fine+core,0.,1.));
-          color*=glow*(1.15+.75*(1.-r));
-          color+=vec3(1.,.16,.01)*pow(max(0.,glow-.58),2.)*1.4;
+          vec2 r=u_resolution,FC=gl_FragCoord.xy;
+          float t=u_time,i=0.,e=0.,R=0.,s=0.;
+          vec3 q=vec3(0.),p=vec3(0.);
+          vec3 d=vec3(FC.xy/r*.4+vec2(-.2,.8),1.);
+          vec3 color=vec3(0.);
+          q.zy-=1.;
+          for(int ray=0;ray<130;ray++){
+            i+=1.;s=13.;p=q+=d*e*R*.1;
+            R=max(length(p),1e-5);
+            p=vec3(log(R)-t*.3,exp(R-p.z*.5),atan(p.y,p.x)+t*.3);
+            p.y-=1.;e=p.y;
+            for(int octave=0;octave<7;octave++){
+              if(s>=1e3)break;
+              e+=dot(cos(p.xzz*s),sin(p.zzx*s+.5))/s;
+              s+=s;
+            }
+            float glow=max(0.,.007-e)*3.;
+            float depth=clamp(glow,0.,1.);
+            color+=mix(vec3(.98,.42,.06),vec3(1.,.96,.31),clamp(R*.3+q.y*.12,0.,1.))*depth;
+          }
+          color=1.-exp(-color*.82);
           gl_FragColor=vec4(color,1.);
         }
       `;
@@ -855,41 +851,21 @@
           float n001=hash31(i+vec3(0,0,1)),n101=hash31(i+vec3(1,0,1)),n011=hash31(i+vec3(0,1,1)),n111=hash31(i+vec3(1,1,1));
           return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y),mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y),f.z)*2.-1.;
         }
-        float fbm(vec3 p){
-          float n=0.,a=.56;
-          for(int octave=0;octave<4;octave++){n+=a*snoise3D(p);p=p*2.03+vec3(7.1,3.7,5.9);a*=.5;}
-          return n;
-        }
         void main(){
-          vec2 uv=(gl_FragCoord.xy-.5*u_resolution)/u_resolution.y*2.25;
-          float t=u_time,rr=dot(uv,uv);
-          float radius=.82;
-          if(rr>radius*radius){gl_FragColor=vec4(0.,0.,0.,1.);return;}
-          float z=sqrt(max(0.,radius*radius-rr));
-          vec3 p=normalize(vec3(uv,z));
-          float spin=t*.42;
-          mat2 rot=mat2(cos(spin),-sin(spin),sin(spin),cos(spin));
-          p.xz=rot*p.xz;
-          float broad=fbm(p*3.25+vec3(0.,-sin(t*.5),cos(t*.5))*.22);
-          float medium=fbm(p*8.5+vec3(t*.07,-t*.09,t*.04));
-          float fine=fbm(p*19.+vec3(-t*.12,t*.08,t*.05));
-          float cells=abs(fract((broad*.58+medium*.32+fine*.1)*8.)-.5);
-          float fissure=1.-smoothstep(.045,.18,cells);
-          float granules=smoothstep(.5,.92,fbm(p*30.+fine));
-          vec3 lightDir=normalize(vec3(-.42,.55,.72));
-          float diffuse=max(.08,dot(normalize(vec3(uv,z)),lightDir));
-          float rim=pow(1.-z/radius,2.4);
-          float heat=clamp(.48+broad*.54+medium*.34,0.,1.);
-          vec3 dark=vec3(.16,.025,.004);
-          vec3 copper=vec3(.88,.19,.018);
-          vec3 orange=vec3(1.,.49,.055);
-          vec3 color=mix(dark,copper,heat);
-          color=mix(color,orange,clamp(fissure*.72+granules*.38,0.,1.));
-          color*=.38+diffuse*1.28;
-          color+=orange*fissure*fissure*(.45+diffuse*.8);
-          color*=1.-rim*.62;
-          float edge=smoothstep(radius,radius-.022,sqrt(rr));
-          gl_FragColor=vec4(color*edge,1.);
+          vec2 r=u_resolution,FC=gl_FragCoord.xy;
+          float t=u_time,i=0.,g=0.,e=0.;
+          vec3 p=vec3(0.),q=vec3(0.),energy=vec3(0.);
+          for(int ray=0;ray<23;ray++){
+            i+=1.;
+            p=vec3((FC.xy-.5*r)/r.y*2.5,g*g-1.);
+            p+=snoise3D(p*2.+vec3(0.,-sin(t),cos(t))*.3)*.01;
+            q=cos(p*5.5);
+            e=max((length(p)-.8)-e,(distance(q,p*2.)*snoise3D(p*i+vec3(0.,0.,cos(t)*.2))/359.)+5e-3);
+            g+=e;
+            energy+=exp(-abs(e)*9e2)*.3*vec3(2.6,1.2,.5);
+          }
+          vec3 color=1.-exp(-max(energy,0.)*1.45);
+          gl_FragColor=vec4(color,1.);
         }
       `;
     }
