@@ -38,6 +38,7 @@
     precision highp float;
     uniform vec2 uResolution;
     uniform float uTime;
+    uniform float uPointerX;
 
     #define PI 3.141592653589793
 
@@ -88,10 +89,18 @@
         color += hsv(u.y > 0.0 ? u.y : 0.57, 0.3, max(value, 0.0));
       }
 
-      // A physically legible solar core and bloom at the mathematical horizon.
+      // Pointer-controlled light temperature: sunrise amber through cool moonlight.
+      vec3 warmSun = vec3(1.2, 0.8, 0.5);
+      vec3 coolSun = vec3(0.4, 0.7, 1.5);
+      vec3 sunColor = mix(warmSun, coolSun, smoothstep(0.0, 1.0, uPointerX));
+      vec3 warmBloom = vec3(1.0, 0.42, 0.08);
+      vec3 coolBloom = vec3(0.2, 0.48, 1.0);
+      vec3 bloomColor = mix(warmBloom, coolBloom, smoothstep(0.0, 1.0, uPointerX));
+
+      // A physically legible solar core, bloom, and reflection at the horizon.
       float sunDistance = length(u * vec2(1.0, 1.08));
-      color += vec3(1.2, 0.8, 0.5) * 0.045 / max(sunDistance, 0.0028);
-      color += vec3(1.0, 0.42, 0.08) * 0.006 / max(sunDistance * sunDistance, 0.00012);
+      color += sunColor * 0.045 / max(sunDistance, 0.0028);
+      color += bloomColor * 0.006 / max(sunDistance * sunDistance, 0.00012);
 
       // Fine film grain prevents banding on large displays without creating sparkle motion.
       float grain = hash21(frag) - 0.5;
@@ -142,12 +151,15 @@
   const position = gl.getAttribLocation(program, 'aPosition');
   const resolution = gl.getUniformLocation(program, 'uResolution');
   const time = gl.getUniformLocation(program, 'uTime');
+  const pointerX = gl.getUniformLocation(program, 'uPointerX');
   gl.enableVertexAttribArray(position);
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
   let visible = true;
   let animationFrame = 0;
   let lastFrame = -Infinity;
+  let targetPointerX = 0.18;
+  let currentPointerX = targetPointerX;
 
   const resize = () => {
     const bounds = canvas.parentElement.getBoundingClientRect();
@@ -172,6 +184,8 @@
     gl.useProgram(program);
     gl.uniform2f(resolution, canvas.width, canvas.height);
     gl.uniform1f(time, timestamp * 0.00034);
+    currentPointerX += (targetPointerX - currentPointerX) * (reducedMotion ? 1 : 0.075);
+    gl.uniform1f(pointerX, currentPointerX);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
 
@@ -188,6 +202,16 @@
   }
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas.parentElement);
   else window.addEventListener('resize', resize, { passive: true });
+
+  const updateLightColor = event => {
+    const bounds = canvas.getBoundingClientRect();
+    targetPointerX = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+    if (reducedMotion) draw(18.0);
+  };
+
+  const interactionSurface = canvas.parentElement;
+  interactionSurface.addEventListener('pointermove', updateLightColor, { passive: true });
+  interactionSurface.addEventListener('pointerdown', updateLightColor, { passive: true });
 
   canvas.addEventListener('webglcontextlost', event => event.preventDefault());
   resize();
