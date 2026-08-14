@@ -5396,3 +5396,38 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 .page-hero-about:after{z-index:1!important;background:linear-gradient(90deg,rgba(1,7,13,.88) 0%,rgba(2,9,16,.69) 38%,rgba(2,7,11,.12) 70%,rgba(0,0,0,.08) 100%),linear-gradient(0deg,rgba(1,8,14,.5),transparent 54%)!important}
 .page-hero-about .about-hero-copy{position:relative;z-index:2}
 @media(max-width:650px){.page-hero-about{background:#020305!important}.page-hero-about:after{background:linear-gradient(90deg,rgba(1,7,13,.8),rgba(2,8,14,.28)),linear-gradient(0deg,rgba(1,7,13,.55),transparent 62%)!important}}
+
+/* Unified primary hero typography — Careers is the site-wide reference scale. */
+:root{--skar-hero-title-size:clamp(54px,6vw,84px);--skar-hero-title-mobile:clamp(43px,12vw,56px);--skar-hero-title-small:42px}
+.page-hero h1,
+.page-hero-about .about-hero-copy h1,
+.story-copy h1,
+.story-copy .story-title,
+.capability-hero h1,
+.way-copy h1,
+.insight-subhero h1,
+.contact-intro h1{
+  font-size:var(--skar-hero-title-size);
+  line-height:.96;
+  letter-spacing:-.055em;
+}
+@media(max-width:760px){
+  .page-hero h1,
+  .page-hero-about .about-hero-copy h1,
+  .story-copy h1,
+  .story-copy .story-title,
+  .capability-hero h1,
+  .way-copy h1,
+  .insight-subhero h1,
+  .contact-intro h1{font-size:var(--skar-hero-title-mobile);line-height:.96}
+}
+@media(max-width:390px){
+  .page-hero h1,
+  .page-hero-about .about-hero-copy h1,
+  .story-copy h1,
+  .story-copy .story-title,
+  .capability-hero h1,
+  .way-copy h1,
+  .insight-subhero h1,
+  .contact-intro h1{font-size:var(--skar-hero-title-small)}
+}
