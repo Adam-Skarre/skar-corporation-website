@@ -117,3 +117,8 @@
 @keyframes engFlow{to{stroke-dashoffset:-120}}
 @keyframes engPulse{50%{transform:scale(1.8);opacity:.45}}
 @media(prefers-reduced-motion:reduce){.eng-primary-link,.eng-stage-ring,.eng-stage-axis,.eng-stage-visual>b{transition:none}.eng-flow-lines path,.eng-pulses circle{animation:none}}
+
+/* Match the Careers reference headline scale. */
+.eng-hero h1{font-size:clamp(54px,6vw,84px);line-height:.96;letter-spacing:-.055em}
+@media(max-width:760px){.eng-hero h1{font-size:clamp(43px,12vw,56px);line-height:.96}}
+@media(max-width:390px){.eng-hero h1{font-size:42px}}

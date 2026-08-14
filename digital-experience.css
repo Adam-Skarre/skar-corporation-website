@@ -210,3 +210,8 @@
 @media (color-gamut:p3){
   .digital-hero h1 span{background:linear-gradient(100deg,color(display-p3 .39 .65 1),color(display-p3 .31 1 .86),color(display-p3 .78 .42 1));-webkit-background-clip:text;background-clip:text}
 }
+
+/* Match the Careers reference headline scale. */
+.digital-hero h1{font-size:clamp(54px,6vw,84px);line-height:.96;letter-spacing:-.055em}
+@media(max-width:760px){.digital-hero h1{font-size:clamp(43px,12vw,56px);line-height:.96}}
+@media(max-width:390px){.digital-hero h1{font-size:42px}}
