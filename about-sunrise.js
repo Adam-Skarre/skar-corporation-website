@@ -93,6 +93,22 @@
       color += vec3(1.2, 0.8, 0.5) * 0.045 / max(sunDistance, 0.0028);
       color += vec3(1.0, 0.42, 0.08) * 0.006 / max(sunDistance * sunDistance, 0.00012);
 
+      // Broken specular path: narrow at the horizon, wider across near-field waves.
+      float waterMask = smoothstep(0.025, -0.035, u.y);
+      float waterDepth = clamp(-u.y * 2.35, 0.0, 1.0);
+      float reflectedWave = sin(u.y * 118.0 - uTime * 2.1) * 0.48;
+      reflectedWave += sin(u.y * 247.0 + u.x * 34.0 + uTime * 1.35) * 0.28;
+      reflectedWave += sin(u.y * 61.0 - u.x * 17.0 - uTime * 0.72) * 0.24;
+      float reflectionWidth = mix(0.012, 0.19, pow(waterDepth, 0.78));
+      float centerDrift = reflectedWave * mix(0.002, 0.032, waterDepth);
+      float reflectionPath = exp(-pow(abs(u.x + centerDrift) / reflectionWidth, 1.35));
+      float waveBreaks = smoothstep(-0.15, 0.72, reflectedWave);
+      float fineGlints = smoothstep(0.35, 0.96, sin(u.y * 420.0 + u.x * 78.0 - uTime * 2.6));
+      float horizonEnergy = mix(1.0, 0.24, waterDepth);
+      float reflection = waterMask * reflectionPath * horizonEnergy * (0.24 + waveBreaks * 0.58 + fineGlints * 0.18);
+      color += vec3(1.16, 0.62, 0.24) * reflection * 1.35;
+      color += vec3(1.0, 0.88, 0.58) * reflectionPath * waterMask * waveBreaks * pow(1.0 - waterDepth, 2.2) * 0.72;
+
       // Fine film grain prevents banding on large displays without creating sparkle motion.
       float grain = hash21(frag) - 0.5;
       color += grain * 0.012;
