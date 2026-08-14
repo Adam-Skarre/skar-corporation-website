@@ -1,134 +1,196 @@
 (() => {
+  'use strict';
+
   const canvas = document.querySelector('[data-about-sunrise]');
   if (!canvas) return;
 
-  const context = canvas.getContext('2d', { alpha: false });
-  if (!context) return;
-
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let width = 1;
-  let height = 1;
-  let ratio = 1;
-  let visible = true;
-  let frame = 0;
+  const gl = canvas.getContext('webgl', {
+    alpha: false,
+    antialias: false,
+    depth: false,
+    stencil: false,
+    powerPreference: 'high-performance',
+    preserveDrawingBuffer: false
+  });
 
-  function resize() {
-    const bounds = canvas.parentElement.getBoundingClientRect();
-    width = Math.max(1, Math.round(bounds.width));
-    height = Math.max(1, Math.round(bounds.height));
-    ratio = Math.min(window.devicePixelRatio || 1, 1.6);
-    canvas.width = Math.round(width * ratio);
-    canvas.height = Math.round(height * ratio);
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    if (reducedMotion) draw(0);
+  if (!gl) {
+    const fallback = canvas.getContext('2d', { alpha: false });
+    if (fallback) {
+      const gradient = fallback.createLinearGradient(0, 0, 0, canvas.height || 800);
+      gradient.addColorStop(0, '#000');
+      gradient.addColorStop(.62, '#070707');
+      gradient.addColorStop(1, '#402515');
+      fallback.fillStyle = gradient;
+      fallback.fillRect(0, 0, canvas.width || 1600, canvas.height || 800);
+    }
+    return;
   }
 
-  function draw(time) {
-    const t = reducedMotion ? 9.5 : time * 0.00018;
-    const horizon = height * 0.57;
-    const sunX = width * (width < 720 ? 0.68 : 0.72);
-    const sunRadius = Math.max(13, Math.min(width, height) * 0.034);
-    const cycle = 0.5 + 0.5 * Math.sin(t * 0.32 - 0.7);
-    const sunY = horizon + sunRadius * 0.36 - cycle * sunRadius * 0.72;
+  const vertexSource = `
+    attribute vec2 aPosition;
+    void main() {
+      gl_Position = vec4(aPosition, 0.0, 1.0);
+    }
+  `;
 
-    const sky = context.createLinearGradient(0, 0, 0, horizon + 20);
-    sky.addColorStop(0, '#020305');
-    sky.addColorStop(0.62, '#050608');
-    sky.addColorStop(0.9, '#16100c');
-    sky.addColorStop(1, '#684121');
-    context.fillStyle = sky;
-    context.fillRect(0, 0, width, height);
+  const fragmentSource = `
+    precision highp float;
+    uniform vec2 uResolution;
+    uniform float uTime;
 
-    const glow = context.createRadialGradient(sunX, horizon, 0, sunX, horizon, sunRadius * 7.5);
-    glow.addColorStop(0, 'rgba(255,244,188,.95)');
-    glow.addColorStop(0.1, 'rgba(255,170,58,.74)');
-    glow.addColorStop(0.34, 'rgba(203,90,24,.24)');
-    glow.addColorStop(1, 'rgba(30,13,7,0)');
-    context.fillStyle = glow;
-    context.fillRect(sunX - sunRadius * 8, horizon - sunRadius * 5, sunRadius * 16, sunRadius * 10);
+    #define PI 3.141592653589793
 
-    const sun = context.createRadialGradient(sunX - sunRadius * 0.2, sunY - sunRadius * 0.25, 1, sunX, sunY, sunRadius);
-    sun.addColorStop(0, '#fffef1');
-    sun.addColorStop(0.46, '#fff1a4');
-    sun.addColorStop(0.78, '#ffb12f');
-    sun.addColorStop(1, 'rgba(239,91,13,0)');
-    context.fillStyle = sun;
-    context.beginPath();
-    context.arc(sunX, sunY, sunRadius * 1.22, 0, Math.PI * 2);
-    context.fill();
+    mat2 rotate2D(float angle) {
+      float c = cos(angle);
+      float s = sin(angle);
+      return mat2(c, -s, s, c);
+    }
 
-    const water = context.createLinearGradient(0, horizon, 0, height);
-    water.addColorStop(0, '#5d5141');
-    water.addColorStop(0.09, '#363536');
-    water.addColorStop(0.48, '#171719');
-    water.addColorStop(1, '#080708');
-    context.fillStyle = water;
-    context.fillRect(0, horizon, width, height - horizon);
+    vec3 hsv(float h, float s, float v) {
+      vec3 rgb = clamp(abs(mod(h * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+      rgb = rgb * rgb * (3.0 - 2.0 * rgb);
+      return v * mix(vec3(1.0), rgb, s);
+    }
 
-    const layers = width < 720 ? 54 : 76;
-    for (let layer = 0; layer < layers; layer += 1) {
-      const v = layer / Math.max(1, layers - 1);
-      const baseY = horizon + Math.pow(v, 1.52) * (height - horizon + 10);
-      const amplitude = 1.2 + v * v * height * 0.025;
-      const frequency = 0.022 - v * 0.009;
-      const phase = t * (2.1 + v * 1.9) + layer * 1.73;
-      context.beginPath();
-      for (let x = -8; x <= width + 8; x += 5) {
-        const broad = Math.sin(x * frequency + phase) * amplitude;
-        const fine = Math.sin(x * frequency * 2.7 - phase * 1.4 + layer) * amplitude * 0.34;
-        const y = baseY + broad + fine;
-        if (x === -8) context.moveTo(x, y);
-        else context.lineTo(x, y);
+    float hash21(vec2 p) {
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
+    }
+
+    void main() {
+      vec2 frag = gl_FragCoord.xy;
+      float r = min(uResolution.x, uResolution.y);
+      vec2 u = (frag - 0.5 * uResolution) / r;
+
+      // Keep the focal point clear of the About copy on wide screens.
+      u.x -= mix(0.0, 0.22, smoothstep(1.25, 2.1, uResolution.x / uResolution.y));
+
+      float g = 0.012;
+      float e = 0.0;
+      vec3 color = vec3(0.0);
+
+      // Faithful, resolution-independent interpretation of the supplied 89-step field.
+      for (int iteration = 0; iteration < 89; iteration++) {
+        vec3 p = vec3(u * g, g);
+        e = p.y + 0.7;
+        p.y = e;
+
+        for (int octave = 0; octave < 9; octave++) {
+          float scale = exp2(float(octave));
+          p.xz = rotate2D(scale) * p.xz;
+          e += abs(dot(sin(p.zx * scale + uTime), vec2(0.1))) / scale;
+        }
+
+        g += e * 1.4;
+        float value = min(e * 256.0 - 0.05, 0.45 - e) / 63.0;
+        color += hsv(u.y > 0.0 ? u.y : 0.57, 0.3, max(value, 0.0));
       }
-      const horizonLight = Math.pow(1 - v, 1.9);
-      context.strokeStyle = `rgba(${118 + horizonLight * 92},${112 + horizonLight * 72},${106 + horizonLight * 38},${0.09 + horizonLight * 0.25})`;
-      context.lineWidth = 0.65 + v * 1.05;
-      context.stroke();
-    }
 
-    context.save();
-    context.globalCompositeOperation = 'screen';
-    const reflectionWidth = sunRadius * (1.25 + Math.pow((height - horizon) / Math.max(1, height), 0.5));
-    for (let band = 0; band < 46; band += 1) {
-      const v = band / 45;
-      const y = horizon + 4 + Math.pow(v, 1.28) * (height - horizon - 10);
-      const spread = reflectionWidth * (0.65 + v * 4.5);
-      const offset = Math.sin(band * 2.37 + t * 5.2) * spread * 0.32;
-      const segment = spread * (0.22 + 0.3 * (0.5 + 0.5 * Math.sin(band * 4.1 - t * 3)));
-      const alpha = (1 - v) * 0.5 + 0.045;
-      context.strokeStyle = `rgba(255,${186 + Math.round((1 - v) * 53)},${76 + Math.round((1 - v) * 92)},${alpha})`;
-      context.lineWidth = 1 + (1 - v) * 1.35;
-      context.beginPath();
-      context.moveTo(sunX + offset - segment, y);
-      context.lineTo(sunX + offset + segment, y + Math.sin(band + t) * 1.4);
-      context.stroke();
-    }
-    context.restore();
+      // A physically legible solar core and bloom at the mathematical horizon.
+      float sunDistance = length(u * vec2(1.0, 1.08));
+      color += vec3(1.2, 0.8, 0.5) * 0.045 / max(sunDistance, 0.0028);
+      color += vec3(1.0, 0.42, 0.08) * 0.006 / max(sunDistance * sunDistance, 0.00012);
 
-    const vignette = context.createRadialGradient(width * 0.62, height * 0.56, Math.min(width, height) * 0.16, width * 0.52, height * 0.54, Math.max(width, height) * 0.76);
-    vignette.addColorStop(0, 'rgba(0,0,0,0)');
-    vignette.addColorStop(1, 'rgba(0,0,0,.58)');
-    context.fillStyle = vignette;
-    context.fillRect(0, 0, width, height);
+      // Fine film grain prevents banding on large displays without creating sparkle motion.
+      float grain = hash21(frag) - 0.5;
+      color += grain * 0.012;
+
+      // Filmic compression preserves highlight detail at 4K and wide-gamut densities.
+      color = color / (1.0 + color);
+      color = pow(max(color, 0.0), vec3(0.88));
+
+      float vignette = 1.0 - 0.42 * dot(u * vec2(0.78, 1.04), u * vec2(0.78, 1.04));
+      color *= clamp(vignette, 0.55, 1.0);
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  const compile = (type, source) => {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.warn('About hero shader unavailable:', gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  };
+
+  const vertexShader = compile(gl.VERTEX_SHADER, vertexSource);
+  const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSource);
+  if (!vertexShader || !fragmentShader) return;
+
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  gl.deleteShader(vertexShader);
+  gl.deleteShader(fragmentShader);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.warn('About hero shader could not be linked:', gl.getProgramInfoLog(program));
+    return;
   }
 
-  function animate(time) {
-    if (visible) draw(time);
-    frame = window.requestAnimationFrame(animate);
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.useProgram(program);
+
+  const position = gl.getAttribLocation(program, 'aPosition');
+  const resolution = gl.getUniformLocation(program, 'uResolution');
+  const time = gl.getUniformLocation(program, 'uTime');
+  gl.enableVertexAttribArray(position);
+  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+  let visible = true;
+  let animationFrame = 0;
+  let lastFrame = -Infinity;
+
+  const resize = () => {
+    const bounds = canvas.parentElement.getBoundingClientRect();
+    const cssWidth = Math.max(1, Math.round(bounds.width));
+    const cssHeight = Math.max(1, Math.round(bounds.height));
+    let ratio = Math.min(window.devicePixelRatio || 1, cssWidth > 900 ? 2.25 : 1.75);
+    const pixelBudget = 6_000_000;
+    ratio = Math.min(ratio, Math.sqrt(pixelBudget / (cssWidth * cssHeight)));
+    const renderWidth = Math.max(1, Math.round(cssWidth * ratio));
+    const renderHeight = Math.max(1, Math.round(cssHeight * ratio));
+    if (canvas.width !== renderWidth || canvas.height !== renderHeight) {
+      canvas.width = renderWidth;
+      canvas.height = renderHeight;
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
+      gl.viewport(0, 0, renderWidth, renderHeight);
+    }
+    draw(reducedMotion ? 18.0 : performance.now());
+  };
+
+  const draw = timestamp => {
+    gl.useProgram(program);
+    gl.uniform2f(resolution, canvas.width, canvas.height);
+    gl.uniform1f(time, timestamp * 0.00034);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+
+  const animate = timestamp => {
+    if (visible && timestamp - lastFrame > 32) {
+      draw(timestamp);
+      lastFrame = timestamp;
+    }
+    animationFrame = requestAnimationFrame(animate);
+  };
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0.02 }).observe(canvas);
   }
-
-  const visibilityObserver = 'IntersectionObserver' in window
-    ? new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0.02 })
-    : null;
-  if (visibilityObserver) visibilityObserver.observe(canvas);
-
-  const resizeObserver = 'ResizeObserver' in window ? new ResizeObserver(resize) : null;
-  if (resizeObserver) resizeObserver.observe(canvas.parentElement);
+  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas.parentElement);
   else window.addEventListener('resize', resize, { passive: true });
 
+  canvas.addEventListener('webglcontextlost', event => event.preventDefault());
   resize();
-  if (!reducedMotion) frame = window.requestAnimationFrame(animate);
-  window.addEventListener('pagehide', () => window.cancelAnimationFrame(frame), { once: true });
+  if (!reducedMotion) animationFrame = requestAnimationFrame(animate);
+  window.addEventListener('pagehide', () => cancelAnimationFrame(animationFrame), { once: true });
 })();
