@@ -831,7 +831,7 @@
             }
             float glow=max(0.,.007-e)*3.;
             float depth=clamp(glow,0.,1.);
-            color+=mix(vec3(.98,.42,.06),vec3(1.,.96,.31),clamp(R*.3+q.y*.12,0.,1.))*depth;
+            color+=mix(vec3(.08,.38,.76),vec3(.38,.86,1.),clamp(R*.3+q.y*.12,0.,1.))*depth;
           }
           color=1.-exp(-color*.82);
           gl_FragColor=vec4(color,1.);
@@ -851,6 +851,7 @@
           float n001=hash31(i+vec3(0,0,1)),n101=hash31(i+vec3(1,0,1)),n011=hash31(i+vec3(0,1,1)),n111=hash31(i+vec3(1,1,1));
           return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y),mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y),f.z)*2.-1.;
         }
+        mat2 rotate2D(float angle){float c=cos(angle),s=sin(angle);return mat2(c,-s,s,c);}
         void main(){
           vec2 r=u_resolution,FC=gl_FragCoord.xy;
           float t=u_time,i=0.,g=0.,e=0.;
@@ -858,11 +859,16 @@
           for(int ray=0;ray<23;ray++){
             i+=1.;
             p=vec3((FC.xy-.5*r)/r.y*2.5,g*g-1.);
-            p+=snoise3D(p*2.+vec3(0.,-sin(t),cos(t))*.3)*.01;
-            q=cos(p*5.5);
-            e=max((length(p)-.8)-e,(distance(q,p*2.)*snoise3D(p*i+vec3(0.,0.,cos(t)*.2))/359.)+5e-3);
+            p.xz=rotate2D(t*.72)*p.xz;
+            p.xy=rotate2D(t*.23)*p.xy;
+            float pulse=.8+sin(t*2.15)*.028;
+            float movingNoise=snoise3D(p*2.15+vec3(t*.34,-t*.19,t*.27));
+            p+=movingNoise*.016;
+            q=cos(p*5.5+vec3(t*.42,-t*.31,t*.24));
+            e=max((length(p)-pulse)-e,(distance(q,p*2.)*snoise3D(p*i+vec3(t*.14,0.,cos(t)*.28))/359.)+5e-3);
             g+=e;
-            energy+=exp(-abs(e)*9e2)*.3*vec3(2.6,1.2,.5);
+            float pulseLight=.92+.12*sin(t*2.15);
+            energy+=exp(-abs(e)*9e2)*.3*vec3(.45,1.35,2.65)*pulseLight;
           }
           vec3 color=1.-exp(-max(energy,0.)*1.45);
           gl_FragColor=vec4(color,1.);
