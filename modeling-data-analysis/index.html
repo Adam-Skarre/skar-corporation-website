@@ -7,9 +7,9 @@
   <meta name="description" content="Decision models, scenario analysis, dashboards, and visual analytics that turn complex data into usable direction."><link rel="canonical" href="https://www.skartech.com/modeling-data-analysis/"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="stylesheet" href="../site.css">
   <link rel="stylesheet" href="../refinement.css?v=20260809-5">
-  <link rel="stylesheet" href="../modeling-hero.css?v=20260810-2">
+  <link rel="stylesheet" href="../modeling-hero.css?v=20260813-1">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <script src="../site-nav.js?v=20260813-1" defer></script><script src="../capability-art.js?v=20260728-17" defer></script><script src="../modeling-hero.js?v=20260810-2" defer></script><script src="../decision-dashboard.js?v=20260729-1" defer></script>
+  <script src="../site-nav.js?v=20260813-1" defer></script><script src="../capability-art.js?v=20260728-17" defer></script>
 </head>
 <body class="capability-page-modeling">
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -32,72 +32,20 @@
         <article><small>Operating view</small><h3>Put the next decision in view.</h3><p>Dashboards and visual analytics that distinguish signal, change, and required attention.</p></article>
       </div>
     </section>
-    <section class="modeling-network-study" data-modeling-network-study aria-labelledby="modeling-network-title">
-      <canvas data-modeling-network role="img" aria-label="An interactive three-dimensional network model showing connected variables and propagating decision pulses.">Interactive network model</canvas>
-      <div class="modeling-network-shade" aria-hidden="true"></div>
-      <div class="modeling-network-copy">
-        <span class="modeling-network-pill">Live model / 03</span>
-        <p class="eyebrow">Interactive structure study</p>
-        <h2 id="modeling-network-title">Find the structure behind the signal.</h2>
-        <p>Move through the field to see how variables connect. Select a point to send a pulse through the model and reveal what changes with it.</p>
-        <a href="#decision-lab">Open the decision lab <span aria-hidden="true">↓</span></a>
-      </div>
-      <div class="modeling-network-readout" aria-hidden="true">
-        <span><i></i> MODEL ONLINE</span>
-        <b>MOVE · SELECT · TRACE</b>
-      </div>
-      <div class="modeling-network-legend" aria-hidden="true"><span>VARIABLE</span><i></i><span>CONNECTION</span><i></i><span>CONSEQUENCE</span></div>
-    </section>
-    <section class="decision-lab" id="decision-lab" data-decision-lab>
-      <div class="decision-lab-heading">
-        <div><p class="eyebrow">Interactive operations decision lab</p><h2>Connect operating choices to financial consequences.</h2></div>
-        <p>Test demand, capacity, and pricing decisions against revenue, contribution margin, service, backlog, and constraint risk. Use the demonstration data or import a client-formatted CSV.</p>
-      </div>
-      <div class="decision-lab-frame">
-        <div class="decision-lab-toolbar">
-          <div class="lab-source"><i aria-hidden="true"></i><div><small>Data source</small><strong data-source-label>SKAR demonstration · 52 weeks</strong></div></div>
-          <div class="lab-toolbar-actions">
-            <label class="lab-button lab-upload"><input type="file" accept=".csv,text/csv" data-csv-input><span>Import CSV</span></label>
-            <button class="lab-button" type="button" data-reset-dashboard>Reset demo</button>
-            <button class="lab-button primary" type="button" data-export-dashboard>Export scenario</button>
-          </div>
-        </div>
-        <div class="decision-lab-layout">
-          <aside class="lab-controls" aria-label="Scenario controls">
-            <div class="lab-controls-head"><small>Scenario design</small><strong data-scenario-name>Base operating plan</strong></div>
-            <div class="lab-presets" role="group" aria-label="Scenario presets">
-              <button class="active" type="button" data-preset="base">Base</button>
-              <button type="button" data-preset="growth">Growth</button>
-              <button type="button" data-preset="shock">Capacity shock</button>
-              <button type="button" data-preset="pricing">Pricing</button>
-            </div>
-            <label class="lab-control"><span>Demand change <output data-output="demand">0%</output></span><input type="range" min="-20" max="30" step="1" value="0" data-control="demand"></label>
-            <label class="lab-control"><span>Available capacity <output data-output="capacity">0%</output></span><input type="range" min="-20" max="25" step="1" value="0" data-control="capacity"></label>
-            <label class="lab-control"><span>Price realization <output data-output="price">0%</output></span><input type="range" min="-10" max="15" step="1" value="0" data-control="price"></label>
-            <label class="lab-select"><span>Decision horizon</span><select data-horizon><option value="13">13 weeks</option><option value="26" selected>26 weeks</option><option value="52">52 weeks</option></select></label>
-            <div class="lab-data-guide"><strong>CSV schema</strong><p><code>date, demand, capacity, throughput, price, variable_cost</code></p><small>Missing throughput, price, or cost values are modeled from the available series. Data stays in the browser.</small></div>
-          </aside>
-          <div class="lab-workspace">
-            <div class="lab-workspace-head"><div><small>Integrated operating outlook</small><h3 data-dashboard-title>Base plan · 26-week outlook</h3></div><span class="lab-status"><i aria-hidden="true"></i><b data-dashboard-status>Within operating range</b></span></div>
-            <div class="lab-kpis" aria-live="polite">
-              <article><small>Projected revenue</small><strong data-kpi="revenue">$0</strong><span data-delta="revenue">—</span></article>
-              <article><small>Contribution margin</small><strong data-kpi="margin">0%</strong><span data-delta="margin">—</span></article>
-              <article><small>Service attainment</small><strong data-kpi="service">0%</strong><span data-delta="service">—</span></article>
-              <article><small>Constraint exposure</small><strong data-kpi="risk">0%</strong><span data-delta="risk">—</span></article>
-            </div>
-            <div class="lab-chart-panel">
-              <div class="lab-chart-head"><div><small>Scenario trajectory</small><strong data-chart-title>Demand, throughput &amp; capacity</strong></div><div class="lab-chart-tabs" role="group" aria-label="Chart view"><button class="active" type="button" data-chart-view="volume">Volume</button><button type="button" data-chart-view="economics">Economics</button><button type="button" data-chart-view="service">Service</button><button type="button" data-chart-view="backlog">Backlog</button></div></div>
-              <div class="lab-chart-wrap"><canvas data-decision-chart width="1200" height="480" role="img" aria-label="Scenario time-series chart"></canvas><div class="lab-chart-tooltip" data-chart-tooltip hidden></div></div>
-              <div class="lab-chart-legend" data-chart-legend></div>
-            </div>
-            <div class="lab-insight-grid">
-              <article class="lab-driver-card"><div><small>Value-driver decomposition</small><strong>What changes the result</strong></div><div class="lab-driver-list" data-driver-list></div></article>
-              <article class="lab-decision-card"><small>Decision brief</small><span class="lab-recommendation-tag" data-recommendation-tag>Monitor</span><h3 data-recommendation-title>Operating plan remains balanced.</h3><p data-recommendation-copy>Demand and capacity remain aligned within the selected horizon.</p><dl><div><dt>Backlog at horizon</dt><dd data-brief="backlog">0</dd></div><div><dt>Working capital at risk</dt><dd data-brief="working-capital">$0</dd></div><div><dt>Peak utilization</dt><dd data-brief="peak-utilization">0%</dd></div></dl></article>
-            </div>
-            <details class="lab-data-table"><summary>Inspect modeled data <span>Latest eight periods</span></summary><div><table><thead><tr><th>Period</th><th>Demand</th><th>Capacity</th><th>Throughput</th><th>Service</th><th>Revenue</th></tr></thead><tbody data-table-body></tbody></table></div></details>
-          </div>
-        </div>
-        <div class="decision-lab-foot"><p data-dashboard-message>Demonstration data is active. Change the scenario controls or import a CSV to evaluate another operating case.</p><span>Illustrative decision model · Financial values are representative</span></div>
+    <section class="modeling-method" id="modeling-method" aria-labelledby="modeling-method-title">
+      <header>
+        <div><p class="eyebrow">A defensible modeling process</p><h2 id="modeling-method-title">No invented certainty. No black box.</h2></div>
+        <p>The model begins with the decision, the evidence available, and the uncertainty that matters. Results are presented with their assumptions and limits intact.</p>
+      </header>
+      <ol class="modeling-method-steps">
+        <li><span>01</span><div><small>Frame</small><h3>Define the decision and boundary.</h3><p>Identify the choice, time horizon, constraints, stakeholders, and measures that determine whether an option is useful.</p></div></li>
+        <li><span>02</span><div><small>Establish</small><h3>Audit the evidence.</h3><p>Document sources, definitions, missing observations, measurement quality, and where judgment must replace unavailable data.</p></div></li>
+        <li><span>03</span><div><small>Test</small><h3>Expose sensitivity and uncertainty.</h3><p>Compare scenarios, vary material assumptions, identify thresholds, and show where the recommended direction changes.</p></div></li>
+        <li><span>04</span><div><small>Deliver</small><h3>Make the reasoning inspectable.</h3><p>Provide the model, assumptions register, decision brief, and a clear explanation of what should be monitored next.</p></div></li>
+      </ol>
+      <div class="modeling-deliverables">
+        <p class="eyebrow">Typical deliverables</p>
+        <ul><li>Decision model</li><li>Scenario and sensitivity analysis</li><li>Documented assumptions</li><li>Source and data-quality record</li><li>Decision brief</li><li>Handoff guidance</li></ul>
       </div>
     </section>
     <section class="capability-proof">
