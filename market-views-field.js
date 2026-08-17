@@ -33,48 +33,70 @@
       }
       return value;
     }
+    float cloudField(vec2 p){
+      vec2 warp=vec2(fbm(p*.58+vec2(1.7,5.2)),fbm(p*.58-vec2(4.1,2.6)));
+      return fbm(p+(warp-.5)*1.18);
+    }
+    vec3 cloudColor(float field,float dx,float dy,vec3 shadow){
+      vec3 normal=normalize(vec3(-dx*5.2,-dy*5.2,.72));
+      vec3 lightDirection=normalize(vec3(-.48,.62,.78));
+      float light=.32+.68*max(0.,dot(normal,lightDirection));
+      float crown=smoothstep(.58,.88,field);
+      vec3 middle=mix(shadow,vec3(.82,.9,.98),light);
+      return mix(middle,vec3(.985,.992,1.),crown*.74);
+    }
     void main(){
       vec2 uv=gl_FragCoord.xy/r;
       vec2 aspect=vec2(r.x/r.y,1.);
-      vec2 pointer=(m-.5)*vec2(.11,.07);
-      float drift=t*.018;
+      vec2 pointer=(m-.5)*vec2(.075,.045);
+      float drift=t*.055;
+      float epsilon=.08;
 
-      vec3 zenith=vec3(.34,.57,.84);
-      vec3 horizon=vec3(.78,.88,.98);
-      vec3 color=mix(horizon,zenith,smoothstep(.12,.92,uv.y));
-      color+=vec3(.14,.18,.22)*(1.-distance(uv,vec2(.54,.57)))*.16;
+      // A deep blue sky corridor stays visible between the cloud banks.
+      vec3 horizon=vec3(.63,.79,.94);
+      vec3 zenith=vec3(.18,.43,.72);
+      vec3 color=mix(horizon,zenith,smoothstep(.04,.96,uv.y));
+      float corridor=exp(-8.5*distance(uv,vec2(.53,.54)));
+      color+=vec3(.075,.11,.15)*corridor;
 
-      // Distant veil: slow, soft, and slightly above the viewer.
-      vec2 farP=(uv*aspect+pointer*.35)*vec2(1.25,2.2)+vec2(drift*.38,1.7);
-      float farShape=fbm(farP)+.42*fbm(farP*1.8+3.1);
-      float farMask=smoothstep(.58,.82,farShape+smoothstep(.18,.94,uv.y)*.18);
-      vec3 farCloud=mix(vec3(.55,.68,.83),vec3(.96,.985,1.),smoothstep(.57,.9,farShape));
-      color=mix(color,farCloud,farMask*.52);
+      // High, distant formations move slowly and retain a crisp silhouette.
+      vec2 farP=(uv*aspect+pointer*.28)*vec2(1.42,1.72)+vec2(-drift*.24,2.1);
+      float farField=cloudField(farP);
+      float farDx=noise(farP*3.+vec2(epsilon,0.))-noise(farP*3.-vec2(epsilon,0.));
+      float farDy=noise(farP*3.+vec2(0.,epsilon))-noise(farP*3.-vec2(0.,epsilon));
+      float farGate=.015+abs(uv.x-.52)*.08;
+      float farMask=smoothstep(.59,.69,farField+farGate);
+      vec3 farCloud=cloudColor(farField,farDx,farDy,vec3(.43,.58,.74));
+      color=mix(color,farCloud,farMask*.38);
 
-      // Upper cloud ceiling leaves a central opening and establishes height.
-      vec2 upperP=(uv*aspect-pointer*.6)*vec2(.92,2.65)+vec2(-drift*.65,4.8);
-      float upper=fbm(upperP)+.3*fbm(upperP*2.25);
-      float ceiling=smoothstep(.58,.79,upper+(uv.y-.58)*.72);
-      float opening=smoothstep(.08,.46,distance(uv,vec2(.52,.57)));
-      ceiling*=mix(.28,1.,opening);
-      vec3 upperCloud=mix(vec3(.43,.57,.73),vec3(.98,.99,1.),smoothstep(.57,.86,upper));
-      color=mix(color,upperCloud,ceiling*.82);
+      // An upper ceiling frames the opening instead of flooding the center.
+      vec2 upperP=(uv*aspect-pointer*.44)*vec2(1.08,1.86)+vec2(drift*.38,5.35);
+      float upperField=cloudField(upperP);
+      float upperDx=noise(upperP*3.+vec2(epsilon,0.))-noise(upperP*3.-vec2(epsilon,0.));
+      float upperDy=noise(upperP*3.+vec2(0.,epsilon))-noise(upperP*3.-vec2(0.,epsilon));
+      float upperGate=(uv.y-.72)*1.38+abs(uv.x-.52)*.08;
+      float upperMask=smoothstep(.53,.65,upperField+upperGate);
+      vec3 upperCloud=cloudColor(upperField,upperDx,upperDy,vec3(.3,.46,.64));
+      color=mix(color,upperCloud,upperMask*.9);
 
-      // Near cloud deck moves fastest and rises into frame, creating levitation.
-      vec2 nearP=(uv*aspect+pointer)*vec2(1.35,3.1)+vec2(drift,7.4);
-      float nearField=fbm(nearP)+.36*fbm(nearP*2.05+7.2);
-      float deck=smoothstep(.53,.73,nearField+(0.42-uv.y)*1.28);
-      vec3 nearShadow=vec3(.28,.43,.62);
-      vec3 nearLight=vec3(.98,.99,1.);
-      vec3 nearCloud=mix(nearShadow,nearLight,smoothstep(.5,.84,nearField+.12*uv.y));
-      color=mix(color,nearCloud,deck*.96);
+      // The near deck has larger billows, darker undersides, and faster upward drift.
+      vec2 nearP=(uv*aspect+pointer)*vec2(1.02,1.48)+vec2(-drift*.92,7.15-drift*.48);
+      float nearField=cloudField(nearP);
+      float nearDx=noise(nearP*3.+vec2(epsilon,0.))-noise(nearP*3.-vec2(epsilon,0.));
+      float nearDy=noise(nearP*3.+vec2(0.,epsilon))-noise(nearP*3.-vec2(0.,epsilon));
+      float nearGate=(.43-uv.y)*1.34+abs(uv.x-.5)*.12;
+      float nearMask=smoothstep(.5,.635,nearField+nearGate);
+      vec3 nearCloud=cloudColor(nearField,nearDx,nearDy,vec3(.22,.38,.58));
+      float underside=smoothstep(.1,.48,uv.y);
+      nearCloud*=mix(.78,1.,underside);
+      color=mix(color,nearCloud,nearMask*.98);
 
-      // Soft aerial perspective and edge shading, never film grain.
-      float glow=exp(-9.*distance(uv,vec2(.53,.52)));
-      color+=vec3(.22,.28,.34)*glow;
-      float vignette=1.-.22*dot((uv-.5)*vec2(.72,1.),(uv-.5)*vec2(.72,1.));
+      // Restrained atmospheric depth without the white bloom that obscured the forms.
+      float aerial=exp(-18.*distance(uv,vec2(.55,.5)));
+      color+=vec3(.035,.055,.075)*aerial;
+      float vignette=1.-.16*dot((uv-.5)*vec2(.72,1.),(uv-.5)*vec2(.72,1.));
       color*=vignette;
-      color=pow(clamp(color,0.,1.),vec3(.94));
+      color=pow(clamp(color,0.,1.),vec3(.96));
       gl_FragColor=vec4(color,1.);
     }
   `;
