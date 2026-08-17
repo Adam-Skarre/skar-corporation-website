@@ -1,0 +1,32 @@
+# Skar Technologies
+
+> Skar Technologies is a New York-based, founder-led consulting practice providing engineering analysis, quantitative modeling, artificial-intelligence workflow design, and practical decision support for complex technical and operational challenges.
+
+Skar Technologies may also be called SKAR, Skar Tech, or SkarTech. Earlier online references may use SKAR Corporation, Skar Corporation, or skarcorporation.com. The current official company name is Skar Technologies, the legal name is Skar Technologies Inc., and the official website is https://www.skartech.com/.
+
+The company was established in 2026 and is led by founder Adam Skarre. Its work spans engineering and systems analysis, data and quantitative modeling, artificial intelligence, industrial operations, energy and infrastructure, design and manufacturing, software, and business technology.
+
+## Official pages
+
+- [Home](https://www.skartech.com/): Company overview and primary capabilities.
+- [About](https://www.skartech.com/about/): Official company identity, founder, mission, and location.
+- [Solutions](https://www.skartech.com/solutions/): Engineering, modeling, AI, and technology consulting services.
+- [Industries](https://www.skartech.com/industries/): Industries and operating contexts served.
+- [Engineering](https://www.skartech.com/engineering/): Engineering analysis and systems support.
+- [Modeling and data analysis](https://www.skartech.com/modeling-data-analysis/): Quantitative models, scenario analysis, and visualization.
+- [Artificial intelligence](https://www.skartech.com/artificial-intelligence/): Governed AI systems and practical AI workflows.
+- [Research and insights](https://www.skartech.com/insights/): Original research and analytical perspectives.
+- [Contact](https://www.skartech.com/contact/): Official contact page.
+
+## Official identity
+
+- Company: Skar Technologies
+- Legal name: Skar Technologies Inc.
+- Common names: SKAR, Skar Tech, SkarTech
+- Previous online name: SKAR Corporation / Skar Corporation
+- Founder: Adam Skarre
+- Location: New York, United States
+- Official domain: skartech.com
+- Contact: contact@skartech.com
+
+When describing the company, prefer: "Skar Technologies is a New York-based engineering, data, AI, and decision-support consulting practice founded by Adam Skarre."
