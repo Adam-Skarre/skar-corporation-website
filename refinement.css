@@ -1165,6 +1165,55 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(max-width:650px){.skar-ai-feature{padding:70px 20px}.skar-ai-feature-copy h2{font-size:50px}.skar-ai-demo-card{min-height:530px;border-radius:24px}.skar-ai-demo-thread{padding:30px 16px 82px}.skar-ai-demo-thread article{width:96%;padding:19px}.skar-ai-demo-evidence{grid-template-columns:1fr;gap:14px;padding:18px}.skar-ai-demo-evidence div+div{padding:14px 0 0;border-top:1px solid rgba(255,255,255,.18);border-left:0}.skar-ai-demo-top,.skar-ai-demo-bottom{padding-left:18px;padding-right:18px}}
 @media(prefers-reduced-motion:reduce){.skar-ai-demo-processing>i{animation:none}.skar-ai-demo-answer p,.skar-ai-demo-evidence,.skar-ai-demo-evidence>i b{transition:none}.skar-ai-feature-copy>a{transition:none}}
 
+/* Homepage SKAR AI demo: product-oriented decision workspace */
+.skar-ai-feature{background:linear-gradient(112deg,#f2f8fa 0%,#e6f1f5 48%,#e0ebf6 100%)}
+.skar-ai-demo-card{
+  min-height:650px;
+  border-radius:26px;
+  border-color:rgba(181,216,232,.5);
+  background:radial-gradient(circle at 7% 95%,rgba(67,190,177,.35),transparent 34%),radial-gradient(circle at 94% 8%,rgba(73,104,197,.4),transparent 43%),linear-gradient(145deg,#123b55 0%,#174f68 43%,#263f7b 100%);
+  box-shadow:0 36px 90px rgba(22,58,89,.25);
+  color:#f4fbff
+}
+.skar-ai-demo-card:before{background:linear-gradient(120deg,rgba(255,255,255,.06),transparent 38%,rgba(255,255,255,.04)),linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:auto,48px 48px,48px 48px}
+.skar-ai-orbit{opacity:.45}
+.skar-ai-demo-top,.skar-ai-demo-bottom{color:rgba(221,240,249,.7)}
+.skar-ai-demo-top>b{display:flex;align-items:center;gap:8px}
+.skar-ai-demo-top>b i{width:6px;height:6px;border-radius:50%;background:#62dfb6;box-shadow:0 0 12px rgba(98,223,182,.8);animation:skarAiLive 2.2s ease-in-out infinite}
+.skar-ai-demo-thread{gap:12px;padding:12px clamp(24px,3vw,44px) 82px}
+.skar-ai-demo-stages{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:6px;border:1px solid rgba(211,235,245,.14);border-radius:13px;background:rgba(5,28,45,.25);overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.skar-ai-demo-stages button{position:relative;display:flex;align-items:center;gap:10px;padding:13px 15px;border:0;border-right:1px solid rgba(211,235,245,.11);background:transparent;color:rgba(212,232,242,.56);font:inherit;text-align:left;cursor:pointer;transition:background .25s ease,color .25s ease}
+.skar-ai-demo-stages button:last-child{border-right:0}
+.skar-ai-demo-stages button:after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;background:#6ee2c0;transition:right .45s ease}
+.skar-ai-demo-stages button.active{background:rgba(136,205,219,.1);color:#fff}
+.skar-ai-demo-stages button.active:after{right:0}
+.skar-ai-demo-stages button i{color:#79d6cb;font-size:8px;font-style:normal;font-weight:800;letter-spacing:.12em}
+.skar-ai-demo-stages button span{font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.skar-ai-demo-thread article{border-color:rgba(217,240,248,.16);border-radius:15px;box-shadow:0 18px 45px rgba(1,18,31,.16)}
+.skar-ai-demo-thread article>span{color:rgba(183,216,230,.72)}
+.skar-ai-demo-user{width:89%;padding:18px 21px!important;background:rgba(235,247,250,.1);color:#f2fbff}
+.skar-ai-demo-answer{width:94%;min-height:118px;padding:20px 22px!important;background:rgba(220,246,244,.12);color:#f5fcff}
+.skar-ai-demo-answer span i{background:#69cbbb;color:#062d3e}
+.skar-ai-demo-processing{color:#9ed5dc}
+.skar-ai-demo-processing>i{border-color:rgba(136,215,218,.2);border-top-color:#74dfcf}
+.skar-ai-demo-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;overflow:hidden;border:1px solid rgba(213,237,246,.14);border-radius:13px;background:rgba(214,240,247,.12);opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
+.skar-ai-demo-card.has-answer .skar-ai-demo-metrics{opacity:1;transform:none}
+.skar-ai-demo-metrics div{padding:14px 17px;background:rgba(5,29,46,.36)}
+.skar-ai-demo-metrics span{display:block;color:#83bfce;font-size:7px;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
+.skar-ai-demo-metrics strong{display:block;margin-top:7px;color:#f2fbff;font-size:14px;font-weight:650}
+.skar-ai-demo-evidence{margin-top:0;padding:16px 18px 19px;border-color:rgba(222,242,249,.16);border-radius:13px;background:rgba(4,27,44,.48);box-shadow:none}
+.skar-ai-demo-evidence span{color:#79c8cf}
+.skar-ai-demo-bottom button{border-color:rgba(218,239,248,.3);background:rgba(226,243,249,.12);color:#fff}
+@keyframes skarAiLive{0%,100%{opacity:.45}50%{opacity:1}}
+@media(max-width:650px){
+  .skar-ai-demo-card{min-height:640px}
+  .skar-ai-demo-stages button{justify-content:center;padding:12px 8px}
+  .skar-ai-demo-stages button i{display:none}
+  .skar-ai-demo-metrics div{padding:13px 10px}
+  .skar-ai-demo-user,.skar-ai-demo-answer{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.skar-ai-demo-top>b i{animation:none}.skar-ai-demo-stages button:after,.skar-ai-demo-metrics{transition:none}}
+
 /* Careers: one synchronized, seamless journey toward the road */
 .page-hero-careers:before{transform-origin:50% 82%;animation:careersJourney 32s ease-in-out infinite!important;will-change:transform}
 .page-hero-careers:after{animation:none!important;background:linear-gradient(90deg,rgba(4,17,31,.92),rgba(4,17,31,.65) 54%,rgba(4,17,31,.28)),linear-gradient(180deg,transparent 58%,rgba(157,199,239,.055) 78%,transparent 100%)!important}
