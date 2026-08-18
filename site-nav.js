@@ -186,9 +186,9 @@
           <a class="brand" href="/" aria-label="Skar Technologies home"><img class="brand-wordmark" src="/assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
           <p>Knowledge. Vision. Engineering.</p>
         </div>
-        <div class="footer-section"><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a></div>
+        <div class="footer-section"><h4>Company</h4><a href="/about/">About</a><a href="/careers/">Careers</a><a href="/news/">News</a></div>
         <div class="footer-section"><h4>Expertise</h4><a href="/solutions/">Solutions</a><a href="/industries/">Industries</a></div>
-        <div class="footer-section footer-insights"><h4>Insights</h4><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/visualization/">Visualization</a><a href="/news/">News</a></div>
+        <div class="footer-section footer-insights"><h4>Insights</h4><a href="/way-through/">The Way Through</a><a href="/research/">Research</a><a href="/market-views/">Market Views</a><a href="/visualization/">Visualization</a></div>
       </div>
       <div class="footer-bottom">
         <div class="copyright">© 2026 Skar Technologies Inc. All rights reserved.</div>
