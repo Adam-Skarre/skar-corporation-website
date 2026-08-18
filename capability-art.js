@@ -1381,126 +1381,94 @@
         this.width * .5 + x * scale,
         this.height * .5 + y * scale
       ];
-      const cycle = (t * .22) % 1;
-      const ringMotion = (moment, strength) => {
-        const elapsed = cycle - moment;
-        if (elapsed < 0) return 0;
-        return strength * Math.exp(-elapsed * 14) *
-          Math.sin(elapsed * TAU * 11);
+      const bob = Math.sin(t * 7.2) * 5;
+      const roll = Math.sin(t * 5.1) * .025;
+      const boatPoint = (x, y) => {
+        const cos = Math.cos(roll);
+        const sin = Math.sin(roll);
+        return toScreen(x * cos - y * sin, y * cos + x * sin + bob);
       };
-      const firstRing = ringMotion(.11, .5);
-      const secondRing = ringMotion(.62, .34);
-      const swing = firstRing + secondRing;
-      const ringEnergy =
-        (cycle >= .11 ? Math.exp(-(cycle - .11) * 14) : 0) +
-        (cycle >= .62 ? .68 * Math.exp(-(cycle - .62) * 14) : 0);
-      const anchor = [0, -248];
-      const pivot = [0, -202];
-      const armLength = 118;
-      const bellCenter = [
-        pivot[0] + Math.sin(swing) * armLength,
-        pivot[1] + Math.cos(swing) * armLength
-      ];
-      const rotateBell = (x, y) => [
-        bellCenter[0] + x * Math.cos(swing) - y * Math.sin(swing),
-        bellCenter[1] + x * Math.sin(swing) + y * Math.cos(swing)
-      ];
 
-      this.line([toScreen(...anchor), toScreen(...pivot)], .34, .88, .6);
-      this.line([toScreen(...pivot), toScreen(...bellCenter)], .4, 1.05, .72);
-      for (let link = 0; link < 180; link++) {
-        const u = hash(link * 5.7);
-        const y = anchor[1] + u * (pivot[1] - anchor[1]);
-        const x = Math.sin(u * TAU * 7) * 2.2;
-        const point = toScreen(x, y);
-        const light = this.shimmer(link + 7200, t, 6);
-        this.point(
-          point[0],
-          point[1],
-          (.42 + light * .5) * this.dpr,
-          .08 + light * .25,
-          light,
-          .7
-        );
-      }
-
-      const bellOutline = [
-        [-20, -44], [-37, -32], [-49, -12], [-60, 16],
-        [-76, 47], [-97, 68], [-111, 78], [111, 78],
-        [97, 68], [76, 47], [60, 16], [49, -12],
-        [37, -32], [20, -44], [-20, -44]
-      ].map(point => toScreen(...rotateBell(...point)));
-      this.line(bellOutline, .5, 1.08, .9);
-
-      const bellCount = this.mobile ? 2100 : 4400;
-      for (let i = bellCount; i > 0; i--) {
-        const v = hash(i * 5.7);
-        const width = 22 + v * 68 + Math.sin(v * Math.PI) * 20 +
-          (v > .86 ? (v - .86) / .14 * 18 : 0);
-        const across = hash(i * 11.3 + 2) * 2 - 1;
-        const local = rotateBell(
-          across * width,
-          -44 + v * 122
-        );
-        const point = toScreen(...local);
-        const light = this.shimmer(i + 9000, t, 7);
-        const edge = Math.abs(across) > .9 || v < .035 || v > .955;
-        this.point(
-          point[0],
-          point[1],
-          (.42 + light * .62 + (edge ? .2 : 0)) * this.dpr,
-          .055 + light * .24 + (edge ? .22 : 0),
-          light,
-          .88
-        );
-      }
-
-      [.28, .5, .72, .9].forEach((v, index) => {
-        const width = 22 + v * 68 + Math.sin(v * Math.PI) * 20 +
-          (v > .86 ? (v - .86) / .14 * 18 : 0);
-        const contour = [];
-        for (let step = 0; step <= 42; step++) {
-          const across = -1 + step / 21;
-          const curve = (1 - across * across) * (5 + index * 1.2);
-          contour.push(toScreen(...rotateBell(
-            across * width,
-            -44 + v * 122 + curve
-          )));
+      // A working-water horizon gives the scene a grounded, local-business feel.
+      for (let band = 0; band < 8; band++) {
+        const wave = [];
+        const baseY = 92 + band * 18;
+        for (let step = 0; step <= 52; step++) {
+          const x = -258 + step * 10;
+          const y = baseY + Math.sin(step * .48 + t * (5.8 - band * .24) + band) * (4 + band * .7);
+          wave.push(toScreen(x, y));
         }
-        this.line(contour, .08 + index * .025, .42, .7);
-      });
+        this.line(wave, .2 - band * .012, .62, band < 3 ? .55 : 0);
+      }
 
-      const clapperPivot = rotateBell(0, 8);
-      const clapperLag = -swing * .72 +
-        ringEnergy * Math.sin(cycle * TAU * 13) * .11;
-      const clapperAngle = swing + clapperLag;
-      const clapperEnd = [
-        clapperPivot[0] + Math.sin(clapperAngle) * 88,
-        clapperPivot[1] + Math.cos(clapperAngle) * 88
-      ];
-      this.line(
-        [toScreen(...clapperPivot), toScreen(...clapperEnd)],
-        .42,
-        .94,
-        .84
-      );
-      const clapperCount = this.mobile ? 210 : 380;
-      for (let i = clapperCount; i > 0; i--) {
-        const angle = hash(i * 7.7) * TAU;
-        const radius = Math.sqrt(hash(i * 13.2 + 4)) * 11;
-        const point = toScreen(
-          clapperEnd[0] + Math.cos(angle) * radius,
-          clapperEnd[1] + Math.sin(angle) * radius
-        );
-        const light = this.shimmer(i + 14500, t, 8);
-        this.point(
-          point[0],
-          point[1],
-          (.44 + light * .6) * this.dpr,
-          .1 + light * .32,
-          light,
-          .95
-        );
+      // Hull, deck, wheelhouse, and working mast.
+      const hull = [
+        [-142, 35], [137, 35], [111, 91], [72, 112],
+        [-77, 112], [-119, 88], [-142, 35]
+      ].map(([x, y]) => boatPoint(x, y));
+      this.line(hull, .56, 1.18, .72);
+      this.line([boatPoint(-122, 57), boatPoint(115, 57)], .22, .62, .5);
+      this.line([boatPoint(-88, 34), boatPoint(-72, -35), boatPoint(28, -35), boatPoint(50, 34)], .48, .96, .52);
+      this.line([boatPoint(-57, -35), boatPoint(-48, -76), boatPoint(12, -76), boatPoint(28, -35)], .42, .88, .56);
+      this.line([boatPoint(-41, -67), boatPoint(-14, -67), boatPoint(-14, -44), boatPoint(-46, -44), boatPoint(-41, -67)], .23, .58);
+      this.line([boatPoint(-5, -67), boatPoint(10, -67), boatPoint(22, -44), boatPoint(-5, -44), boatPoint(-5, -67)], .23, .58);
+      this.line([boatPoint(-19, -77), boatPoint(-19, -161)], .48, .94, .7);
+      this.line([boatPoint(-19, -145), boatPoint(75, -37)], .32, .7, .62);
+      this.line([boatPoint(-19, -126), boatPoint(-83, -35)], .25, .64, .45);
+      this.line([boatPoint(-37, -150), boatPoint(-1, -150)], .32, .7, .7);
+
+      const boatCount = this.mobile ? 1900 : 3900;
+      for (let i = boatCount; i > 0; i--) {
+        const u = hash(i * 5.31);
+        const v = hash(i * 9.77 + 3);
+        let x;
+        let y;
+        let edge = false;
+        if (i % 3) {
+          x = -132 + u * 252;
+          const hullTop = 38 + Math.abs(x) * .025;
+          const hullBottom = 108 - Math.max(0, Math.abs(x) - 72) * .22;
+          y = hullTop + v * Math.max(4, hullBottom - hullTop);
+          edge = v < .035 || v > .965;
+        } else {
+          x = -76 + u * 118;
+          y = -72 + v * 104;
+          edge = u < .045 || u > .955 || v < .045 || v > .955;
+        }
+        const point = boatPoint(x, y);
+        const light = this.shimmer(i + 18000, t, 6.5);
+        this.point(point[0], point[1], (.4 + light * .62 + (edge ? .16 : 0)) * this.dpr, .055 + light * .23 + (edge ? .18 : 0), light, .68);
+      }
+
+      // A trawl line and opening net turn daily work into an operating-system metaphor.
+      const netPulse = .5 + .5 * Math.sin(t * 2.8);
+      const towStart = boatPoint(118, 27);
+      const towEnd = toScreen(176, 72 + bob * .35);
+      this.line([towStart, towEnd], .42, .9, .62);
+      const netMouthTop = [176, 57 + bob * .35];
+      const netMouthBottom = [176, 101 + bob * .35];
+      const netTip = [248 + netPulse * 9, 82 + Math.sin(t * 3.5) * 4];
+      this.line([toScreen(...netMouthTop), toScreen(...netTip), toScreen(...netMouthBottom), toScreen(...netMouthTop)], .48, .92, .7);
+      for (let strand = 1; strand < 6; strand++) {
+        const v = strand / 6;
+        const startY = netMouthTop[1] + (netMouthBottom[1] - netMouthTop[1]) * v;
+        this.line([toScreen(netMouthTop[0], startY), toScreen(netTip[0], netTip[1])], .14, .48, .48);
+      }
+      for (let cross = 1; cross < 5; cross++) {
+        const u = cross / 5;
+        const top = [netMouthTop[0] + (netTip[0] - netMouthTop[0]) * u, netMouthTop[1] + (netTip[1] - netMouthTop[1]) * u];
+        const bottom = [netMouthBottom[0] + (netTip[0] - netMouthBottom[0]) * u, netMouthBottom[1] + (netTip[1] - netMouthBottom[1]) * u];
+        this.line([toScreen(...top), toScreen(...bottom)], .12, .46, .42);
+      }
+
+      // Signals move from the work into the boat: customers, cash, capacity, and decisions.
+      for (let signal = 0; signal < 24; signal++) {
+        const progress = (signal / 24 + t * .13) % 1;
+        const x = netTip[0] + (82 - netTip[0]) * progress;
+        const y = netTip[1] + (18 - netTip[1]) * progress - Math.sin(progress * Math.PI) * 34;
+        const point = toScreen(x, y);
+        const major = signal % 6 === 0;
+        this.point(point[0], point[1], (major ? 2.2 : .9) * this.dpr, major ? .82 : .4, .96, .82);
       }
     }
 
