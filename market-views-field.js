@@ -21,11 +21,22 @@
       return v*mix(vec3(1.),rgb,s);
     }
 
-    vec3 rotateAxisAngle(vec3 point,float angle,vec3 axis){
+    mat3 rotate3D(float angle,vec3 axis){
       axis=normalize(axis);
       float sine=sin(angle);
       float cosine=cos(angle);
-      return point*cosine+cross(axis,point)*sine+axis*dot(axis,point)*(1.-cosine);
+      float inverse=1.-cosine;
+      return mat3(
+        cosine+axis.x*axis.x*inverse,
+        axis.y*axis.x*inverse+axis.z*sine,
+        axis.z*axis.x*inverse-axis.y*sine,
+        axis.x*axis.y*inverse-axis.z*sine,
+        cosine+axis.y*axis.y*inverse,
+        axis.z*axis.y*inverse+axis.x*sine,
+        axis.x*axis.z*inverse+axis.y*sine,
+        axis.y*axis.z*inverse-axis.x*sine,
+        cosine+axis.z*axis.z*inverse
+      );
     }
 
     void main(){
@@ -40,11 +51,7 @@
       // illuminated layer, producing the billowing, fly-through cloudscape.
       for(int ray=0;ray<99;ray++){
         vec3 point=vec3(screen,depth);
-        point=rotateAxisAngle(
-          point,
-          -1.1-cos(t*.15)*.1,
-          vec3(1.,11.+sin(t)*.15,-1.5)
-        );
+        point=point*rotate3D(-1.1-cos(t*.15)*.1,vec3(1.,11.+sin(t)*.15,-1.5));
         scale=2.;
         for(int fold=0;fold<19;fold++){
           energy=7.1/max(.0001,dot(point,point*.51));
@@ -56,7 +63,14 @@
         color+=vec3(.01)-hsv(.1,depth*.016-energy*.3,scale/200.);
       }
 
-      color=pow(clamp(color,0.,1.),vec3(.96));
+      color=clamp(color,0.,1.);
+      // Protect the cool cloud palette from yellow inversion when a device's
+      // shader precision exaggerates the extrapolated HSV saturation.
+      float yellow=max(0.,min(color.r,color.g)-color.b);
+      color.r=max(0.,color.r-yellow*.72);
+      color.g=max(0.,color.g-yellow*.58);
+      color.b=min(1.,color.b+yellow*.48);
+      color=pow(color,vec3(1.08));
       gl_FragColor=vec4(color,1.);
     }
   `;
