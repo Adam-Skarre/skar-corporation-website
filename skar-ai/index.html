@@ -9,8 +9,8 @@
   <meta name="theme-color" content="#f7f8fa">
   <meta name="skar-ai-endpoint" content="https://api.skartech.com/skar-ai">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260812-5">
-  <script src="../skar-ai-demo.js?v=20260813-1" defer></script>
+  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260818-1">
+  <script src="../skar-ai-demo.js?v=20260818-1" defer></script>
 </head>
 <body>
 <div class="ai-app" data-ai-app>
@@ -22,7 +22,7 @@
     <button class="ai-new" data-new-thread><span aria-hidden="true">＋</span><span>New chat</span></button>
     <nav class="ai-recents" aria-label="Recent chats"><p>Chats</p><div data-thread-list></div></nav>
     <div class="ai-sidebar-foot">
-      <button class="ai-account" data-open-auth><span class="ai-account-avatar">A</span><span><strong>Sign in</strong><small>Save and sync your chats</small></span><i>›</i></button>
+      <div class="ai-account"><span class="ai-account-avatar">S</span><span><strong>Local workspace</strong><small>Chats stay in this browser</small></span></div>
       <a href="/artificial-intelligence/">About SKAR AI <span>↗</span></a>
     </div>
   </aside>
@@ -30,14 +30,15 @@
   <main class="ai-main">
     <header class="ai-topbar">
       <button class="ai-icon-button ai-menu" data-sidebar-open aria-label="Open sidebar"><span></span><span></span></button>
-      <div class="ai-model">SKAR AI</div>
-      <div class="ai-top-actions"><a href="/">Skar Technologies</a><button class="ai-signin" data-open-auth>Sign in</button></div>
+      <div class="ai-model">SKAR AI <span>Decision support</span></div>
+      <div class="ai-top-actions"><span class="ai-status" data-ai-status><i></i><b>Checking service</b></span><a href="/">Skar Technologies</a></div>
     </header>
 
     <section class="ai-welcome">
       <div class="ai-glyph" aria-hidden="true">S</div>
       <h1>What can we solve?</h1>
-      <p>Describe a process, queue, or decision. SKAR AI will find the likely constraint and frame the next measurable action.</p>
+      <p>Describe a process, queue, or decision. SKAR AI will separate evidence from assumptions, identify the likely constraint, and frame a measurable next action.</p>
+      <div class="ai-capabilities" aria-label="SKAR AI capabilities"><span>Diagnose a process</span><span>Compare options</span><span>Define a test</span></div>
       <div class="ai-starters">
         <button data-starter="Our quotes take 9 days end to end. Where is the time actually going?"><strong>Find a bottleneck</strong><span>Locate where elapsed time accumulates</span></button>
         <button data-starter="Help me size a bottleneck with only rough numbers."><strong>Size a constraint</strong><span>Work from estimates and incomplete data</span></button>
@@ -51,26 +52,14 @@
     <div class="ai-composer-wrap">
       <form class="ai-composer" data-composer>
         <label class="sr-only" for="ai-message">Message SKAR AI</label>
-        <textarea id="ai-message" data-input rows="1" maxlength="4000" placeholder="Message SKAR AI"></textarea>
+        <textarea id="ai-message" data-input rows="1" maxlength="4000" placeholder="Describe the decision, constraint, or process…"></textarea>
         <span class="ai-count" data-count>0 / 4000</span>
         <button class="ai-send" type="submit" data-send aria-label="Send message">↑</button>
       </form>
-      <p>SKAR AI can make mistakes. Verify important decisions.</p>
+      <p>No account required. Chats are stored only in this browser. Verify important decisions.</p>
     </div>
   </main>
   <button class="ai-scrim" data-scrim aria-label="Close sidebar"></button>
-
-  <dialog class="ai-auth" data-auth-dialog>
-    <button class="ai-auth-close" data-close-auth aria-label="Close sign in">×</button>
-    <div class="ai-auth-mark">S</div>
-    <h2>Sign in to SKAR AI</h2>
-    <p>Save your conversations and continue them from any device.</p>
-    <button class="ai-google" data-google-signin><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285f4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4z"/><path fill="#34a853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.5-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#fbbc05" d="M6.5 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9.1L6.5 14z"/><path fill="#ea4335" d="M12 6a5.4 5.4 0 0 1 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 3.1 7.5l3.4 2.6A5.9 5.9 0 0 1 12 6z"/></svg>Continue with Google</button>
-    <p class="ai-auth-feedback" data-auth-feedback hidden></p>
-    <div class="ai-auth-divider"><span>or</span></div>
-    <button class="ai-guest" data-continue-guest>Continue without an account</button>
-    <small>By continuing, you agree to use SKAR AI responsibly.</small>
-  </dialog>
 </div>
 </body>
 </html>
