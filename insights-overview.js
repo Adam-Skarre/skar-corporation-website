@@ -22,11 +22,11 @@
       linkText: 'Explore applied AI'
     },
     markets: {
-      kicker: 'Markets and strategy',
-      title: 'Translate external change into internal choices.',
-      description: 'Signals in capital, technology, energy, and industrial capacity interpreted through the decisions they affect.',
-      href: '/market-views/',
-      linkText: 'Open Market Views'
+      kicker: 'Engineer View · Market intelligence',
+      title: 'Always get an engineer’s view.',
+      description: 'Independent Market Views on the systems beneath capital, energy, infrastructure, industry, and technology.',
+      href: 'https://engineerview.com/market-views.html',
+      linkText: 'Visit Engineer View'
     },
     energy: {
       kicker: 'Energy and infrastructure',
@@ -773,11 +773,11 @@
       nodes: ['constraints', 'scenarios']
     },
     markets: {
-      label: 'Market question',
-      title: 'Which external changes alter the decision inside the organization?',
-      description: 'We connect movements in technology, capital, energy, demand, and capacity to concrete exposure, timing, and strategic options for operators and decision-makers.',
-      linkText: 'Open Market Views',
-      href: '/market-views/',
+      label: 'The Engineer View',
+      title: 'What is the system beneath the market signal?',
+      description: 'Engineer View traces movements in technology, capital, energy, demand, and capacity back to the constraints and operating realities that determine consequence.',
+      linkText: 'Visit Engineer View',
+      href: 'https://engineerview.com/market-views.html',
       readout: 'External exposure',
       nodes: ['evidence', 'consequences']
     },
