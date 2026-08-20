@@ -4,9 +4,28 @@ const ALLOWED_ORIGINS = new Set([
   'https://adam-skarre.github.io'
 ]);
 
-const SYSTEM_PROMPT = `You are SKAR AI, an engineering and operational decision assistant from Skar Technologies.
+const SYSTEM_PROMPT = `You are SKAR AI, an evidence-aware engineering, business, and product workspace from Skar Technologies.
 
-Help the user reason through processes, queues, constraints, technical tradeoffs, rework, measurement, and consequential decisions. Ask focused follow-up questions when context is missing. Use rough estimates when the user labels them as estimates, and distinguish evidence from inference. Give practical next actions and measurements. Do not pretend to have inspected files, systems, or data the user has not supplied. Do not claim certainty beyond the evidence. Keep answers direct, structured, and conversational. For medical, legal, financial, safety-critical, or other high-stakes matters, state the limits of the response and recommend appropriate qualified review.`;
+Help users analyze consequential decisions, compare options, inspect evidence, plan complex work, clarify technical systems, and create useful professional artifacts. You may draft specifications, analyses, plans, models, tables, and code when asked, but never claim to have executed, tested, searched, or inspected anything you have not actually received. Treat attached material as user-provided context, not automatically verified fact.
+
+Core behavior:
+- Lead with the useful conclusion or artifact.
+- Clearly distinguish observations, assumptions, inferences, and recommendations.
+- Preserve uncertainty and name missing evidence instead of inventing it.
+- Use concise Markdown with a title and descriptive section headings.
+- Make next actions owned, bounded, and measurable.
+- Ask one focused question when the missing answer would materially change the work.
+- Never fabricate citations, sources, calculations, people, results, or system access.
+- Keep consequential judgment with a responsible person.
+
+For medical, legal, financial, safety-critical, or other high-stakes matters, explain the limits and recommend appropriate qualified review.`;
+
+const MODE_INSTRUCTIONS = {
+  decision: 'Prepare an inspectable decision brief. Include the working conclusion, supporting evidence, assumptions, risks or open questions, recommended next action, and success signal.',
+  plan: 'Build a practical action plan. Include the objective, scope, sequenced work, owners or decision rights, milestones, dependencies, risks, and measures of completion.',
+  compare: 'Compare the options using explicit decision criteria. Identify tradeoffs, uncertainty, reversible versus irreversible choices, evidence gaps, and the next test before commitment.',
+  evidence: 'Review the supplied evidence. Separate facts from claims and assumptions, identify contradictions and source limitations, assess what the material supports, and define a verification plan.'
+};
 
 function corsHeaders(origin) {
   return {
@@ -41,10 +60,14 @@ export default {
     const origin = request.headers.get('Origin') || '';
     const localOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
     if (!ALLOWED_ORIGINS.has(origin) && !localOrigin) return json({ error: 'Origin not allowed.' }, 403, origin);
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
-
     const url = new URL(request.url);
-    if (request.method !== 'POST' || url.pathname !== '/skar-ai') return json({ error: 'Not found.' }, 404, origin);
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
+    if (url.pathname !== '/skar-ai') return json({ error: 'Not found.' }, 404, origin);
+    if (request.method === 'GET') {
+      if (!env.OPENAI_API_KEY) return json({ status: 'guided', product: 'SKAR AI' }, 503, origin);
+      return json({ status: 'ready', product: 'SKAR AI' }, 200, origin);
+    }
+    if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405, origin);
     if (!env.OPENAI_API_KEY) return json({ error: 'SKAR AI is not configured.' }, 503, origin);
 
     let body;
@@ -54,16 +77,17 @@ export default {
       return json({ error: 'Invalid request.' }, 400, origin);
     }
 
+    const mode = Object.hasOwn(MODE_INSTRUCTIONS, body.mode) ? body.mode : 'decision';
     const rawMessages = Array.isArray(body.messages) ? body.messages : [];
     const messages = rawMessages
       .filter(message => message && (message.role === 'user' || message.role === 'assistant') && typeof message.text === 'string')
       .slice(-20)
-      .map(message => ({ role: message.role, content: message.text.trim().slice(0, 4000) }))
+      .map(message => ({ role: message.role, content: message.text.trim().slice(0, message.role === 'user' ? 14000 : 7000) }))
       .filter(message => message.content);
 
     if (!messages.length || messages[messages.length - 1].role !== 'user') return json({ error: 'A user message is required.' }, 400, origin);
     const totalCharacters = messages.reduce((sum, message) => sum + message.content.length, 0);
-    if (totalCharacters > 24000) return json({ error: 'This conversation is too long. Start a new chat to continue.' }, 413, origin);
+    if (totalCharacters > 32000) return json({ error: 'This workspace is too long. Start a new workspace or remove some attached material.' }, 413, origin);
 
     let response;
     try {
@@ -75,9 +99,9 @@ export default {
         },
         body: JSON.stringify({
           model: env.OPENAI_MODEL || 'gpt-5.6',
-          instructions: SYSTEM_PROMPT,
+          instructions: `${SYSTEM_PROMPT}\n\nCurrent workspace mode: ${MODE_INSTRUCTIONS[mode]}`,
           input: messages,
-          max_output_tokens: 1200
+          max_output_tokens: 1800
         })
       });
     } catch (_) {
