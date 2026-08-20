@@ -25,7 +25,7 @@
       kicker: 'Engineer View · Market intelligence',
       title: 'Always get an engineer’s view.',
       description: 'Independent Market Views on the systems beneath capital, energy, infrastructure, industry, and technology.',
-      href: 'https://engineerview.com/market-views.html',
+      href: 'https://engineerview.com/',
       linkText: 'Visit Engineer View'
     },
     energy: {
@@ -777,7 +777,7 @@
       title: 'What is the system beneath the market signal?',
       description: 'Engineer View traces movements in technology, capital, energy, demand, and capacity back to the constraints and operating realities that determine consequence.',
       linkText: 'Visit Engineer View',
-      href: 'https://engineerview.com/market-views.html',
+      href: 'https://engineerview.com/',
       readout: 'External exposure',
       nodes: ['evidence', 'consequences']
     },
