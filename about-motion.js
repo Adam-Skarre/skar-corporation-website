@@ -187,7 +187,10 @@
 
   function updatePointer(event) {
     if (reducedMotion) return;
-    const bounds = stage.getBoundingClientRect();
+    // The Insights card scales and translates this canvas for its cropped
+    // mountain composition. Map the pointer against that transformed canvas,
+    // not the untransformed card, so the disturbance stays under the cursor.
+    const bounds = canvas.getBoundingClientRect();
     const normalizedX = clamp((event.clientX - bounds.left) / bounds.width, 0, 1);
     const normalizedY = clamp((event.clientY - bounds.top) / bounds.height, 0, 1);
     pointerTargetX = normalizedX;
