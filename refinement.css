@@ -5223,14 +5223,13 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden}
 @media(prefers-reduced-motion:reduce){.problem-pathway,.problem-pathway>span b{transition:none}}
 
 /* Home statement rail */
-.complexity-marquee{position:relative;display:flex;height:clamp(250px,25vw,390px);align-items:center;overflow:hidden;background:#7bafd4;color:#071f34;border-bottom:1px solid #5f95bd}
+.complexity-marquee{position:relative;display:flex;height:clamp(250px,25vw,390px);align-items:center;overflow:hidden;background:#071f34;color:#fff;border-bottom:1px solid #123a58}
 .complexity-marquee:before,.complexity-marquee:after{content:"";position:absolute;z-index:2;top:0;bottom:0;width:8vw;pointer-events:none}
-.complexity-marquee:before{left:0;background:linear-gradient(90deg,#7bafd4,transparent)}
-.complexity-marquee:after{right:0;background:linear-gradient(-90deg,#7bafd4,transparent)}
+.complexity-marquee:before{left:0;background:linear-gradient(90deg,#071f34,transparent)}
+.complexity-marquee:after{right:0;background:linear-gradient(-90deg,#071f34,transparent)}
 .complexity-marquee-track{display:flex;width:max-content;will-change:transform;animation:complexityMarquee 22s linear infinite}
 .complexity-marquee-group{display:flex;flex:0 0 auto;align-items:center;gap:clamp(42px,5vw,92px);padding-right:clamp(42px,5vw,92px);white-space:nowrap}
 .complexity-marquee-group span{font-family:Georgia,"Times New Roman",serif;font-size:clamp(92px,11.7vw,192px);font-weight:400;line-height:.84;letter-spacing:-.065em}
-.complexity-marquee-group i{color:#f5f9fc;font-family:Georgia,"Times New Roman",serif;font-size:clamp(34px,4vw,64px);font-style:normal}
 @keyframes complexityMarquee{to{transform:translateX(-50%)}}
 @media(max-width:760px){.complexity-marquee{height:190px}.complexity-marquee-track{animation-duration:15s}.complexity-marquee-group span{font-size:20vw}.complexity-marquee-group{gap:34px;padding-right:34px}}
 @media(prefers-reduced-motion:reduce){.complexity-marquee-track{animation:none;transform:translateX(-4vw)}}
