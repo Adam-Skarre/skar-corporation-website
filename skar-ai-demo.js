@@ -12,10 +12,17 @@
   const submit = app.querySelector('[data-ask-submit]');
   const count = app.querySelector('[data-count]');
   const thinkingLabel = app.querySelector('[data-thinking-label]');
-  const resultQuestion = app.querySelector('[data-result-question]');
-  const resultAnswer = app.querySelector('[data-result-answer]');
+  const conversation = app.querySelector('[data-conversation]');
+  const inlineThinking = app.querySelector('[data-inline-thinking]');
+  const followupForm = app.querySelector('[data-followup-form]');
+  const followupInput = app.querySelector('[data-followup-input]');
+  const followupSubmit = app.querySelector('[data-followup-submit]');
+  const followupCount = app.querySelector('[data-followup-count]');
+  const errorBox = app.querySelector('[data-ask-error]');
   const resultArticles = app.querySelector('[data-result-articles]');
   let thinkingTimer = 0;
+  let busy = false;
+  let messages = [];
 
   const articles = [
     { title: 'Before the Dashboard', type: 'Manufacturing systems', href: '/report-manufacturing-readiness/', keys: /manufactur|factory|dashboard|readiness|digital|data|operations?/ },
@@ -24,30 +31,42 @@
     { title: 'Planning for Load Growth', type: 'Energy & infrastructure', href: '/report-data-center-demand/', keys: /energy|electric|power|grid|load|data.?center|infrastructure/ }
   ];
 
-  const guidedAnswer = question => {
-    const lower = question.toLowerCase();
-    if (/manufactur|factory|dashboard|industry/.test(lower)) return '# Start with the operating decision, not the interface.\n\nBefore selecting an AI platform or dashboard, define the decision the system must improve, identify its accountable owner, and verify that the underlying operational data is consistent enough to support it.\n\n## A practical sequence\n- Map the current workflow and the point where judgment is required.\n- Confirm source definitions, timestamps, exceptions, and ownership.\n- Test one bounded use case before expanding the technology layer.\n\nA dashboard can make activity visible, but it cannot repair an undefined process or unreliable source record.';
-    if (/energy|electric|power|grid|load|data.?center|infrastructure/.test(lower)) return '# Treat the forecast as a range of operating scenarios.\n\nInfrastructure decisions should separate committed demand from announced or speculative demand, then test the system against multiple timing and utilization cases.\n\n## What to establish first\n- Which loads are contracted, under construction, or still proposed.\n- The location, timing, duration, and flexibility of each demand source.\n- The transmission, generation, permitting, and interconnection constraints that control delivery.\n\nThe useful output is not one precise forecast. It is a decision that remains defensible across the scenarios that matter.';
-    if (/\bai\b|artificial intelligence|adoption|workflow|automation/.test(lower)) return '# Verify workflow readiness before scaling the tool.\n\nAI adoption creates value when it is attached to a specific decision, supported by approved information, and governed by someone accountable for the result. Access to a model alone does not establish those conditions.\n\n## Questions to resolve\n- Which task or decision is being improved?\n- What evidence may the system use, and who maintains it?\n- Where must a person review, approve, or override the output?\n- How will the organization detect whether the change actually helped?\n\nBegin with one reversible use case whose quality and operating effect can be observed.';
-    return '# Frame the decision before searching for the solution.\n\nState the outcome that matters, the boundary of the system, the evidence already available, and the consequence of being wrong. That separates a consequential decision from a broad topic.\n\n## A useful next step\n- Write the decision in one sentence.\n- Name the owner and the deadline.\n- Separate observations from assumptions.\n- Identify the smallest missing fact that could change the direction.\n\nThat structure makes the next analysis more focused and easier to verify.';
-  };
-
-  const appendText = (container, value) => {
+  const appendMarkdown = (container, value) => {
     container.replaceChildren();
     let list = null;
     value.split('\n').forEach(raw => {
       const line = raw.trim();
       if (!line) { list = null; return; }
-      if (line.startsWith('# ')) {
-        const h2 = document.createElement('h2'); h2.textContent = line.slice(2); container.append(h2); list = null;
+      if (line.startsWith('### ')) {
+        const h4 = document.createElement('h4'); h4.textContent = line.slice(4); container.append(h4); list = null;
       } else if (line.startsWith('## ')) {
         const h3 = document.createElement('h3'); h3.textContent = line.slice(3); container.append(h3); list = null;
-      } else if (line.startsWith('- ')) {
-        if (!list) { list = document.createElement('ul'); container.append(list); }
+      } else if (line.startsWith('# ')) {
+        const h2 = document.createElement('h2'); h2.textContent = line.slice(2); container.append(h2); list = null;
+      } else if (/^[-*] /.test(line)) {
+        if (!list || list.tagName !== 'UL') { list = document.createElement('ul'); container.append(list); }
         const item = document.createElement('li'); item.textContent = line.slice(2); list.append(item);
+      } else if (/^\d+\. /.test(line)) {
+        if (!list || list.tagName !== 'OL') { list = document.createElement('ol'); container.append(list); }
+        const item = document.createElement('li'); item.textContent = line.replace(/^\d+\. /, ''); list.append(item);
       } else {
-        const paragraph = document.createElement('p'); paragraph.textContent = line; container.append(paragraph); list = null;
+        const paragraph = document.createElement('p'); paragraph.textContent = line.replace(/\*\*/g, ''); container.append(paragraph); list = null;
       }
+    });
+  };
+
+  const renderConversation = () => {
+    conversation.replaceChildren();
+    messages.forEach(message => {
+      const turn = document.createElement('section');
+      turn.className = `ask-turn ask-turn-${message.role}`;
+      const label = document.createElement('span');
+      label.textContent = message.role === 'user' ? 'YOU' : 'SKAR AI';
+      const body = document.createElement('div');
+      if (message.role === 'assistant') appendMarkdown(body, message.text);
+      else { const paragraph = document.createElement('p'); paragraph.textContent = message.text; body.append(paragraph); }
+      turn.append(label, body);
+      conversation.append(turn);
     });
   };
 
@@ -67,60 +86,103 @@
     });
   };
 
-  const requestAnswer = async question => {
-    if (!endpoint) return guidedAnswer(question);
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'evidence', messages: [{ role: 'user', text: question }] })
-      });
-      const payload = await response.json();
-      if (!response.ok || typeof payload.answer !== 'string' || !payload.answer.trim()) throw new Error('Unavailable');
-      return payload.answer.trim();
-    } catch (_) {
-      return guidedAnswer(question);
+  const requestAnswer = async () => {
+    if (!endpoint) throw new Error('The live AI endpoint has not been configured.');
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'conversation', messages })
+    });
+    let payload = {};
+    try { payload = await response.json(); } catch (_) { /* use the service error below */ }
+    if (!response.ok || typeof payload.answer !== 'string' || !payload.answer.trim()) {
+      throw new Error(typeof payload.error === 'string' ? payload.error : 'SKAR AI could not complete that response.');
     }
+    return payload.answer.trim();
   };
 
   const showThinking = () => {
     askView.hidden = true; resultView.hidden = true; thinkingView.hidden = false;
-    const labels = ['Reviewing the question', 'Clarifying the decision', 'Connecting relevant research'];
+    const labels = ['Reading your question', 'Reasoning through the context', 'Preparing a useful answer'];
     let index = 0;
     thinkingLabel.textContent = labels[0];
     clearInterval(thinkingTimer);
     thinkingTimer = setInterval(() => { index = (index + 1) % labels.length; thinkingLabel.textContent = labels[index]; }, 720);
   };
 
-  const showResult = (question, answer) => {
+  const showResult = latestQuestion => {
     clearInterval(thinkingTimer);
-    resultQuestion.textContent = question;
-    appendText(resultAnswer, answer);
-    showArticles(question);
-    thinkingView.hidden = true; resultView.hidden = false;
-    scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    renderConversation();
+    showArticles(latestQuestion);
+    thinkingView.hidden = true;
+    askView.hidden = true;
+    resultView.hidden = false;
   };
 
-  const ask = async question => {
+  const showError = message => {
+    errorBox.textContent = `${message} The live model must be connected before SKAR AI can answer; no canned response has been substituted.`;
+    errorBox.hidden = false;
+  };
+
+  const setBusy = value => {
+    busy = value;
+    submit.disabled = value;
+    followupSubmit.disabled = value;
+    followupInput.disabled = value;
+    inlineThinking.hidden = !value;
+  };
+
+  const ask = async (question, firstTurn = false) => {
     const clean = question.replace(/\s+/g, ' ').trim();
-    if (clean.length < 12) { input.focus(); return; }
-    submit.disabled = true;
-    showThinking();
-    const started = Date.now();
-    const answer = await requestAnswer(clean);
-    const remaining = Math.max(0, 1450 - (Date.now() - started));
-    setTimeout(() => { showResult(clean, answer); submit.disabled = false; }, remaining);
+    if (!clean || busy) return;
+    errorBox.hidden = true;
+    messages.push({ role: 'user', text: clean });
+    showArticles(clean);
+    if (firstTurn) showThinking();
+    else { renderConversation(); inlineThinking.hidden = false; }
+    setBusy(true);
+    try {
+      const answer = await requestAnswer();
+      messages.push({ role: 'assistant', text: answer });
+      showResult(clean);
+      followupInput.value = '';
+      followupCount.textContent = '0 / 1400';
+      followupInput.focus({ preventScroll: true });
+    } catch (error) {
+      if (firstTurn) showResult(clean);
+      else renderConversation();
+      showError(error instanceof Error ? error.message : 'SKAR AI is temporarily unavailable.');
+    } finally {
+      setBusy(false);
+    }
   };
 
-  form.addEventListener('submit', event => { event.preventDefault(); ask(input.value); });
-  input.addEventListener('input', () => { count.textContent = `${input.value.length} / 700`; });
-  input.addEventListener('keydown', event => {
-    if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); }
+  const updateCount = (field, target) => { target.textContent = `${field.value.length} / 1400`; };
+  const submitOnEnter = (field, targetForm) => field.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); targetForm.requestSubmit(); }
   });
+
+  form.addEventListener('submit', event => { event.preventDefault(); ask(input.value, true); });
+  followupForm.addEventListener('submit', event => { event.preventDefault(); ask(followupInput.value); });
+  input.addEventListener('input', () => updateCount(input, count));
+  followupInput.addEventListener('input', () => updateCount(followupInput, followupCount));
+  submitOnEnter(input, form);
+  submitOnEnter(followupInput, followupForm);
+
   app.querySelectorAll('[data-prompt]').forEach(button => button.addEventListener('click', () => {
     input.value = button.dataset.prompt; input.dispatchEvent(new Event('input')); input.focus();
   }));
+
   app.querySelector('[data-ask-again]').addEventListener('click', () => {
-    resultView.hidden = true; thinkingView.hidden = true; askView.hidden = false; input.value = ''; input.dispatchEvent(new Event('input')); input.focus(); scrollTo({ top: 0, behavior: 'smooth' });
+    messages = [];
+    conversation.replaceChildren();
+    errorBox.hidden = true;
+    resultView.hidden = true;
+    thinkingView.hidden = true;
+    askView.hidden = false;
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    input.focus();
+    scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   });
 })();
