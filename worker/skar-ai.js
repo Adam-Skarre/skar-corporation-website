@@ -4,15 +4,17 @@ const ALLOWED_ORIGINS = new Set([
   'https://adam-skarre.github.io'
 ]);
 
-const SYSTEM_PROMPT = `You are SKAR AI, an evidence-aware engineering, business, and product workspace from Skar Technologies.
+const SYSTEM_PROMPT = `You are SKAR AI, a conversational research and reasoning assistant from Skar Technologies.
 
-Help users analyze consequential decisions, compare options, inspect evidence, plan complex work, clarify technical systems, and create useful professional artifacts. You may draft specifications, analyses, plans, models, tables, and code when asked, but never claim to have executed, tested, searched, or inspected anything you have not actually received. Treat attached material as user-provided context, not automatically verified fact.
+Have natural, useful conversations about everyday questions as well as engineering, business, product, operating, and infrastructure decisions. Remember the conversation supplied to you and answer follow-up questions in context. You may draft specifications, analyses, plans, models, tables, and code when asked, but never claim to have executed, tested, searched, or inspected anything you have not actually received. Treat user-provided material as context, not automatically verified fact.
 
 Core behavior:
-- Lead with the useful conclusion or artifact.
+- Respond naturally to greetings, short questions, brainstorming, and ordinary conversation.
+- Lead with the useful answer or artifact; do not force every exchange into a decision brief.
 - Clearly distinguish observations, assumptions, inferences, and recommendations.
 - Preserve uncertainty and name missing evidence instead of inventing it.
-- Use concise Markdown with a title and descriptive section headings.
+- Use concise Markdown and descriptive headings only when they help readability.
+- For substantial analytical questions, include a short "Why this answer" section that explains the evidence, assumptions, and logic a decision-maker can inspect. This is a concise rationale, not private chain-of-thought or hidden internal reasoning.
 - Make next actions owned, bounded, and measurable.
 - Ask one focused question when the missing answer would materially change the work.
 - Never fabricate citations, sources, calculations, people, results, or system access.
@@ -21,6 +23,7 @@ Core behavior:
 For medical, legal, financial, safety-critical, or other high-stakes matters, explain the limits and recommend appropriate qualified review.`;
 
 const MODE_INSTRUCTIONS = {
+  conversation: 'Hold a natural multi-turn conversation. Answer the user directly, retain relevant prior context, and provide a concise inspectable rationale when the question is analytical or consequential.',
   decision: 'Prepare an inspectable decision brief. Include the working conclusion, supporting evidence, assumptions, risks or open questions, recommended next action, and success signal.',
   plan: 'Build a practical action plan. Include the objective, scope, sequenced work, owners or decision rights, milestones, dependencies, risks, and measures of completion.',
   compare: 'Compare the options using explicit decision criteria. Identify tradeoffs, uncertainty, reversible versus irreversible choices, evidence gaps, and the next test before commitment.',
@@ -28,13 +31,14 @@ const MODE_INSTRUCTIONS = {
 };
 
 function corsHeaders(origin) {
-  return {
-    'Access-Control-Allow-Origin': origin,
+  const headers = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin'
   };
+  if (origin) headers['Access-Control-Allow-Origin'] = origin;
+  return headers;
 }
 
 function json(body, status, origin) {
@@ -59,12 +63,13 @@ export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
     const localOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-    if (!ALLOWED_ORIGINS.has(origin) && !localOrigin) return json({ error: 'Origin not allowed.' }, 403, origin);
     const url = new URL(request.url);
+    const browserRequest = request.method !== 'GET';
+    if (browserRequest && !ALLOWED_ORIGINS.has(origin) && !localOrigin) return json({ error: 'Origin not allowed.' }, 403, origin);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
     if (url.pathname !== '/skar-ai') return json({ error: 'Not found.' }, 404, origin);
     if (request.method === 'GET') {
-      if (!env.OPENAI_API_KEY) return json({ status: 'guided', product: 'SKAR AI' }, 503, origin);
+      if (!env.OPENAI_API_KEY) return json({ status: 'not_configured', product: 'SKAR AI' }, 503, origin);
       return json({ status: 'ready', product: 'SKAR AI' }, 200, origin);
     }
     if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405, origin);
@@ -77,17 +82,17 @@ export default {
       return json({ error: 'Invalid request.' }, 400, origin);
     }
 
-    const mode = Object.hasOwn(MODE_INSTRUCTIONS, body.mode) ? body.mode : 'decision';
+    const mode = Object.hasOwn(MODE_INSTRUCTIONS, body.mode) ? body.mode : 'conversation';
     const rawMessages = Array.isArray(body.messages) ? body.messages : [];
     const messages = rawMessages
       .filter(message => message && (message.role === 'user' || message.role === 'assistant') && typeof message.text === 'string')
-      .slice(-20)
-      .map(message => ({ role: message.role, content: message.text.trim().slice(0, message.role === 'user' ? 14000 : 7000) }))
+      .slice(-24)
+      .map(message => ({ role: message.role, content: message.text.trim().slice(0, message.role === 'user' ? 9000 : 12000) }))
       .filter(message => message.content);
 
     if (!messages.length || messages[messages.length - 1].role !== 'user') return json({ error: 'A user message is required.' }, 400, origin);
     const totalCharacters = messages.reduce((sum, message) => sum + message.content.length, 0);
-    if (totalCharacters > 32000) return json({ error: 'This workspace is too long. Start a new workspace or remove some attached material.' }, 413, origin);
+    if (totalCharacters > 48000) return json({ error: 'This conversation is too long. Start a new conversation to continue.' }, 413, origin);
 
     let response;
     try {
@@ -101,7 +106,9 @@ export default {
           model: env.OPENAI_MODEL || 'gpt-5.6',
           instructions: `${SYSTEM_PROMPT}\n\nCurrent workspace mode: ${MODE_INSTRUCTIONS[mode]}`,
           input: messages,
-          max_output_tokens: 1800
+          reasoning: { effort: 'medium' },
+          max_output_tokens: 2200,
+          store: false
         })
       });
     } catch (_) {

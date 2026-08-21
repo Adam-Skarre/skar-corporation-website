@@ -24,4 +24,8 @@ Merge a change to `worker/**`, `wrangler.toml`, or the deployment workflow, or r
 2. Deploy the Worker and upload `OPENAI_API_KEY` as an encrypted Worker secret.
 3. Verify `https://api.skartech.com/skar-ai` returns a healthy response.
 
-Until production activation is complete, the website remains usable in **Guided mode** and clearly labels that state. It does not pretend a live model is connected.
+Until production activation is complete, the website shows a clear service-unavailable message. It does not substitute a scripted or canned answer for the live model.
+
+## Conversation behavior
+
+The browser sends the active conversation to the Worker, which calls the OpenAI Responses API with the model configured by `OPENAI_MODEL`. The Worker keeps the OpenAI key server-side and asks the model to provide a concise, inspectable rationale for substantive answers without exposing private hidden chain-of-thought.

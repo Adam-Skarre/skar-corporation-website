@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Ask SKAR AI | Skar Technologies</title>
-  <meta name="description" content="Ask one consequential question and receive a concise working answer with relevant SKAR research.">
+  <meta name="description" content="Have a real conversation with SKAR AI, a research and reasoning assistant from Skar Technologies.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="theme-color" content="#eef5f6">
   <meta name="skar-ai-endpoint" content="https://api.skartech.com/skar-ai">
   <link rel="canonical" href="https://www.skartech.com/skar-ai/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ask SKAR AI | Skar Technologies">
-  <meta property="og:description" content="A focused research assistant for consequential technical and operating questions.">
+  <meta property="og:description" content="A conversational research and reasoning assistant for technical, operating, and everyday questions.">
   <meta property="og:url" content="https://www.skartech.com/skar-ai/">
   <meta property="og:image" content="https://www.skartech.com/assets/skar-social-card.png">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260820-2">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SKAR AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"A focused research assistant that answers one consequential question and connects it to relevant published SKAR research.","provider":{"@type":"Organization","name":"Skar Technologies","url":"https://www.skartech.com/"},"url":"https://www.skartech.com/skar-ai/"}</script>
-  <script src="../skar-ai-demo.js?v=20260820-2" defer></script>
+  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260820-3">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SKAR AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"A conversational research and reasoning assistant that retains context and connects relevant questions to published SKAR research.","provider":{"@type":"Organization","name":"Skar Technologies","url":"https://www.skartech.com/"},"url":"https://www.skartech.com/skar-ai/"}</script>
+  <script src="../skar-ai-demo.js?v=20260820-3" defer></script>
 </head>
 <body>
   <header class="ask-header">
@@ -28,14 +28,14 @@
 
   <main class="ask-main" data-ai-app>
     <section class="ask-intro" data-ask-view>
-      <p class="ask-eyebrow"><i></i> ONE QUESTION. CLEARER DIRECTION.</p>
-      <h1>What do you need<br><span>to understand?</span></h1>
-      <p class="ask-deck">Ask a complete question about an engineering, operating, technology, or infrastructure decision. SKAR AI will prepare a concise working answer and connect it to relevant published research.</p>
+      <p class="ask-eyebrow"><i></i> ASK. REASON. FOLLOW UP.</p>
+      <h1>What would you like<br><span>to work through?</span></h1>
+      <p class="ask-deck">Talk with SKAR AI naturally. Ask a quick question, explore an idea, or work through a consequential engineering, operating, technology, or infrastructure decision over multiple turns.</p>
 
       <form class="ask-form" data-ask-form>
         <label class="sr-only" for="ask-question">Ask SKAR AI a question</label>
-        <textarea id="ask-question" data-ask-input rows="3" maxlength="700" placeholder="For example: Where should a manufacturer begin before investing in an AI-enabled operations dashboard?"></textarea>
-        <div><span data-count>0 / 700</span><button type="submit" data-ask-submit>Ask SKAR AI <i aria-hidden="true">→</i></button></div>
+        <textarea id="ask-question" data-ask-input rows="3" maxlength="1400" placeholder="Ask anything, then follow up naturally…"></textarea>
+        <div><span data-count>0 / 1400</span><button type="submit" data-ask-submit>Ask SKAR AI <i aria-hidden="true">→</i></button></div>
       </form>
 
       <div class="ask-prompts" aria-label="Suggested questions">
@@ -43,22 +43,33 @@
         <button type="button" data-prompt="What should leaders verify before expanding AI across a business workflow?">AI adoption</button>
         <button type="button" data-prompt="How should infrastructure planners think about rapidly rising data-center electricity demand?">Infrastructure demand</button>
       </div>
-      <p class="ask-assurance">Public preview · Verify consequential decisions against primary evidence before acting.</p>
+      <p class="ask-assurance">AI can make mistakes · Verify consequential decisions against primary evidence before acting.</p>
     </section>
 
     <section class="ask-thinking" data-thinking-view aria-live="polite" hidden>
       <div class="ask-orb" aria-hidden="true"><i></i><i></i><i></i></div>
       <p data-thinking-label>Reviewing the question</p>
-      <span>Connecting the decision to relevant SKAR research</span>
+      <span>Thinking through the question and the conversation so far</span>
     </section>
 
     <section class="ask-result" data-result-view aria-live="polite" hidden>
-      <header><p>YOUR QUESTION</p><h2 data-result-question></h2></header>
+      <header><p>SKAR AI CONVERSATION</p><h2>Work through it together.</h2></header>
       <div class="ask-result-grid">
-        <article class="ask-answer"><span><i></i> WORKING ANSWER</span><div data-result-answer></div><p class="ask-caution">Treat this as a starting point. Confirm assumptions, source data, and decision ownership before acting.</p></article>
+        <article class="ask-answer">
+          <span><i></i> LIVE CONVERSATION</span>
+          <div class="ask-conversation" data-conversation></div>
+          <div class="ask-inline-thinking" data-inline-thinking hidden><i></i><span>SKAR AI is thinking…</span></div>
+          <form class="ask-followup" data-followup-form>
+            <label class="sr-only" for="ask-followup">Continue the conversation</label>
+            <textarea id="ask-followup" data-followup-input rows="2" maxlength="1400" placeholder="Ask a follow-up or change direction…"></textarea>
+            <div><span data-followup-count>0 / 1400</span><button type="submit" data-followup-submit>Send <i aria-hidden="true">→</i></button></div>
+          </form>
+          <p class="ask-error" data-ask-error role="alert" hidden></p>
+          <p class="ask-caution">SKAR AI provides an inspectable rationale for substantive answers, not private hidden chain-of-thought. Confirm assumptions, source data, and decision ownership before acting.</p>
+        </article>
         <aside class="ask-research"><p>RELEVANT SKAR RESEARCH</p><div data-result-articles></div></aside>
       </div>
-      <button class="ask-again" type="button" data-ask-again>Ask another question <span>↗</span></button>
+      <button class="ask-again" type="button" data-ask-again>Start a new conversation <span>↗</span></button>
     </section>
   </main>
 

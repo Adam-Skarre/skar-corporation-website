@@ -34,10 +34,10 @@
         if (position === finalAnswer.length) {
           clearInterval(typingTimer);
           card.classList.add('has-articles');
-          timers.push(setTimeout(run, 4200));
+          timers.push(setTimeout(run, 6500));
         }
-      }, 22);
-    }, 1500));
+      }, 42);
+    }, 2600));
   };
 
   toggle.addEventListener('click', () => {
