@@ -24,7 +24,7 @@
       signal: 'Technical review queue',
       evidence: 'Review timestamps',
       metrics: ['1.4 days', '7.6 days', '72%'],
-      step: '01 / FIND THE WAIT',
+      step: '01 / MAP THE SYSTEM',
       meter: '42%'
     },
     {
@@ -35,7 +35,7 @@
       signal: '3.8 days waiting',
       evidence: 'One week of quotes',
       metrics: ['1.4 days', '3.8 days', '84%'],
-      step: '02 / SIZE THE CONSTRAINT',
+      step: '02 / TEST THE ASSUMPTION',
       meter: '68%'
     },
     {
@@ -46,7 +46,7 @@
       signal: 'Twice-daily review window',
       evidence: 'Two-week comparison',
       metrics: ['2 windows', '14 days', 'High'],
-      step: '03 / TEST THE ACTION',
+      step: '03 / PREPARE THE BRIEF',
       meter: '88%'
     }
   ];
