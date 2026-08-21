@@ -3,85 +3,65 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>SKAR AI Workspace | Skar Technologies</title>
-  <meta name="description" content="Use SKAR AI to analyze decisions, compare options, review evidence, and create an inspectable action brief.">
+  <title>Ask SKAR AI | Skar Technologies</title>
+  <meta name="description" content="Ask one consequential question and receive a concise working answer with relevant SKAR research.">
   <meta name="robots" content="index,follow,max-image-preview:large">
-  <meta name="theme-color" content="#071b2d">
+  <meta name="theme-color" content="#eef5f6">
   <meta name="skar-ai-endpoint" content="https://api.skartech.com/skar-ai">
   <link rel="canonical" href="https://www.skartech.com/skar-ai/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="SKAR AI Workspace | Skar Technologies">
-  <meta property="og:description" content="A focused AI workspace for evidence-aware decisions, plans, and practical next actions.">
+  <meta property="og:title" content="Ask SKAR AI | Skar Technologies">
+  <meta property="og:description" content="A focused research assistant for consequential technical and operating questions.">
   <meta property="og:url" content="https://www.skartech.com/skar-ai/">
   <meta property="og:image" content="https://www.skartech.com/assets/skar-social-card.png">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260820-1">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SKAR AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"An evidence-aware workspace for analyzing decisions, comparing options, and creating practical action briefs.","provider":{"@type":"Organization","name":"Skar Technologies","url":"https://www.skartech.com/"},"url":"https://www.skartech.com/skar-ai/"}</script>
-  <script src="../skar-ai-demo.js?v=20260820-1" defer></script>
+  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260820-2">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SKAR AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"A focused research assistant that answers one consequential question and connects it to relevant published SKAR research.","provider":{"@type":"Organization","name":"Skar Technologies","url":"https://www.skartech.com/"},"url":"https://www.skartech.com/skar-ai/"}</script>
+  <script src="../skar-ai-demo.js?v=20260820-2" defer></script>
 </head>
 <body>
-<div class="ai-app" data-ai-app>
-  <aside class="ai-sidebar" aria-label="SKAR AI workspaces">
-    <div class="ai-sidebar-head">
-      <a class="ai-brand" href="/" aria-label="Skar Technologies home"><img src="../assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
-      <button class="ai-icon-button ai-close" data-sidebar-close aria-label="Close workspaces">×</button>
-    </div>
-    <button class="ai-new" data-new-thread><span aria-hidden="true">＋</span><span>New workspace</span></button>
-    <nav class="ai-recents" aria-label="Recent workspaces"><p>RECENT WORK</p><div data-thread-list></div></nav>
-    <div class="ai-sidebar-foot">
-      <div class="ai-privacy"><i aria-hidden="true"></i><span><strong>Private browser workspace</strong><small>Work stays on this device unless sent for analysis.</small></span></div>
-      <a href="/artificial-intelligence/">How SKAR AI works <span>↗</span></a>
-      <a href="/">Skar Technologies <span>↗</span></a>
-    </div>
-  </aside>
+  <header class="ask-header">
+    <a class="ask-brand" href="/" aria-label="Skar Technologies home"><img src="../assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
+    <div><span>SKAR AI</span><small>Research assistant</small></div>
+    <a href="/artificial-intelligence/">How it works <span aria-hidden="true">↗</span></a>
+  </header>
 
-  <main class="ai-main">
-    <header class="ai-topbar">
-      <button class="ai-icon-button ai-menu" data-sidebar-open aria-label="Open workspaces"><span></span><span></span></button>
-      <div class="ai-product"><i aria-hidden="true">S</i><span><b>SKAR AI</b><small>Decision workspace</small></span></div>
-      <label class="ai-mode-control"><span>Mode</span><select data-mode aria-label="Choose work mode"><option value="decision">Decision brief</option><option value="plan">Build a plan</option><option value="compare">Compare options</option><option value="evidence">Review evidence</option></select></label>
-      <div class="ai-top-actions"><span class="ai-status is-checking" data-ai-status><i></i><b>Checking secure service</b></span><button type="button" data-panel-toggle aria-expanded="false">Brief</button></div>
-    </header>
+  <main class="ask-main" data-ai-app>
+    <section class="ask-intro" data-ask-view>
+      <p class="ask-eyebrow"><i></i> ONE QUESTION. CLEARER DIRECTION.</p>
+      <h1>What do you need<br><span>to understand?</span></h1>
+      <p class="ask-deck">Ask a complete question about an engineering, operating, technology, or infrastructure decision. SKAR AI will prepare a concise working answer and connect it to relevant published research.</p>
 
-    <div class="ai-workbench">
-      <section class="ai-chat-pane">
-        <section class="ai-welcome">
-          <p class="ai-eyebrow"><i></i> ENGINEERING JUDGMENT, MADE INSPECTABLE</p>
-          <h1>What are we<br><span>working through?</span></h1>
-          <p>Bring the question, the tradeoffs, and the evidence you have. SKAR AI will structure the work, identify what is missing, and prepare a practical brief for human review.</p>
-          <div class="ai-capabilities" aria-label="SKAR AI capabilities"><span>Traceable reasoning</span><span>Explicit assumptions</span><span>Measurable action</span></div>
-          <div class="ai-starters">
-            <button data-starter="Our quotes take nine days end to end. Diagnose where the time is going and prepare a two-week test."><i>01</i><strong>Find the constraint</strong><span>Separate touch time from waiting time</span></button>
-            <button data-mode-starter="compare" data-starter="Compare building an internal tool, buying a platform, and improving the current workflow. Create decision criteria before recommending an option."><i>02</i><strong>Compare options</strong><span>Make tradeoffs and uncertainty explicit</span></button>
-            <button data-mode-starter="plan" data-starter="Build a 30-day plan to reduce fabrication rework. Include owners, milestones, evidence, risks, and success measures."><i>03</i><strong>Build an action plan</strong><span>Turn a goal into owned next steps</span></button>
-            <button data-mode-starter="evidence" data-starter="Review the evidence I provide. Separate facts from assumptions, identify contradictions, and list what must be verified next."><i>04</i><strong>Review evidence</strong><span>Test the strength of the case</span></button>
-          </div>
-        </section>
+      <form class="ask-form" data-ask-form>
+        <label class="sr-only" for="ask-question">Ask SKAR AI a question</label>
+        <textarea id="ask-question" data-ask-input rows="3" maxlength="700" placeholder="For example: Where should a manufacturer begin before investing in an AI-enabled operations dashboard?"></textarea>
+        <div><span data-count>0 / 700</span><button type="submit" data-ask-submit>Ask SKAR AI <i aria-hidden="true">→</i></button></div>
+      </form>
 
-        <section class="ai-conversation" data-conversation aria-live="polite"></section>
+      <div class="ask-prompts" aria-label="Suggested questions">
+        <button type="button" data-prompt="Where should a manufacturer begin before investing in an AI-enabled operations dashboard?">Manufacturing readiness</button>
+        <button type="button" data-prompt="What should leaders verify before expanding AI across a business workflow?">AI adoption</button>
+        <button type="button" data-prompt="How should infrastructure planners think about rapidly rising data-center electricity demand?">Infrastructure demand</button>
+      </div>
+      <p class="ask-assurance">Public preview · Verify consequential decisions against primary evidence before acting.</p>
+    </section>
 
-        <div class="ai-composer-wrap">
-          <div class="ai-attachment-tray" data-attachment-tray aria-live="polite"></div>
-          <form class="ai-composer" data-composer>
-            <label class="ai-attach" title="Attach text, CSV, JSON, or Markdown"><input type="file" data-file-input accept=".txt,.md,.csv,.json,text/plain,text/csv,application/json" multiple><span aria-hidden="true">＋</span><b class="sr-only">Attach files</b></label>
-            <label class="sr-only" for="ai-message">Message SKAR AI</label>
-            <textarea id="ai-message" data-input rows="1" maxlength="6000" placeholder="Describe the decision, desired outcome, and evidence you have…"></textarea>
-            <span class="ai-count" data-count>0 / 6000</span>
-            <button class="ai-send" type="submit" data-send aria-label="Send message">↑</button>
-          </form>
-          <p><span>Enter to send · Shift + Enter for a new line</span><span>Verify consequential decisions before acting.</span></p>
-        </div>
-      </section>
+    <section class="ask-thinking" data-thinking-view aria-live="polite" hidden>
+      <div class="ask-orb" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p data-thinking-label>Reviewing the question</p>
+      <span>Connecting the decision to relevant SKAR research</span>
+    </section>
 
-      <aside class="ai-brief-pane" data-brief-pane aria-label="Decision brief">
-        <header><div><span>LIVE ARTIFACT</span><h2 data-brief-title>Decision brief</h2></div><button type="button" data-panel-close aria-label="Close brief">×</button></header>
-        <div class="ai-brief-empty" data-brief-empty><i aria-hidden="true">S</i><h3>Your working brief appears here.</h3><p>As you work, SKAR AI will turn the conversation into an inspectable document you can copy or download.</p><ul><li>Working conclusion</li><li>Evidence and assumptions</li><li>Risks and open questions</li><li>Recommended next action</li></ul></div>
-        <article class="ai-brief-content" data-brief-content></article>
-        <footer><span data-brief-state>Waiting for analysis</span><div><button type="button" data-copy-brief disabled>Copy</button><button type="button" data-export-brief disabled>Download .md</button></div></footer>
-      </aside>
-    </div>
+    <section class="ask-result" data-result-view aria-live="polite" hidden>
+      <header><p>YOUR QUESTION</p><h2 data-result-question></h2></header>
+      <div class="ask-result-grid">
+        <article class="ask-answer"><span><i></i> WORKING ANSWER</span><div data-result-answer></div><p class="ask-caution">Treat this as a starting point. Confirm assumptions, source data, and decision ownership before acting.</p></article>
+        <aside class="ask-research"><p>RELEVANT SKAR RESEARCH</p><div data-result-articles></div></aside>
+      </div>
+      <button class="ask-again" type="button" data-ask-again>Ask another question <span>↗</span></button>
+    </section>
   </main>
-  <button class="ai-scrim" data-scrim aria-label="Close workspaces"></button>
-</div>
+
+  <footer class="ask-footer"><span>SKAR AI · Human judgment remains in control.</span><a href="/">Skar Technologies</a></footer>
 </body>
 </html>
