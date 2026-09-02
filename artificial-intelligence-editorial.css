@@ -54,37 +54,21 @@
 .skar-ai-page .ai-header-film-frame {
   position: relative;
   width: min(100%, 960px);
-  height: clamp(205px, 18vw, 225px);
+  aspect-ratio: 16 / 9;
+  max-height: min(480px, 55svh);
   margin-inline: auto;
   overflow: hidden;
   background: #fff;
 }
 
-.skar-ai-page .ai-header-film-frame::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 76px;
-  background: #fff;
-  pointer-events: none;
-}
-
 .skar-ai-page .ai-header-film video {
-  position: absolute;
-  inset: 0 auto auto 0;
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   object-fit: contain;
-  object-position: left top;
+  object-position: center;
   background: #fff;
-  filter: contrast(1.18) saturate(.96);
-  transform: translateX(20%) scale(1.45);
-  transform-origin: left top;
+  filter: contrast(1.12) saturate(.96);
 }
 
 @media (max-width: 760px) {
@@ -99,10 +83,7 @@
   }
 
   .skar-ai-page .ai-header-film-frame {
-    height: clamp(180px, 46vw, 220px);
-  }
-
-  .skar-ai-page .ai-header-film video {
-    transform: translateX(15%) scale(1.3);
+    width: 100%;
+    max-height: none;
   }
 }
