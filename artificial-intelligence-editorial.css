@@ -58,7 +58,7 @@
   max-height: min(480px, 55svh);
   margin-inline: auto;
   overflow: hidden;
-  background: #fff;
+  background: transparent;
 }
 
 .skar-ai-page .ai-header-film video {
@@ -67,8 +67,11 @@
   height: 100%;
   object-fit: contain;
   object-position: center;
-  background: #fff;
-  filter: contrast(1.12) saturate(.96);
+  background: transparent;
+  mix-blend-mode: multiply;
+  filter: contrast(1.16) saturate(.96) brightness(1.02);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
 }
 
 @media (max-width: 760px) {
