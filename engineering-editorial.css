@@ -7,6 +7,62 @@
   --eng-space: clamp(72px, 7vw, 112px);
   background: #fff;
 }
+.engineering-page .engineering-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+  gap: clamp(48px, 8vw, 140px);
+  align-items: start;
+  padding: clamp(88px, 10vw, 156px) var(--eng-gutter) clamp(68px, 8vw, 112px);
+  background: #fff;
+  color: var(--eng-ink);
+}
+.engineering-page .engineering-intro h1 {
+  margin: 0;
+  max-width: 760px;
+  color: var(--eng-ink);
+  font-size: clamp(3.8rem, 7.4vw, 7.5rem);
+  line-height: .9;
+  letter-spacing: -.065em;
+}
+.engineering-page .engineering-intro > div {
+  max-width: 650px;
+  padding-top: clamp(2px, 1vw, 16px);
+}
+.engineering-page .engineering-intro p { margin: 0; }
+.engineering-page .engineering-intro-lead {
+  color: var(--eng-ink);
+  font-size: clamp(1.5rem, 2.1vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -.025em;
+}
+.engineering-page .engineering-intro-lead + p {
+  margin-top: clamp(22px, 2vw, 32px);
+  color: #52687a;
+  font-size: clamp(1.08rem, 1.4vw, 1.35rem);
+  line-height: 1.55;
+}
+.engineering-page .engineering-header-art {
+  margin: 0;
+  padding: 0 var(--eng-gutter) clamp(88px, 9vw, 144px);
+  background: #fff;
+}
+.engineering-page .engineering-header-art-frame {
+  position: relative;
+  width: min(100%, 1240px);
+  margin-inline: auto;
+  aspect-ratio: 16 / 7;
+  min-height: 360px;
+  max-height: 560px;
+  overflow: hidden;
+  background: #fff;
+}
+.engineering-page .engineering-header-art canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .engineering-page .eng-reference-lead,
 .engineering-page .eng-reference-copy,
 .engineering-page .eng-ai-reference,
@@ -155,6 +211,7 @@
   .engineering-page .eng-reference-copy > p:not(.eyebrow) { margin-top: 28px; }
 }
 @media (max-width: 980px) {
+  .engineering-page .engineering-intro { grid-template-columns: minmax(0, 1fr); gap: 42px; }
   .engineering-page .eng-challenge > div,
   .engineering-page .eng-ai-reference,
   .engineering-page .capability-proof-closing { grid-template-columns: minmax(0, 1fr); gap: 36px; }
@@ -168,6 +225,8 @@
   .engineering-page .eng-service-grid { grid-template-columns: minmax(0, 1fr); }
   .engineering-page .eng-reference-image { aspect-ratio: 4 / 3; }
   .engineering-page .eng-ai-reference-image { height: 340px; }
+  .engineering-page .engineering-intro { padding-top: 72px; }
+  .engineering-page .engineering-header-art-frame { min-height: 310px; aspect-ratio: 4 / 3; }
 }
 
 /* Preserve the selected video's horizontal framing and original colors. */
