@@ -161,8 +161,8 @@
 
     engineering(t) {
       const scale = Math.min(this.width, this.height) / 520;
-      const yaw = 1.39 + Math.sin(t * .18) * .025;
-      const pitch = .11 + Math.cos(t * .15) * .018;
+      const yaw = this.lightTheme ? Math.PI / 2 : 1.39 + Math.sin(t * .18) * .025;
+      const pitch = this.lightTheme ? 0 : .11 + Math.cos(t * .15) * .018;
       const cycle = reducedMotion ? .56 : (t * .2) % 1;
       const smooth = value => {
         const bounded = clamp(value);
@@ -195,8 +195,8 @@
       const project = (x, y, z, seat = 1, offsetX = 0, offsetY = 0) => {
         const point = this.project(x, y, z, yaw, pitch, scale);
         return [
-          point[0] + offsetX * dimension * (1 - seat),
-          point[1] + offsetY * dimension * (1 - seat),
+          point[0] + (this.lightTheme ? 0 : offsetX) * dimension * (1 - seat),
+          point[1] + (this.lightTheme ? 0 : offsetY) * dimension * (1 - seat),
           point[2]
         ];
       };
@@ -220,7 +220,7 @@
           const angle = hash(i * 7.3 + center * .17 + radius) * TAU;
           const p = ringPoint(
             center,
-            radius + (hash(i * 13.9) - .5) * 4.5,
+            radius + (hash(i * 13.9) - .5) * (this.lightTheme ? 1.2 : 4.5),
             angle,
             seat,
             offsetX,
@@ -262,11 +262,13 @@
 
       const bladeSeats = [];
       for (let blade = 0; blade < 12; blade++) {
-        const bladeSeat = seated(.065 + blade * .008, .025 + (11 - blade) * .004);
+        const bladeSeat = this.lightTheme
+          ? seated(.08, .04)
+          : seated(.065 + blade * .008, .025 + (11 - blade) * .004);
         bladeSeats.push(bladeSeat);
-        const angle = blade / 12 * TAU + rotorAngle + (1 - bladeSeat) * (blade % 2 ? -.18 : .18);
-        const radialShift = (1 - bladeSeat) * 102;
-        const depthShift = (1 - bladeSeat) * (blade % 2 ? -34 : 34);
+        const angle = blade / 12 * TAU + rotorAngle + (this.lightTheme ? 0 : (1 - bladeSeat) * (blade % 2 ? -.18 : .18));
+        const radialShift = (1 - bladeSeat) * (this.lightTheme ? -28 : 102);
+        const depthShift = this.lightTheme ? 0 : (1 - bladeSeat) * (blade % 2 ? -34 : 34);
         const vertices = [
           [depthShift, Math.cos(angle) * (31 + radialShift), Math.sin(angle) * (31 + radialShift)],
           [depthShift, Math.cos(angle + .09) * (111 + radialShift), Math.sin(angle + .09) * (111 + radialShift)],
@@ -328,7 +330,7 @@
 
       const bladeAssembly = Math.min(...bladeSeats);
       const operating = Math.min(assemblyComplete, bladeAssembly);
-      if (operating > .95 && cycle > .43 && cycle < .8) {
+      if (!this.lightTheme && operating > .95 && cycle > .43 && cycle < .8) {
         for (let pulse = 0; pulse < 36; pulse++) {
           const angle = pulse / 36 * TAU + rotorAngle * .15;
           const radius = 151 + 5 * Math.sin(t * 7 + pulse * .7);
@@ -345,7 +347,7 @@
         }
       }
 
-      const seatMoments = [.28, .305, .33, .355, .38, .405, .43];
+      const seatMoments = this.lightTheme ? [] : [.28, .305, .33, .355, .38, .405, .43];
       seatMoments.forEach((moment, index) => {
         const elapsed = cycle - moment;
         if (elapsed < 0 || elapsed > .04) return;
