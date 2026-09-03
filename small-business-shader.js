@@ -1,139 +1,128 @@
 (() => {
-  // SPDX-License-Identifier: MIT
-  // Shader study adapted from an MIT-licensed fragment by Yohei Nishitsuji.
-  // Responsive framing, edge treatment, renderer, and SKAR palette are original adaptations.
   const canvas = document.querySelector('[data-small-business-shader]');
   if (!canvas) return;
 
-  const gl = canvas.getContext('webgl', {
-    alpha: true,
-    antialias: false,
-    depth: false,
-    premultipliedAlpha: true,
-    powerPreference: 'high-performance'
-  });
-  if (!gl) return;
-
-  const vertexSource = `
-    attribute vec2 a_position;
-    void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
-  `;
-  const fragmentSource = `
-    precision highp float;
-    uniform vec2 u_resolution;
-    uniform float u_time;
-
-    vec3 skarPalette(float phase) {
-      vec3 blue = vec3(0.16, 0.48, 0.88);
-      vec3 cyan = vec3(0.25, 0.78, 0.78);
-      vec3 ice = vec3(0.68, 0.86, 1.0);
-      return mix(mix(blue, cyan, smoothstep(0.0, 1.0, phase)), ice, 0.16);
-    }
-
-    void main() {
-      vec2 r = u_resolution;
-      vec2 FC = gl_FragCoord.xy;
-      float t = u_time;
-      float e = 0.0;
-      float R = 0.0;
-      float s = 0.0;
-      vec3 q = vec3(0.0);
-      vec3 p = vec3(0.0);
-      vec3 d = vec3(FC.xy / r * 0.4 + vec2(-0.2, 0.8), 1.0);
-      vec3 color = vec3(0.0);
-      q.zy -= 1.0;
-
-      for (int stepIndex = 0; stepIndex < 130; stepIndex++) {
-        s = 13.0;
-        p = q += d * e * R * 0.1;
-        R = max(length(p), 0.00001);
-        p = vec3(log(R) - t * 0.3, exp(R - p.z * 0.5), atan(p.y, p.x) + t * 0.3);
-        p.y -= 1.0;
-        e = p.y;
-        for (int octave = 0; octave < 7; octave++) {
-          if (s >= 1000.0) break;
-          e += dot(cos(p.xzz * s), sin(p.zzx * s + 0.5)) / s;
-          s += s;
-        }
-        float energy = max(0.0, 0.007 - e) * 3.0;
-        float phase = 0.5 + 0.5 * sin(R * 2.0 + q.y);
-        color += skarPalette(phase) * energy;
-      }
-
-      vec2 centered = (FC - r * 0.5) / min(r.x, r.y);
-      float edgeFade = 1.0 - smoothstep(0.35, 0.56, length(centered));
-      float luminance = max(color.r, max(color.g, color.b));
-      float alpha = clamp(luminance * 1.7, 0.0, 0.9) * edgeFade;
-      gl_FragColor = vec4(color * edgeFade, alpha);
-    }
-  `;
-
-  function compile(type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.warn(gl.getShaderInfoLog(shader));
-      gl.deleteShader(shader);
-      return null;
-    }
-    return shader;
-  }
-
-  const vertexShader = compile(gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSource);
-  if (!vertexShader || !fragmentShader) return;
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
-  gl.useProgram(program);
-
-  const buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const position = gl.getAttribLocation(program, 'a_position');
-  gl.enableVertexAttribArray(position);
-  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-  const resolution = gl.getUniformLocation(program, 'u_resolution');
-  const time = gl.getUniformLocation(program, 'u_time');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let visible = true;
+  const ctx = canvas.getContext('2d', { alpha: true });
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TAU = Math.PI * 2;
+  let width = 0;
+  let height = 0;
+  let dpr = 1;
   let frame = 0;
+  let visible = true;
+
+  const palette = [
+    [78, 143, 231],
+    [64, 183, 218],
+    [101, 205, 176],
+    [157, 218, 177]
+  ];
 
   function resize() {
-    const bounds = canvas.getBoundingClientRect();
-    const mobile = window.matchMedia('(max-width: 760px)').matches;
-    const ratio = Math.min(window.devicePixelRatio || 1, mobile ? 0.9 : 1.2);
-    const width = Math.max(1, Math.round(bounds.width * ratio));
-    const height = Math.max(1, Math.round(bounds.height * ratio));
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-      gl.viewport(0, 0, width, height);
+    const rect = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+    width = Math.max(1, rect.width);
+    height = Math.max(1, rect.height);
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function mix(a, b, amount) {
+    return a + (b - a) * amount;
+  }
+
+  function colorAt(amount, alpha) {
+    const scaled = Math.max(0, Math.min(.999, amount)) * (palette.length - 1);
+    const index = Math.floor(scaled);
+    const blend = scaled - index;
+    const a = palette[index];
+    const b = palette[Math.min(index + 1, palette.length - 1)];
+    return `rgba(${Math.round(mix(a[0], b[0], blend))},${Math.round(mix(a[1], b[1], blend))},${Math.round(mix(a[2], b[2], blend))},${alpha})`;
+  }
+
+  function draw(time) {
+    ctx.clearRect(0, 0, width, height);
+
+    const mobile = width < 520;
+    const cx = width * .52;
+    const cy = height * .5;
+    const radius = Math.min(width, height) * (mobile ? .31 : .36);
+    const rotation = reduceMotion ? .35 : time * .000045;
+    const count = mobile ? 5200 : 9200;
+    const golden = Math.PI * (3 - Math.sqrt(5));
+
+    const glow = ctx.createRadialGradient(cx, cy, radius * .08, cx, cy, radius * 1.25);
+    glow.addColorStop(0, 'rgba(67, 173, 214, .13)');
+    glow.addColorStop(.5, 'rgba(73, 139, 218, .07)');
+    glow.addColorStop(1, 'rgba(53, 198, 166, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * 1.3, 0, TAU);
+    ctx.fill();
+
+    for (let i = 0; i < count; i += 1) {
+      const y0 = 1 - (i / (count - 1)) * 2;
+      const ring = Math.sqrt(Math.max(0, 1 - y0 * y0));
+      const angle = i * golden + rotation;
+
+      // A compact, dependable operating core: ordered layers with subtle live variation.
+      const band = Math.sin(angle * 5 + y0 * 7 - rotation * 9) * .035;
+      const breathe = 1 + Math.sin(time * .00032 + y0 * 3) * .018;
+      const x0 = Math.cos(angle) * ring * (1 + band) * breathe;
+      const z0 = Math.sin(angle) * ring;
+
+      const tilt = -.18;
+      const y1 = y0 * Math.cos(tilt) - z0 * Math.sin(tilt);
+      const z1 = y0 * Math.sin(tilt) + z0 * Math.cos(tilt);
+      const perspective = 1 + z1 * .12;
+      const x = cx + x0 * radius * perspective;
+      const y = cy + y1 * radius * .92 * perspective;
+
+      const depth = (z1 + 1) * .5;
+      const edge = Math.pow(ring, .45);
+      const alpha = (.16 + depth * .56) * (.72 + edge * .28);
+      const size = (mobile ? .55 : .72) + depth * (mobile ? .72 : .95);
+
+      ctx.fillStyle = colorAt(.12 + depth * .78, alpha);
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, TAU);
+      ctx.fill();
     }
+
+    // Quiet structural orbits echo the Industries header without turning into a diagram.
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(-.18);
+    for (let ring = 0; ring < 3; ring += 1) {
+      ctx.strokeStyle = `rgba(${74 + ring * 12}, ${151 + ring * 18}, ${210 - ring * 5}, ${.16 - ring * .035})`;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 8 + ring * 2]);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius * (1.05 + ring * .075), radius * (.38 + ring * .04), rotation * (ring % 2 ? -2 : 2), 0, TAU);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    if (!reduceMotion && visible) frame = requestAnimationFrame(draw);
   }
 
-  function draw(milliseconds) {
+  const observer = new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible && !reduceMotion && !frame) frame = requestAnimationFrame(draw);
+    if (!visible && frame) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    }
+  }, { threshold: .05 });
+
+  new ResizeObserver(() => {
     resize();
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform2f(resolution, canvas.width, canvas.height);
-    gl.uniform1f(time, reducedMotion ? 2.4 : milliseconds * 0.00055);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  }
-
-  function animate(milliseconds) {
-    if (visible) draw(milliseconds);
-    if (!reducedMotion) frame = requestAnimationFrame(animate);
-  }
-
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, {
-    rootMargin: '100px'
+    if (reduceMotion) draw(0);
   }).observe(canvas);
-  window.addEventListener('resize', () => draw(performance.now()), { passive: true });
-  draw(reducedMotion ? 2400 : performance.now());
-  if (!reducedMotion) frame = requestAnimationFrame(animate);
-  window.addEventListener('pagehide', () => cancelAnimationFrame(frame), { once: true });
+
+  resize();
+  observer.observe(canvas);
+  if (reduceMotion) draw(0);
+  else frame = requestAnimationFrame(draw);
 })();
