@@ -102,6 +102,16 @@
   object-fit: cover;
   object-position: center;
   background: #e8f0f4;
+  filter: contrast(1.04) brightness(1.03);
+}
+.engineering-page .eng-ai-banner .eng-uploaded-helix::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(118deg,rgba(22,113,196,.56) 8%,rgba(43,151,202,.48) 52%,rgba(48,186,132,.55) 100%);
+  mix-blend-mode: color;
 }
 @media (max-width: 620px) {
   .engineering-page .eng-ai-banner .eng-uploaded-helix video {
