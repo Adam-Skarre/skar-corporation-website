@@ -1,13 +1,15 @@
 <!doctype html>
 <html lang="en">
-<head>
+<head><meta property="og:image" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta property="og:image:secure_url" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="SKAR wordmark"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta name="twitter:image:alt" content="SKAR wordmark">
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Visualization</title>
+  <title>Visualization | Skar Technologies</title>
   <meta name="description" content="SKAR develops computational visualizations of nonlinear dynamics, parametric geometry, uncertainty, constraints, and simulated system behavior.">
   <link rel="canonical" href="https://www.skartech.com/visualization/"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="stylesheet" href="../site.css"><link rel="stylesheet" href="../refinement.css?v=20260813-4"><link rel="stylesheet" href="../notes-form.css?v=20260813-1">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <script src="../site-nav.js?v=20260813-1" defer></script><script src="../notes-form.js?v=20260813-3" defer></script>
+  <script src="../site-nav.js?v=20260818-1" defer></script><script src="../notes-form.js?v=20260813-3" defer></script>
+  <link rel="stylesheet" href="../visualization-field.css?v=20260830-1">
+  <script type="module" src="../skar-ai-motion.js?v=20260812-2"></script>
 </head>
 <body><div class="utility">Knowledge · Vision · Engineering</div><header class="site-header"></header><main>
   <section class="form-hero">
@@ -41,8 +43,13 @@
       <article class="form-study"><div class="form-study-visual" aria-hidden="true"><canvas class="form-canvas" data-form-study="infinite"></canvas></div><div class="form-study-copy"><small>STUDY 06 · PERIODIC TRANSPORT</small><h3>Transport on a closed orbit</h3><p>Two ribbon manifolds evolve along a 1:2 Lissajous trajectory. Normal-direction perturbations generate local deformation while the orbit remains closed, clarifying periodic transport, handoffs, and stability through a complete state cycle.</p><div class="form-study-equation">x = sin θ · y = 0.78 sin 2θ</div></div></article>
       <article class="form-study"><div class="form-study-visual" aria-hidden="true"><canvas class="form-canvas" data-form-study="transport"></canvas></div><div class="form-study-copy"><small>STUDY 07 · STOCHASTIC TRANSPORT</small><h3>Advection through uncertainty</h3><p>Lagrangian tracers evolve through a time-varying, divergence-free velocity field while stochastic diffusion separates neighboring paths. The resulting density reveals coherent transport barriers, mixing regions, and the rate at which initial certainty is lost.</p><div class="form-study-equation">dXₜ = u(Xₜ,t)dt + √(2κ)dWₜ · ∇·u = 0</div></div></article>
       <article class="form-study"><div class="form-study-visual" aria-hidden="true"><canvas class="form-canvas" data-form-study="torus-knot"></canvas></div><div class="form-study-copy"><small>STUDY 08 · KNOT TOPOLOGY</small><h3>Closed phase manifold</h3><p>A dense ribbon is transported around a (3,8) torus knot. Slow orbital motion exposes periodic closure, winding number, and the continuous local frame that turns a one-dimensional trajectory into an oriented surface without changing its topology.</p><div class="form-study-equation">γ(t) = ((R+r cos 8t)cos 3t, (R+r cos 8t)sin 3t, r sin 8t)</div></div></article>
-      <article class="form-study"><div class="form-study-visual shader-visual" aria-hidden="true"><canvas class="form-canvas" data-shader-study="golden-bloom"></canvas></div><div class="form-study-copy"><small>STUDY 09 · LOG-POLAR FIELD</small><h3>Recursive bloom</h3><p>A volumetric field is remapped through logarithmic radius, exponential depth, and angular phase. Continuous domain warping resolves the scalar field into a layered radial structure.</p><div class="form-study-equation">p = (log ‖p‖ − .3t, exp(R − .5pᶻ), atan(pʸ,pˣ) + .3t)</div></div></article>
-      <article class="form-study"><div class="form-study-visual shader-visual" aria-hidden="true"><canvas class="form-canvas" data-shader-study="molten-sphere"></canvas></div><div class="form-study-copy"><small>STUDY 10 · NOISE-DEFINED SURFACE</small><h3>Scalar-field sphere</h3><p>A signed-distance sphere is perturbed by a moving three-dimensional noise field. Ray-marched density reveals evolving surface texture while the global boundary remains coherent.</p><div class="form-study-equation">e = max(‖p‖ − .8, d(cos 5.5p,2p) · N(p,t) / 359)</div></div></article>
+    </div>
+  </section>
+  <section class="visualization-field" aria-labelledby="interactive-field-title">
+    <header><p class="eyebrow">Interactive visualization</p><h2 id="interactive-field-title">Explore an interactive field.</h2><p>Move your pointer across the canvas to guide the flowing strands.</p></header>
+    <div class="visualization-field-canvas">
+      <canvas id="skar-ai-tubes" aria-label="Interactive flowing strands responding to pointer movement"></canvas>
+      <p class="field-fallback">This interactive field requires motion effects and WebGL to be available.</p>
     </div>
   </section>
   <section class="cta-band"><h2>Bring us a decision that is difficult to explain.</h2><a class="button white" href="/contact/">Build a clearer decision view <b>↗</b></a></section>

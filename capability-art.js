@@ -10,6 +10,7 @@
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d', { alpha: true });
       this.mode = canvas.dataset.capabilityArt;
+      this.lightTheme = canvas.dataset.artTheme === 'light';
       this.visible = true;
       this.start = performance.now();
       this.last = 0;
@@ -55,13 +56,19 @@
 
     prepare() {
       const ctx = this.ctx;
+      if (this.lightTheme) {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        return;
+      }
       const cx = this.width * .5;
       const cy = this.height * .5;
       const radius = Math.min(this.width, this.height) * .55;
       const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-      glow.addColorStop(0, 'rgba(54,145,187,.15)');
-      glow.addColorStop(.48, 'rgba(17,72,105,.065)');
-      glow.addColorStop(1, 'rgba(3,15,27,0)');
+      glow.addColorStop(0, this.lightTheme ? 'rgba(85,153,209,.09)' : 'rgba(54,145,187,.15)');
+      glow.addColorStop(.48, this.lightTheme ? 'rgba(85,153,209,.035)' : 'rgba(17,72,105,.065)');
+      glow.addColorStop(1, this.lightTheme ? 'rgba(255,255,255,0)' : 'rgba(3,15,27,0)');
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, this.width, this.height);
       ctx.globalCompositeOperation = 'lighter';
@@ -74,6 +81,7 @@
       ctx.globalAlpha = 1;
       ctx.shadowBlur = 0;
       ctx.globalCompositeOperation = 'source-over';
+      if (this.lightTheme) return;
       const vignette = ctx.createRadialGradient(
         this.width * .5,
         this.height * .5,
@@ -83,7 +91,7 @@
         Math.min(this.width, this.height) * .62
       );
       vignette.addColorStop(0, 'rgba(3,20,35,0)');
-      vignette.addColorStop(1, 'rgba(3,20,35,.16)');
+      vignette.addColorStop(1, this.lightTheme ? 'rgba(255,255,255,.1)' : 'rgba(3,20,35,.16)');
       ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, this.width, this.height);
     }
@@ -95,11 +103,12 @@
     point(x, y, size, alpha, shimmer = .5, warmth = 0) {
       if (x < -4 || y < -4 || x > this.width + 4 || y > this.height + 4) return;
       const ctx = this.ctx;
-      const red = Math.round(178 + shimmer * 56 + warmth * 10);
-      const green = Math.round(211 + shimmer * 34 + warmth * 8);
-      const blue = Math.round(230 + shimmer * 18 - warmth * 40);
-      ctx.fillStyle = `rgba(${red},${green},${blue},${clamp(alpha)})`;
-      ctx.fillRect(x, y, size, size);
+      const red = this.lightTheme ? Math.round(20 + shimmer * 32) : Math.round(178 + shimmer * 56 + warmth * 10);
+      const green = this.lightTheme ? Math.round(62 + shimmer * 48) : Math.round(211 + shimmer * 34 + warmth * 8);
+      const blue = this.lightTheme ? Math.round(100 + shimmer * 66) : Math.round(230 + shimmer * 18 - warmth * 40);
+      ctx.fillStyle = `rgba(${red},${green},${blue},${clamp(this.lightTheme ? alpha * 2.15 : alpha)})`;
+      const pointSize = this.lightTheme ? size * 1.2 : size;
+      ctx.fillRect(x, y, pointSize, pointSize);
     }
 
     line(points, alpha = .16, width = .65, warmth = 0) {
@@ -110,9 +119,11 @@
         if (index) ctx.lineTo(x, y);
         else ctx.moveTo(x, y);
       });
-      ctx.strokeStyle = warmth
-        ? `rgba(204,226,198,${alpha})`
-        : `rgba(163,211,235,${alpha})`;
+      ctx.strokeStyle = this.lightTheme
+        ? `rgba(23,73,116,${Math.min(1, alpha * 2.8)})`
+        : warmth
+          ? `rgba(204,226,198,${alpha})`
+          : `rgba(163,211,235,${alpha})`;
       ctx.lineWidth = Math.max(.55, width * this.dpr);
       ctx.stroke();
     }
@@ -150,8 +161,8 @@
 
     engineering(t) {
       const scale = Math.min(this.width, this.height) / 520;
-      const yaw = 1.39 + Math.sin(t * .18) * .025;
-      const pitch = .11 + Math.cos(t * .15) * .018;
+      const yaw = this.lightTheme ? Math.PI / 2 : 1.39 + Math.sin(t * .18) * .025;
+      const pitch = this.lightTheme ? 0 : .11 + Math.cos(t * .15) * .018;
       const cycle = reducedMotion ? .56 : (t * .2) % 1;
       const smooth = value => {
         const bounded = clamp(value);
@@ -209,7 +220,7 @@
           const angle = hash(i * 7.3 + center * .17 + radius) * TAU;
           const p = ringPoint(
             center,
-            radius + (hash(i * 13.9) - .5) * 4.5,
+            radius + (hash(i * 13.9) - .5) * (this.lightTheme ? 1.2 : 4.5),
             angle,
             seat,
             offsetX,

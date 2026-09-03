@@ -1,0 +1,110 @@
+/* Full-width AI for engineering banner. */
+.engineering-page .eng-ai-banner {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: clamp(580px, 48vw, 780px);
+  overflow: hidden;
+  padding: 100px var(--eng-gutter);
+  background: #e8f0f4;
+  color: #071f34;
+  scroll-margin-top: 90px;
+}
+.engineering-page .eng-ai-banner .eng-ai-reference-image {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  background: #e8f0f4;
+}
+.engineering-page .eng-ai-banner video { object-fit: cover; object-position: center; }
+.engineering-page .eng-ai-banner .eng-loop-blend video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.engineering-page .eng-ai-banner [data-loop-blend-secondary] {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity .8s ease-in-out;
+}
+.engineering-page .eng-ai-banner [data-loop-blend-secondary].is-blending { opacity: 1; }
+.engineering-page .eng-ai-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgb(245 250 252 / 97%) 0%, rgb(245 250 252 / 92%) 32%, rgb(245 250 252 / 65%) 52%, rgb(245 250 252 / 8%) 78%, transparent);
+  pointer-events: none;
+}
+.engineering-page .eng-ai-banner .eng-ai-reference-copy {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  padding: 0;
+  background: transparent;
+  color: #071f34;
+  border: 0;
+  box-shadow: none;
+}
+.engineering-page .eng-ai-banner h2 {
+  max-width: none;
+  margin: 0 0 30px;
+  color: #071f34;
+  font-size: clamp(48px, 5.2vw, 80px);
+  letter-spacing: -.045em;
+  text-wrap: balance;
+  line-height: 1.04;
+}
+.engineering-page .eng-ai-banner .eng-ai-reference-copy > .eng-ai-tagline {
+  max-width: none;
+  margin: 0 0 18px;
+  color: #071f34;
+  font-size: clamp(20px, 1.6vw, 24px);
+  line-height: 1.3;
+  text-wrap: balance;
+  font-weight: 500;
+}
+.engineering-page .eng-ai-banner .eng-ai-reference-copy > p:not(.eng-ai-tagline) {
+  max-width: 50ch;
+  margin: 0 0 32px;
+  font-size: 18px;
+  line-height: 1.65;
+  color: #102f44;
+}
+.engineering-page .eng-ai-banner a {
+  align-self: flex-start;
+  margin: 0;
+  padding: 16px 24px;
+  border: 1px solid #071f34;
+  border-radius: 3px;
+  background: #071f34;
+  color: white;
+  text-decoration: none;
+}
+.engineering-page .eng-ai-banner a:hover { background: #123e63; }
+.engineering-page .eng-ai-banner a:focus-visible { outline: 3px solid #2868b0; outline-offset: 4px; }
+@media (max-width: 620px) {
+  .engineering-page .eng-ai-banner { min-height: 600px; padding-block: 72px; }
+  .engineering-page .eng-ai-banner h2 { font-size: clamp(48px, 12vw, 64px); }
+  .engineering-page .eng-ai-banner::after { background: rgb(245 250 252 / 90%); }
+}
+
+/* Keep the replacement motion artwork edge-to-edge and visually integrated. */
+.engineering-page .eng-ai-banner .eng-uploaded-helix {
+  background: #e8f0f4;
+}
+.engineering-page .eng-ai-banner .eng-uploaded-helix video {
+  object-fit: cover;
+  object-position: center;
+  background: #e8f0f4;
+}
+@media (max-width: 620px) {
+  .engineering-page .eng-ai-banner .eng-uploaded-helix video {
+    object-position: 58% center;
+  }
+}

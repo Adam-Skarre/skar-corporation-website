@@ -1,76 +1,77 @@
 <!doctype html>
 <html lang="en">
-<head>
+<head><meta property="og:image" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta property="og:image:secure_url" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="SKAR wordmark"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta name="twitter:image:alt" content="SKAR wordmark">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>SKAR AI</title>
-  <meta name="description" content="Use SKAR AI to diagnose operational constraints and define the next measurable action.">
-  <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#f7f8fa">
+  <title>Ask SKAR AI | Skar Technologies</title>
+  <meta name="description" content="Have a real conversation with SKAR AI, a research and reasoning assistant from Skar Technologies.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#eef5f6">
   <meta name="skar-ai-endpoint" content="https://api.skartech.com/skar-ai">
+  <link rel="canonical" href="https://www.skartech.com/skar-ai/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ask SKAR AI | Skar Technologies">
+  <meta property="og:description" content="A conversational research and reasoning assistant for technical, operating, and everyday questions.">
+  <meta property="og:url" content="https://www.skartech.com/skar-ai/">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260812-5">
-  <script src="../skar-ai-demo.js?v=20260813-1" defer></script>
+  <link rel="stylesheet" href="../skar-ai-demo.css?v=20260820-3">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SKAR AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"A conversational research and reasoning assistant that retains context and connects relevant questions to published SKAR research.","provider":{"@type":"Organization","name":"Skar Technologies","url":"https://www.skartech.com/"},"url":"https://www.skartech.com/skar-ai/"}</script>
+  <script src="../skar-ai-demo.js?v=20260820-3" defer></script>
 </head>
 <body>
-<div class="ai-app" data-ai-app>
-  <aside class="ai-sidebar" aria-label="Conversation history">
-    <div class="ai-sidebar-head">
-      <a class="ai-brand" href="/" aria-label="Skar Technologies home"><img src="../assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
-      <button class="ai-icon-button ai-close" data-sidebar-close aria-label="Close sidebar">×</button>
-    </div>
-    <button class="ai-new" data-new-thread><span aria-hidden="true">＋</span><span>New chat</span></button>
-    <nav class="ai-recents" aria-label="Recent chats"><p>Chats</p><div data-thread-list></div></nav>
-    <div class="ai-sidebar-foot">
-      <button class="ai-account" data-open-auth><span class="ai-account-avatar">A</span><span><strong>Sign in</strong><small>Save and sync your chats</small></span><i>›</i></button>
-      <a href="/artificial-intelligence/">About SKAR AI <span>↗</span></a>
-    </div>
-  </aside>
+  <header class="ask-header">
+    <a class="ask-brand" href="/" aria-label="Skar Technologies home"><img src="../assets/skar-footer-logotype.png?v=20260804-1" alt="SKAR"></a>
+    <div><span>SKAR AI</span><small>Research assistant</small></div>
+    <a href="/artificial-intelligence/">How it works <span aria-hidden="true">↗</span></a>
+  </header>
 
-  <main class="ai-main">
-    <header class="ai-topbar">
-      <button class="ai-icon-button ai-menu" data-sidebar-open aria-label="Open sidebar"><span></span><span></span></button>
-      <div class="ai-model">SKAR AI</div>
-      <div class="ai-top-actions"><a href="/">Skar Technologies</a><button class="ai-signin" data-open-auth>Sign in</button></div>
-    </header>
+  <main class="ask-main" data-ai-app>
+    <section class="ask-intro" data-ask-view>
+      <p class="ask-eyebrow"><i></i> ASK. REASON. FOLLOW UP.</p>
+      <h1>What would you like<br><span>to work through?</span></h1>
+      <p class="ask-deck">Talk with SKAR AI naturally. Ask a quick question, explore an idea, or work through a consequential engineering, operating, technology, or infrastructure decision over multiple turns.</p>
 
-    <section class="ai-welcome">
-      <div class="ai-glyph" aria-hidden="true">S</div>
-      <h1>What can we solve?</h1>
-      <p>Describe a process, queue, or decision. SKAR AI will find the likely constraint and frame the next measurable action.</p>
-      <div class="ai-starters">
-        <button data-starter="Our quotes take 9 days end to end. Where is the time actually going?"><strong>Find a bottleneck</strong><span>Locate where elapsed time accumulates</span></button>
-        <button data-starter="Help me size a bottleneck with only rough numbers."><strong>Size a constraint</strong><span>Work from estimates and incomplete data</span></button>
-        <button data-starter="Draft a one-page plan to cut rework on a fabrication line."><strong>Reduce rework</strong><span>Turn repeat work into a testable plan</span></button>
-        <button data-starter="What should I measure to prove a process change worked?"><strong>Choose measures</strong><span>Define a baseline and success signal</span></button>
+      <form class="ask-form" data-ask-form>
+        <label class="sr-only" for="ask-question">Ask SKAR AI a question</label>
+        <textarea id="ask-question" data-ask-input rows="3" maxlength="1400" placeholder="Ask anything, then follow up naturally…"></textarea>
+        <div><span data-count>0 / 1400</span><button type="submit" data-ask-submit>Ask SKAR AI <i aria-hidden="true">→</i></button></div>
+      </form>
+
+      <div class="ask-prompts" aria-label="Suggested questions">
+        <button type="button" data-prompt="Where should a manufacturer begin before investing in an AI-enabled operations dashboard?">Manufacturing readiness</button>
+        <button type="button" data-prompt="What should leaders verify before expanding AI across a business workflow?">AI adoption</button>
+        <button type="button" data-prompt="How should infrastructure planners think about rapidly rising data-center electricity demand?">Infrastructure demand</button>
       </div>
+      <p class="ask-assurance">AI can make mistakes · Verify consequential decisions against primary evidence before acting.</p>
     </section>
 
-    <section class="ai-conversation" data-conversation aria-live="polite"></section>
+    <section class="ask-thinking" data-thinking-view aria-live="polite" hidden>
+      <div class="ask-orb" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p data-thinking-label>Reviewing the question</p>
+      <span>Thinking through the question and the conversation so far</span>
+    </section>
 
-    <div class="ai-composer-wrap">
-      <form class="ai-composer" data-composer>
-        <label class="sr-only" for="ai-message">Message SKAR AI</label>
-        <textarea id="ai-message" data-input rows="1" maxlength="4000" placeholder="Message SKAR AI"></textarea>
-        <span class="ai-count" data-count>0 / 4000</span>
-        <button class="ai-send" type="submit" data-send aria-label="Send message">↑</button>
-      </form>
-      <p>SKAR AI can make mistakes. Verify important decisions.</p>
-    </div>
+    <section class="ask-result" data-result-view aria-live="polite" hidden>
+      <header><p>SKAR AI CONVERSATION</p><h2>Work through it together.</h2></header>
+      <div class="ask-result-grid">
+        <article class="ask-answer">
+          <span><i></i> LIVE CONVERSATION</span>
+          <div class="ask-conversation" data-conversation></div>
+          <div class="ask-inline-thinking" data-inline-thinking hidden><i></i><span>SKAR AI is thinking…</span></div>
+          <form class="ask-followup" data-followup-form>
+            <label class="sr-only" for="ask-followup">Continue the conversation</label>
+            <textarea id="ask-followup" data-followup-input rows="2" maxlength="1400" placeholder="Ask a follow-up or change direction…"></textarea>
+            <div><span data-followup-count>0 / 1400</span><button type="submit" data-followup-submit>Send <i aria-hidden="true">→</i></button></div>
+          </form>
+          <p class="ask-error" data-ask-error role="alert" hidden></p>
+          <p class="ask-caution">SKAR AI provides an inspectable rationale for substantive answers, not private hidden chain-of-thought. Confirm assumptions, source data, and decision ownership before acting.</p>
+        </article>
+        <aside class="ask-research"><p>RELEVANT SKAR RESEARCH</p><div data-result-articles></div></aside>
+      </div>
+      <button class="ask-again" type="button" data-ask-again>Start a new conversation <span>↗</span></button>
+    </section>
   </main>
-  <button class="ai-scrim" data-scrim aria-label="Close sidebar"></button>
 
-  <dialog class="ai-auth" data-auth-dialog>
-    <button class="ai-auth-close" data-close-auth aria-label="Close sign in">×</button>
-    <div class="ai-auth-mark">S</div>
-    <h2>Sign in to SKAR AI</h2>
-    <p>Save your conversations and continue them from any device.</p>
-    <button class="ai-google" data-google-signin><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285f4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4z"/><path fill="#34a853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.5-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#fbbc05" d="M6.5 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9.1L6.5 14z"/><path fill="#ea4335" d="M12 6a5.4 5.4 0 0 1 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 3.1 7.5l3.4 2.6A5.9 5.9 0 0 1 12 6z"/></svg>Continue with Google</button>
-    <p class="ai-auth-feedback" data-auth-feedback hidden></p>
-    <div class="ai-auth-divider"><span>or</span></div>
-    <button class="ai-guest" data-continue-guest>Continue without an account</button>
-    <small>By continuing, you agree to use SKAR AI responsibly.</small>
-  </dialog>
-</div>
+  <footer class="ask-footer"><span>SKAR AI · Human judgment remains in control.</span><a href="/">Skar Technologies</a></footer>
 </body>
 </html>

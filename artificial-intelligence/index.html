@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
-<head>
+<head><meta property="og:image" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta property="og:image:secure_url" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="SKAR wordmark"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.skartech.com/assets/skar-social-wordmark.png?v=20260902"><meta name="twitter:image:alt" content="SKAR wordmark">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Artificial Intelligence</title>
+  <title>Artificial Intelligence | Skar Technologies</title>
   <meta name="description" content="Meet SKAR AI: a focused AI system that finds operational bottlenecks, explains the evidence, and recommends the next action.">
   <link rel="canonical" href="https://www.skartech.com/artificial-intelligence/">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
@@ -13,18 +13,15 @@
   <meta property="og:title" content="SKAR AI | Governed Intelligence for Business">
   <meta property="og:description" content="Apply intelligence with intent. SKAR AI connects trusted context, useful reasoning, and governed action.">
   <meta property="og:url" content="https://www.skartech.com/artificial-intelligence/">
-  <meta property="og:image" content="https://www.skartech.com/assets/skar-intelligence-hero.png">
-  <meta property="og:image:alt" content="SKAR AI private intelligence system">
-  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SKAR AI | Governed Intelligence for Business">
   <meta name="twitter:description" content="A private intelligence layer for approved company knowledge, evidence-led analysis, and governed action.">
-  <meta name="twitter:image" content="https://www.skartech.com/assets/skar-intelligence-hero.png">
   <link rel="stylesheet" href="../site.css">
   <link rel="stylesheet" href="../refinement.css?v=20260813-4">
   <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
-  <link rel="stylesheet" href="../skar-ai.css?v=20260812-10">
+  <link rel="stylesheet" href="../skar-ai.css?v=20260902-11">
+  <link rel="stylesheet" href="../artificial-intelligence-editorial.css?v=20260902-2">
   <link rel="icon" type="image/svg+xml" href="../assets/skar-favicon.svg">
-  <script src="../site-nav.js?v=20260813-1" defer></script>
+  <script src="../site-nav.js?v=20260818-1" defer></script>
   <script src="../capability-art.js?v=20260802-2" defer></script>
   <script src="../skar-ai.js?v=20260810-5" defer></script>
   <script type="module" src="../skar-ai-motion.js?v=20260812-2"></script>
@@ -37,15 +34,21 @@
   <header class="site-header"></header>
 
   <main>
-    <section class="capability-hero" aria-labelledby="sai-hero-title">
-      <div class="capability-hero-copy">
-        <p class="eyebrow">Artificial intelligence</p>
-        <h1 id="sai-hero-title">Find the bottleneck. <span class="blue-type">Fix what matters.</span></h1>
+    <section class="ai-editorial-intro" aria-labelledby="sai-hero-title">
+      <h1 id="sai-hero-title">Artificial intelligence</h1>
+      <div class="ai-editorial-copy">
+        <p class="ai-editorial-lead">Find the bottleneck. Fix what matters.</p>
         <p>SKAR AI traces how work moves, identifies the constraint limiting progress, and gives the responsible person a clear next action.</p>
-        <a class="sai-hero-demo-link" href="/skar-ai/">Open the SKAR AI demonstration <span>↗</span></a>
+        <a href="/skar-ai/">Open the SKAR AI demonstration <span>↗</span></a>
       </div>
-      <div class="capability-art-wrap" aria-hidden="true"><canvas class="capability-art" data-capability-art="ai"></canvas></div>
     </section>
+    <figure class="ai-header-film">
+      <div class="ai-header-film-frame">
+        <video data-ai-particle-video muted autoplay playsinline preload="auto" aria-label="Particles forming and reforming the SKAR AI chevron">
+          <source src="../assets/ai-chevron-particle-loop.mp4?v=1" type="video/mp4">
+        </video>
+      </div>
+    </figure>
 
     <section class="sai-foundations" aria-label="SKAR AI foundations">
       <article><span>01</span><div><h2>Observe</h2><p>Map the work, queues, handoffs, and delays.</p></div></article>
@@ -70,11 +73,6 @@
     <section class="sai-product-stage" aria-labelledby="sai-intro-title">
       <div class="sai-stage-visual">
         <canvas id="skar-ai-mountain" class="sai-mountain-canvas" aria-label="Infinite animated mountain terrain"></canvas>
-        <div class="sai-stage-glass">
-          <span>SKAR CONSTRAINT ENGINE</span>
-          <strong>Signals become a visible diagnosis: where flow breaks, why it breaks, and what to test next.</strong>
-          <div><em>OBSERVE</em><i></i><em>DIAGNOSE</em><i></i><em>IMPROVE</em></div>
-        </div>
       </div>
       <div class="sai-stage-copy">
         <p class="eyebrow">Meet SKAR AI</p>
@@ -154,11 +152,6 @@
           <div class="sai-flow-copy"><span>SKAR AI</span><h3>Changes the flow.</h3><p>Connects evidence to a constraint, a responsible owner, a bounded intervention, and a result to verify.</p><em>Output → measurable improvement</em></div>
         </article>
       </div>
-      <div class="sai-private-system">
-        <canvas id="skar-ai-tubes" class="sai-tubes-canvas" aria-label="Interactive streams representing connected knowledge moving through SKAR AI"></canvas>
-        <div class="sai-flow-status"><i></i><span>CONTEXT ONLINE</span><b>PRIVATE SYSTEM</b></div>
-        <p>Move across the field to explore the system.</p>
-      </div>
     </section>
 
     <section class="sai-protocol" aria-labelledby="sai-protocol-title">
@@ -190,5 +183,17 @@
   </main>
 
   <footer class="footer"></footer>
+  <script>
+  (() => {
+    const video = document.querySelector('[data-ai-particle-video]');
+    if (!video) return;
+    video.addEventListener('ended', () => {
+      window.setTimeout(() => {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      }, 2000);
+    });
+  })();
+  </script>
 </body>
 </html>
