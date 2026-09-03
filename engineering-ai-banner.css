@@ -93,3 +93,18 @@
   .engineering-page .eng-ai-banner h2 { font-size: clamp(48px, 12vw, 64px); }
   .engineering-page .eng-ai-banner::after { background: rgb(245 250 252 / 90%); }
 }
+
+/* Keep the replacement motion artwork edge-to-edge and visually integrated. */
+.engineering-page .eng-ai-banner .eng-uploaded-helix {
+  background: #e8f0f4;
+}
+.engineering-page .eng-ai-banner .eng-uploaded-helix video {
+  object-fit: cover;
+  object-position: center;
+  background: #e8f0f4;
+}
+@media (max-width: 620px) {
+  .engineering-page .eng-ai-banner .eng-uploaded-helix video {
+    object-position: 58% center;
+  }
+}
