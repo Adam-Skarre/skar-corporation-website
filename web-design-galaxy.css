@@ -1,4 +1,6 @@
-/* Only the Web Design introduction and animation; shared navigation is untouched. */
+/* Keep the page canvas and navigation white above the darker interaction studies. */
+.web-design-page{background:#fff}
+.web-design-page .site-header{background:#fff}
 .web-design-page .web-editorial-intro{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(40px,7vw,112px);padding:clamp(64px,7vw,112px) max(24px,6.5vw,calc((100vw - 1480px)/2)) 36px;background:#fff;color:#102434;align-items:start}
 .web-design-page .web-editorial-intro h1{font-size:clamp(44px,5vw,76px);font-weight:650;line-height:1.08;letter-spacing:-.045em;margin:0;color:#102434;max-width:700px}
 .web-design-page .web-editorial-intro p{max-width:560px;margin:0;font-size:clamp(18px,1.4vw,22px);line-height:1.65;color:#455969}
