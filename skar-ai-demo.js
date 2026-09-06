@@ -54,7 +54,7 @@
     $('conversation').replaceChildren();
     messages.forEach(message => {
       const turn = document.createElement('section'); turn.className = `ask-turn ask-turn-${message.role}`;
-      const label = document.createElement('span'); label.textContent = message.role === 'user' ? 'YOU' : '✳ SKAR AI';
+      const label = document.createElement('span'); label.textContent = message.role === 'user' ? 'YOU' : 'SKAR AI';
       const body = document.createElement('div');
       if (message.role === 'assistant') markdown(body, message.text);
       else { const paragraph = document.createElement('p'); paragraph.textContent = message.text; body.append(paragraph); }

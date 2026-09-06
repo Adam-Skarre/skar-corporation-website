@@ -24,3 +24,15 @@
 .capability-page-modeling .capability-proof p{color:#455969}
 @media(max-width:1000px){.capability-page-modeling .modeling-method-steps li>div{grid-template-columns:1fr;gap:14px}.capability-page-modeling .modeling-method-steps p{grid-column:auto}}
 @media(max-width:760px){.capability-page-modeling .modeling-intro,.capability-page-modeling .analysis-field-head,.capability-page-modeling .modeling-method>header,.capability-page-modeling .capability-proof{grid-template-columns:1fr;gap:32px}.capability-page-modeling .analysis-field-grid{grid-template-columns:1fr;grid-template-rows:auto}.capability-page-modeling .analysis-field-grid article,.capability-page-modeling .analysis-field-grid .analysis-field-core{grid-column:auto;grid-row:auto;border-right:0;padding:28px}.capability-page-modeling .analysis-field-grid .analysis-field-core{border-bottom:1px solid #24425a}.capability-page-modeling .modeling-deliverables{grid-template-columns:1fr;gap:24px}}
+
+/* iPhone: blend the video into the page instead of exposing a media rectangle. */
+@media(max-width:760px){
+.capability-page-modeling .modeling-intro{padding-top:48px;padding-bottom:24px;gap:26px}
+.capability-page-modeling .modeling-intro h1{font-size:clamp(40px,10.5vw,58px)}
+.capability-page-modeling .modeling-intro p{font-size:18px;line-height:1.6}
+.capability-page-modeling .modeling-intro .modeling-intro-lead{font-size:23px;margin:0 0 18px}
+.capability-page-modeling .modeling-film{padding:0 16px 36px;background:#fff;isolation:isolate}
+.modeling-film-frame{width:100%;aspect-ratio:16/11;max-height:340px;background:#fff;isolation:isolate}
+.modeling-film-frame::after{box-shadow:none;background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,0) 15%,rgba(255,255,255,0) 85%,#fff 100%)}
+.modeling-film video{object-fit:contain;mix-blend-mode:multiply;filter:contrast(1.2) brightness(1.04);transform:scale(1.1);-webkit-mask-image:radial-gradient(ellipse 65% 60% at 50% 50%,#000 55%,transparent 90%);mask-image:radial-gradient(ellipse 65% 60% at 50% 50%,#000 55%,transparent 90%)}
+}
