@@ -4,7 +4,6 @@
   if (!figure) return;
   const canvas = figure.querySelector('canvas');
   const stage = figure.querySelector('.web-galaxy-stage');
-  const toggle = figure.querySelector('button');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const compact = matchMedia('(max-width: 760px)');
   const gl = canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, powerPreference: 'low-power' });
@@ -119,8 +118,8 @@
       });
       uniforms=Object.fromEntries(['Time','Aspect','Dpr','Scale','Pointer','Hover','Pulse'].map(name=>[name,gl.getUniformLocation(program,'u'+name)]));
       gl.clearColor(1,1,1,1);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.disable(gl.DEPTH_TEST);
-      lost=false;resize();figure.classList.add('is-ready');toggle.hidden=false;setLabel();schedule();
-    } catch (_) { lost=true;figure.classList.remove('is-ready');toggle.hidden=true; }
+      lost=false;resize();figure.classList.add('is-ready');schedule();
+    } catch (_) { lost=true;figure.classList.remove('is-ready'); }
   }
   function draw() {
     if(lost||!uniforms)return;
@@ -149,9 +148,7 @@
     draw();raf=requestAnimationFrame(frame);
   }
   function schedule() {cancelAnimationFrame(raf);raf=0;previous=0;if(!paused&&visible&&!document.hidden&&!lost)raf=requestAnimationFrame(frame);}
-  function setLabel(){toggle.setAttribute('aria-pressed',String(paused));toggle.setAttribute('aria-label',paused?'Play galaxy animation':'Pause galaxy animation');toggle.querySelector('[data-galaxy-icon]').textContent=paused?'▷':'Ⅱ';toggle.querySelector('[data-galaxy-label]').textContent=paused?'Play motion':'Pause motion';}
-  toggle.addEventListener('click',()=>{paused=!paused;setLabel();schedule();});
-  reduced.addEventListener('change',()=>{paused=reduced.matches;pointer.tx=pointer.ty=pointer.x=pointer.y=pointer.vx=pointer.vy=pointer.hover=pointer.vh=pointer.target=0;if(lens)lens.style.opacity='0';setLabel();draw();schedule();});
+  reduced.addEventListener('change',()=>{paused=reduced.matches;pointer.tx=pointer.ty=pointer.x=pointer.y=pointer.vx=pointer.vy=pointer.hover=pointer.vh=pointer.target=0;if(lens)lens.style.opacity='0';draw();schedule();});
   function aim(event) {
     const r=stage.getBoundingClientRect();
     pointer.tx=Math.max(-1,Math.min(1,(event.clientX-r.left)/r.width*2-1));
@@ -177,7 +174,7 @@
   document.addEventListener('visibilitychange',schedule);
   if('IntersectionObserver'in window)new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule();},{threshold:0.05}).observe(stage);
   if('ResizeObserver'in window)new ResizeObserver(resize).observe(stage);else addEventListener('resize',resize,{passive:true});
-  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();lost=true;schedule();figure.classList.remove('is-ready');toggle.hidden=true;});
+  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();lost=true;schedule();figure.classList.remove('is-ready');});
   canvas.addEventListener('webglcontextrestored',init);
   addEventListener('pagehide',()=>{cancelAnimationFrame(raf);clearTimeout(releaseTimer);pointer.target=0;previous=0;});addEventListener('pageshow',schedule);
   init();
