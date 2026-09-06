@@ -22,6 +22,7 @@
     precision highp float;
     uniform vec2 u_resolution;
     uniform float u_time;
+    uniform float u_light_theme;
 
     vec3 skarPalette(float phase) {
       vec3 blue = vec3(0.16, 0.48, 0.88);
@@ -64,7 +65,11 @@
       float edgeFade = 1.0 - smoothstep(0.35, 0.56, length(centered));
       float luminance = max(color.r, max(color.g, color.b));
       float alpha = clamp(luminance * 1.7, 0.0, 0.9) * edgeFade;
-      gl_FragColor = vec4(color * edgeFade, alpha);
+      // Preserve the motion and density while giving the white surface blue ink.
+      vec3 ink = vec3(0.08, 0.25, 0.40);
+      gl_FragColor = u_light_theme > 0.5
+        ? vec4(ink * alpha, alpha)
+        : vec4(color * edgeFade, alpha);
     }
   `;
 
@@ -98,6 +103,8 @@
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
   const resolution = gl.getUniformLocation(program, 'u_resolution');
   const time = gl.getUniformLocation(program, 'u_time');
+  const lightTheme = gl.getUniformLocation(program, 'u_light_theme');
+  gl.uniform1f(lightTheme, canvas.dataset.artTheme === 'light' ? 1 : 0);
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let visible = true;
   let frame = 0;
