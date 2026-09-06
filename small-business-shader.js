@@ -1,139 +1,205 @@
 (() => {
-  // SPDX-License-Identifier: MIT
-  // Shader study adapted from an MIT-licensed fragment by Yohei Nishitsuji.
-  // Responsive framing, edge treatment, renderer, and SKAR palette are original adaptations.
+  'use strict';
   const canvas = document.querySelector('[data-small-business-shader]');
   if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return;
 
-  const gl = canvas.getContext('webgl', {
-    alpha: true,
-    antialias: false,
-    depth: false,
-    premultipliedAlpha: true,
-    powerPreference: 'high-performance'
-  });
-  if (!gl) return;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = matchMedia('(max-width: 760px)');
+  const TAU = Math.PI * 2;
+  const PHI = Math.PI * (3 - Math.sqrt(5));
+  const palette = ['111,170,224', '139,202,225', '194,225,239'];
+  let width = 1, height = 1, dpr = 1, points = [];
+  let visible = true, raf = 0, last = 0, elapsed = 0;
 
-  const vertexSource = `
-    attribute vec2 a_position;
-    void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
-  `;
-  const fragmentSource = `
-    precision highp float;
-    uniform vec2 u_resolution;
-    uniform float u_time;
-
-    vec3 skarPalette(float phase) {
-      vec3 blue = vec3(0.16, 0.48, 0.88);
-      vec3 cyan = vec3(0.25, 0.78, 0.78);
-      vec3 ice = vec3(0.68, 0.86, 1.0);
-      return mix(mix(blue, cyan, smoothstep(0.0, 1.0, phase)), ice, 0.16);
-    }
-
-    void main() {
-      vec2 r = u_resolution;
-      vec2 FC = gl_FragCoord.xy;
-      float t = u_time;
-      float e = 0.0;
-      float R = 0.0;
-      float s = 0.0;
-      vec3 q = vec3(0.0);
-      vec3 p = vec3(0.0);
-      vec3 d = vec3(FC.xy / r * 0.4 + vec2(-0.2, 0.8), 1.0);
-      vec3 color = vec3(0.0);
-      q.zy -= 1.0;
-
-      for (int stepIndex = 0; stepIndex < 130; stepIndex++) {
-        s = 13.0;
-        p = q += d * e * R * 0.1;
-        R = max(length(p), 0.00001);
-        p = vec3(log(R) - t * 0.3, exp(R - p.z * 0.5), atan(p.y, p.x) + t * 0.3);
-        p.y -= 1.0;
-        e = p.y;
-        for (int octave = 0; octave < 7; octave++) {
-          if (s >= 1000.0) break;
-          e += dot(cos(p.xzz * s), sin(p.zzx * s + 0.5)) / s;
-          s += s;
-        }
-        float energy = max(0.0, 0.007 - e) * 3.0;
-        float phase = 0.5 + 0.5 * sin(R * 2.0 + q.y);
-        color += skarPalette(phase) * energy;
-      }
-
-      vec2 centered = (FC - r * 0.5) / min(r.x, r.y);
-      float edgeFade = 1.0 - smoothstep(0.35, 0.56, length(centered));
-      float luminance = max(color.r, max(color.g, color.b));
-      float alpha = clamp(luminance * 1.7, 0.0, 0.9) * edgeFade;
-      gl_FragColor = vec4(color * edgeFade, alpha);
-    }
-  `;
-
-  function compile(type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.warn(gl.getShaderInfoLog(shader));
-      gl.deleteShader(shader);
-      return null;
-    }
-    return shader;
+  function hash(value) {
+    const result = Math.sin(value * 91.73 + 17.19) * 43758.5453;
+    return result - Math.floor(result);
   }
 
-  const vertexShader = compile(gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSource);
-  if (!vertexShader || !fragmentShader) return;
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
-  gl.useProgram(program);
+  function rotatePlane(x, y, z, tiltX, tiltY) {
+    const cx = Math.cos(tiltX), sx = Math.sin(tiltX);
+    const cy = Math.cos(tiltY), sy = Math.sin(tiltY);
+    const y1 = y * cx - z * sx;
+    const z1 = y * sx + z * cx;
+    return { x: x * cy + z1 * sy, y: y1, z: -x * sy + z1 * cy };
+  }
 
-  const buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const position = gl.getAttribLocation(program, 'a_position');
-  gl.enableVertexAttribArray(position);
-  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-  const resolution = gl.getUniformLocation(program, 'u_resolution');
-  const time = gl.getUniformLocation(program, 'u_time');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let visible = true;
-  let frame = 0;
+  function build() {
+    points = [];
+    const shellCount = mobile.matches ? 780 : 1450;
+    const coreCount = mobile.matches ? 280 : 520;
+    const ringCount = mobile.matches ? 70 : 120;
+    for (let i = 0; i < shellCount; i++) {
+      const y = 1 - 2 * (i + .5) / shellCount;
+      const ring = Math.sqrt(Math.max(0, 1 - y * y));
+      const angle = i * PHI;
+      const variation = .965 + .045 * Math.sin(angle * 3 + y * 8);
+      points.push({
+        x: Math.cos(angle) * ring * variation,
+        y: y * variation,
+        z: Math.sin(angle) * ring * variation,
+        size: .48 + hash(i) * .5,
+        tone: i % 3,
+        alpha: .17 + hash(i + 9) * .28
+      });
+    }
+    for (let i = 0; i < coreCount; i++) {
+      const y = 1 - 2 * (i + .5) / coreCount;
+      const ring = Math.sqrt(Math.max(0, 1 - y * y));
+      const angle = i * PHI + .7;
+      const scale = .43 + hash(i + 31) * .055;
+      points.push({
+        x: Math.cos(angle) * ring * scale,
+        y: y * scale,
+        z: Math.sin(angle) * ring * scale,
+        size: .55 + hash(i + 51) * .55,
+        tone: (i + 1) % 3,
+        alpha: .2 + hash(i + 71) * .32
+      });
+    }
+    const tilts = [[.2, .45], [1.15, -.28], [-.72, .92], [.58, 1.38]];
+    tilts.forEach(([tiltX, tiltY], orbit) => {
+      for (let i = 0; i < ringCount; i++) {
+        const angle = i / ringCount * TAU;
+        const radius = .66 + orbit * .082;
+        const point = rotatePlane(Math.cos(angle) * radius, Math.sin(angle) * radius, 0, tiltX, tiltY);
+        points.push({
+          ...point,
+          size: .46 + (i % 17 === 0 ? .8 : 0),
+          tone: orbit % 3,
+          alpha: i % 17 === 0 ? .72 : .14
+        });
+      }
+    });
+  }
+
+  function transform(point, yaw, pitch) {
+    const cy = Math.cos(yaw), sy = Math.sin(yaw);
+    const cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const x1 = point.x * cy + point.z * sy;
+    const z1 = -point.x * sy + point.z * cy;
+    return { x: x1, y: point.y * cp - z1 * sp, z: point.y * sp + z1 * cp };
+  }
+
+  function drawOrbit(tiltX, tiltY, radius, yaw, pitch, alpha) {
+    ctx.beginPath();
+    for (let i = 0; i <= 150; i++) {
+      const angle = i / 150 * TAU;
+      const plane = rotatePlane(Math.cos(angle) * radius, Math.sin(angle) * radius, 0, tiltX, tiltY);
+      const point = transform(plane, yaw, pitch);
+      const perspective = 1 / (1.16 - point.z * .105);
+      const x = width * .52 + point.x * Math.min(width, height) * .34 * perspective;
+      const y = height * .5 + point.y * Math.min(width, height) * .34 * perspective;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = `rgba(116,177,222,${alpha})`;
+    ctx.lineWidth = Math.max(.5, dpr * .45);
+    ctx.stroke();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    const centerX = width * .52, centerY = height * .5;
+    const radius = Math.min(width, height) * .34;
+    const glow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius * 1.45);
+    glow.addColorStop(0, 'rgba(52,137,191,.13)');
+    glow.addColorStop(.46, 'rgba(28,91,139,.055)');
+    glow.addColorStop(1, 'rgba(4,22,38,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, width, height);
+
+    const yaw = .55 + elapsed * .13;
+    const pitch = -.18 + Math.sin(elapsed * .16) * .07;
+    drawOrbit(.2, .45, .67, yaw, pitch, .14);
+    drawOrbit(1.15, -.28, .75, yaw, pitch, .1);
+    drawOrbit(-.72, .92, .83, yaw, pitch, .08);
+
+    const projected = points.map((point, index) => {
+      const moved = transform(point, yaw, pitch);
+      const perspective = 1 / (1.16 - moved.z * .105);
+      return {
+        ...point,
+        index,
+        z: moved.z,
+        x: centerX + moved.x * radius * perspective,
+        y: centerY + moved.y * radius * perspective
+      };
+    }).sort((a, b) => a.z - b.z);
+
+    for (const point of projected) {
+      const depth = Math.max(0, Math.min(1, .5 + point.z * .46));
+      const pulse = .84 + .16 * Math.sin(elapsed * .72 + point.index * .071);
+      const alpha = point.alpha * (.45 + depth * .72) * pulse;
+      const size = point.size * dpr * (.72 + depth * .48);
+      ctx.fillStyle = `rgba(${palette[point.tone]},${alpha})`;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, size, 0, TAU);
+      ctx.fill();
+    }
+
+    for (let signal = 0; signal < 5; signal++) {
+      const angle = elapsed * (.22 + signal * .013) + signal * TAU / 5;
+      const plane = rotatePlane(Math.cos(angle) * .75, Math.sin(angle) * .75, 0, 1.15, -.28);
+      const point = transform(plane, yaw, pitch);
+      const perspective = 1 / (1.16 - point.z * .105);
+      const x = centerX + point.x * radius * perspective;
+      const y = centerY + point.y * radius * perspective;
+      const signalRadius = (1.25 + .35 * Math.sin(elapsed * 1.2 + signal)) * dpr;
+      ctx.fillStyle = 'rgba(218,240,248,.82)';
+      ctx.shadowColor = 'rgba(105,188,229,.72)';
+      ctx.shadowBlur = 8 * dpr;
+      ctx.beginPath();
+      ctx.arc(x, y, signalRadius, 0, TAU);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
 
   function resize() {
     const bounds = canvas.getBoundingClientRect();
-    const mobile = window.matchMedia('(max-width: 760px)').matches;
-    const ratio = Math.min(window.devicePixelRatio || 1, mobile ? 0.9 : 1.2);
-    const width = Math.max(1, Math.round(bounds.width * ratio));
-    const height = Math.max(1, Math.round(bounds.height * ratio));
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-      gl.viewport(0, 0, width, height);
+    dpr = Math.min(devicePixelRatio || 1, mobile.matches ? 1.35 : 1.7);
+    width = canvas.width = Math.max(1, Math.round(bounds.width * dpr));
+    height = canvas.height = Math.max(1, Math.round(bounds.height * dpr));
+    draw();
+  }
+
+  function frame(now) {
+    raf = 0;
+    if (!visible || document.hidden || reducedMotion.matches) {
+      last = 0;
+      return;
     }
+    if (!last || now - last >= 1000 / 30) {
+      elapsed += last ? Math.min((now - last) / 1000, .08) : 0;
+      last = now;
+      draw();
+    }
+    raf = requestAnimationFrame(frame);
   }
 
-  function draw(milliseconds) {
-    resize();
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform2f(resolution, canvas.width, canvas.height);
-    gl.uniform1f(time, reducedMotion ? 2.4 : milliseconds * 0.00055);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  function schedule() {
+    cancelAnimationFrame(raf);
+    raf = 0;
+    last = 0;
+    if (visible && !document.hidden && !reducedMotion.matches) raf = requestAnimationFrame(frame);
   }
 
-  function animate(milliseconds) {
-    if (visible) draw(milliseconds);
-    if (!reducedMotion) frame = requestAnimationFrame(animate);
+  build();
+  resize();
+  schedule();
+  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas);
+  else addEventListener('resize', resize, { passive: true });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      schedule();
+    }, { rootMargin: '100px' }).observe(canvas);
   }
-
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, {
-    rootMargin: '100px'
-  }).observe(canvas);
-  window.addEventListener('resize', () => draw(performance.now()), { passive: true });
-  draw(reducedMotion ? 2400 : performance.now());
-  if (!reducedMotion) frame = requestAnimationFrame(animate);
-  window.addEventListener('pagehide', () => cancelAnimationFrame(frame), { once: true });
+  reducedMotion.addEventListener('change', () => { draw(); schedule(); });
+  mobile.addEventListener('change', () => { build(); resize(); });
+  document.addEventListener('visibilitychange', schedule);
+  addEventListener('pagehide', () => cancelAnimationFrame(raf), { once: true });
+  addEventListener('pageshow', schedule);
 })();
