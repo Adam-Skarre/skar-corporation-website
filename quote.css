@@ -2,7 +2,6 @@
 .quote-button{display:inline-flex;align-items:center;justify-content:space-between;gap:32px;min-height:54px;padding:16px 24px;background:#0b3a6d;color:#fff;font-size:16px;font-weight:650;line-height:1.4;text-decoration:none}
 .quote-button:hover{background:#245c9b}
 .quote-button:focus-visible{outline:3px solid #3979db;outline-offset:4px}
-.quote-hero-link{position:relative;z-index:2;margin-top:20px}
 .solutions-quote{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:48px;padding:72px 8vw;background:#fff;border-top:1px solid #d9e0e5}
 .solutions-quote h2{margin:16px 0;font-size:clamp(32px,3.5vw,52px);line-height:1.1;letter-spacing:-.035em;color:#102434}
 .solutions-quote p:not(.eyebrow){max-width:690px;margin-bottom:0;font-size:18px;line-height:1.65;color:#455969}
