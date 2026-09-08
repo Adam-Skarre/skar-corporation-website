@@ -6,7 +6,7 @@
   const storageKey = 'skar-contact-inquiry';
   const contactAddress = 'contact@skartech.com';
   const quoteType = 'Request a quote';
-  const otherType = 'General inquiry';
+  const inquiryTypes = ['Request a quote', 'Consulting and strategy', 'Engineering and systems', 'Technology and operations', 'Data and decision support', 'Research and collaboration', 'Careers', 'General inquiry'];
   const inquiry = form.elements.namedItem('inquiryType');
 
   function getValues() {
@@ -24,7 +24,7 @@
 
   function updateInquiry() {
     const isQuote = inquiry.value === quoteType;
-    form.querySelector('.contact-form-kicker').textContent = isQuote ? 'Request a quote' : 'Other inquiry';
+    form.querySelector('.contact-form-kicker').textContent = isQuote ? 'Request a quote' : inquiry.value;
     form.querySelector('.contact-form-heading h2').textContent = isQuote ? 'Tell us about your project.' : 'How can we help?';
     form.querySelector('.message-label').textContent = isQuote ? 'What would you like a quote for? *' : 'Your message *';
     form.querySelector('.contact-submit').innerHTML = `${isQuote ? 'Prepare quote email' : 'Prepare email'} <span aria-hidden="true">→</span>`;
@@ -40,12 +40,13 @@
         fullName: saved.fullName || `${saved.firstName || ''} ${saved.lastName || ''}`.trim(),
         email: saved.email,
         company: saved.company,
+        industry: saved.industry,
         message: saved.message
       };
       Object.entries(restored).forEach(([name, value]) => {
         if (typeof value === 'string') form.elements.namedItem(name).value = value;
       });
-      inquiry.value = saved.inquiryType && saved.inquiryType !== quoteType ? otherType : quoteType;
+      inquiry.value = inquiryTypes.includes(saved.inquiryType) ? saved.inquiryType : quoteType;
       status.textContent = 'Your saved inquiry has been restored on this device.';
     }
   } catch (_) {
@@ -78,6 +79,7 @@
       `Email: ${values.email || ''}`,
       `Company: ${values.company || 'Not provided'}`,
       `Inquiry type: ${values.inquiryType}`,
+      `Industry: ${values.industry || 'Not provided'}`,
       '',
       values.inquiryType === quoteType ? 'Project details:' : 'Message:',
       values.message || ''

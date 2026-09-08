@@ -2,18 +2,13 @@
 .quote-button{display:inline-flex;align-items:center;justify-content:space-between;gap:32px;min-height:54px;padding:16px 24px;background:#0b3a6d;color:#fff;font-size:16px;font-weight:650;line-height:1.4;text-decoration:none}
 .quote-button:hover{background:#245c9b}
 .quote-button:focus-visible{outline:3px solid #3979db;outline-offset:4px}
-.quote-hero-link{position:relative;z-index:2;margin-top:20px}
 .solutions-quote{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:48px;padding:72px 8vw;background:#fff;border-top:1px solid #d9e0e5}
 .solutions-quote h2{margin:16px 0;font-size:clamp(32px,3.5vw,52px);line-height:1.1;letter-spacing:-.035em;color:#102434}
 .solutions-quote p:not(.eyebrow){max-width:690px;margin-bottom:0;font-size:18px;line-height:1.65;color:#455969}
 #skar-contact-form{scroll-margin-top:110px;min-width:0}
 .contact-form .inquiry-choice{padding:0;margin:0 0 28px;border:0;min-width:0}
-.inquiry-choice legend{margin-bottom:12px;font-size:14px;font-weight:700}
-.inquiry-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.contact-form .inquiry-options label{display:flex;flex-direction:row;align-items:center;gap:10px;padding:16px;border:1px solid #cbd4dc;cursor:pointer;font-size:14px;min-height:56px}
-.contact-form .inquiry-options label:has(input:checked){border-color:#0b3a6d;background:#edf3fa}
-.contact-form .inquiry-options input{width:18px;min-height:18px;height:18px;margin:0;padding:0;flex-shrink:0;accent-color:#0b3a6d}
-.contact-form .inquiry-options label>span,.contact-form label>.message-label{color:#18212a}
+.contact-form label:not(.consent-row)>.message-label{color:#18212a}
+.contact-form select{appearance:auto;min-height:56px;font-size:16px}
 .contact-form label{font-size:14px}
 .contact-form .form-grid{gap:22px}
 .contact-form .contact-form-intro{font-size:16px}

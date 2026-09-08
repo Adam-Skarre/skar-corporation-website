@@ -10,8 +10,8 @@
   <link rel="icon" type="image/svg+xml" href="/assets/skar-favicon.svg">
   <link rel="shortcut icon" href="/assets/skar-favicon.svg">
   <script src="/site-nav.js?v=20260818-1" defer></script>
-  <script src="/contact.js?v=20260908-1" defer></script>
-  <link rel="stylesheet" href="/quote.css?v=20260908-1">
+  <script src="/contact.js?v=20260908-2" defer></script>
+  <link rel="stylesheet" href="/quote.css?v=20260908-2">
 </head>
 <body>
   <div class="utility">Knowledge · Vision · Engineering</div>
@@ -38,17 +38,32 @@
           </div>
           <span>Required fields *</span>
         </div>
-        <fieldset class="inquiry-choice">
-          <legend>How can we help?</legend>
-          <div class="inquiry-options">
-            <label><input type="radio" name="inquiryType" value="Request a quote" checked required><span>Request a quote</span></label>
-            <label><input type="radio" name="inquiryType" value="General inquiry"><span>Other inquiry</span></label>
-          </div>
-        </fieldset>
+        <label class="inquiry-choice" for="contact-inquiry">Inquiry type *
+          <select id="contact-inquiry" name="inquiryType" required>
+            <option selected>Request a quote</option>
+            <option>Consulting and strategy</option>
+            <option>Engineering and systems</option>
+            <option>Technology and operations</option>
+            <option>Data and decision support</option>
+            <option>Research and collaboration</option>
+            <option>Careers</option>
+            <option>General inquiry</option>
+          </select>
+        </label>
         <div class="form-grid">
           <label for="contact-name">Name *<input id="contact-name" type="text" name="fullName" autocomplete="name" required></label>
           <label for="contact-email">Email address *<input id="contact-email" type="email" name="email" autocomplete="email" required></label>
           <label class="form-full" for="contact-company">Company (optional)<input id="contact-company" type="text" name="company" autocomplete="organization"></label>
+          <label class="form-full" for="contact-industry">Industry (optional)
+            <select id="contact-industry" name="industry">
+              <option value="">Select an industry</option>
+              <option>Design, Manufacturing &amp; Supply Chain</option>
+              <option>Energy &amp; Infrastructure</option>
+              <option>Industrial &amp; Technical Operations</option>
+              <option>Small Business &amp; Professional Services</option>
+              <option>Other / Not sure</option>
+            </select>
+          </label>
           <label class="form-full" for="contact-message"><span class="message-label">What would you like a quote for? *</span><textarea id="contact-message" name="message" rows="5" placeholder="Tell us what you need and your ideal timeline. It’s okay if you’re still working out the details." required></textarea></label>
         </div>
         <label class="consent-row"><input type="checkbox" name="consent" required><span>I consent to SKAR using this information to respond to my inquiry.</span></label>

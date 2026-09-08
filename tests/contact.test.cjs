@@ -3,7 +3,7 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const source = readFileSync('contact.js', 'utf8');
 function setup({saved, search = '', blocked = false, valid = true} = {}) {
-  const fields = Object.fromEntries(['fullName','email','company','message','inquiryType'].map(k => [k, {value: k === 'inquiryType' ? 'Request a quote' : ''}]));
+  const fields = Object.fromEntries(['fullName','email','company','message','industry','inquiryType'].map(k => [k, {value: k === 'inquiryType' ? 'Request a quote' : ''}]));
   const nodes = {};
   const events = {};
   const form = {
@@ -44,6 +44,14 @@ state = setup({valid:false});
 state.events.submit({preventDefault(){}});
 assert.equal(state.location.href, '');
 state = setup({saved:{inquiryType:'Research and collaboration'}});
-assert.equal(state.fields.inquiryType.value, 'General inquiry');
+assert.equal(state.fields.inquiryType.value, 'Research and collaboration');
 assert.equal(state.nodes['.message-label'].textContent, 'Your message *');
 console.log('Passed: quote deep link, draft migration, email encoding, unavailable storage, validation, other inquiry.');
+
+state = setup({saved:{inquiryType:'Careers',industry:'Energy & Infrastructure'}});
+assert.equal(state.fields.inquiryType.value, 'Careers');
+state.events.submit({preventDefault(){}});
+url = new URL(state.location.href);
+assert.match(url.searchParams.get('subject'), /^Careers/);
+assert.match(url.searchParams.get('body'), /Industry: Energy & Infrastructure/);
+console.log('Passed: restored categories and industry included in email.');
