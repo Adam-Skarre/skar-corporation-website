@@ -4,7 +4,8 @@
 
   const status = form.querySelector('.form-status');
   const storageKey = 'skar-contact-inquiry';
-  const contactAddress = 'contact@skartech.com';
+  const submit = form.querySelector('.contact-submit');
+  let sending = false;
   const quoteType = 'Request a quote';
   const inquiryTypes = ['Request a quote', 'Consulting and strategy', 'Engineering and systems', 'Technology and operations', 'Data and decision support', 'Research and collaboration', 'Careers', 'General inquiry'];
   const inquiry = form.elements.namedItem('inquiryType');
@@ -27,7 +28,7 @@
     form.querySelector('.contact-form-kicker').textContent = isQuote ? 'Request a quote' : inquiry.value;
     form.querySelector('.contact-form-heading h2').textContent = isQuote ? 'Tell us about your project.' : 'How can we help?';
     form.querySelector('.message-label').textContent = isQuote ? 'What would you like a quote for? *' : 'Your message *';
-    form.querySelector('.contact-submit').innerHTML = `${isQuote ? 'Prepare quote email' : 'Prepare email'} <span aria-hidden="true">→</span>`;
+    form.querySelector('.contact-submit').innerHTML = `${isQuote ? 'Submit quote request' : 'Send inquiry'} <span aria-hidden="true">→</span>`;
     form.elements.namedItem('message').placeholder = isQuote
       ? 'Tell us what you need and your ideal timeline. It’s okay if you’re still working out the details.'
       : 'Tell us what you’d like to discuss.';
@@ -61,31 +62,47 @@
     status.textContent = saveDraft() ? 'Draft saved on this device.' : '';
   });
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (sending) return;
     if (!form.checkValidity()) {
       form.reportValidity();
       status.textContent = 'Please complete the required fields.';
       return;
     }
-    const values = getValues();
     saveDraft();
-    const name = (values.fullName || '').trim();
-    const subject = `${values.inquiryType} — ${values.company || name}`;
-    const body = [
-      values.inquiryType === quoteType ? 'Skar Technologies quote request' : 'Skar Technologies inquiry',
-      '',
-      `Name: ${name}`,
-      `Email: ${values.email || ''}`,
-      `Company: ${values.company || 'Not provided'}`,
-      `Inquiry type: ${values.inquiryType}`,
-      `Industry: ${values.industry || 'Not provided'}`,
-      '',
-      values.inquiryType === quoteType ? 'Project details:' : 'Message:',
-      values.message || ''
-    ].join('\n');
-
-    status.textContent = `Opening a new email to ${contactAddress}. Your request has not been sent yet. Review it and select Send in your email app.`;
-    window.location.href = `mailto:${contactAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const data = new FormData(form);
+    const isQuote = data.get('inquiryType') === quoteType;
+    data.set('subject', `${data.get('inquiryType')} — ${data.get('company') || data.get('fullName')}`);
+    sending = true;
+    const controls = Array.from(form.querySelectorAll('input, select, textarea, button'));
+    const disabledStates = controls.map(control => control.disabled);
+    controls.forEach(control => { control.disabled = true; });
+    form.setAttribute('aria-busy', 'true');
+    submit.textContent = 'Submitting…';
+    status.textContent = 'Submitting your inquiry…';
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST', body: data, headers: {Accept: 'application/json'}
+      });
+      if (!response.ok) {
+        status.textContent = response.status === 429
+          ? 'Submissions are temporarily unavailable. Please try again later or email contact@skartech.com. Your entries have been retained.'
+          : 'Your inquiry could not be submitted. Please review your details and try again, or email contact@skartech.com. Your entries have been retained.';
+        return;
+      }
+      form.reset();
+      try { localStorage.removeItem(storageKey); } catch (_) {}
+      status.textContent = isQuote
+        ? 'Thank you. Your quote request has been received. We will contact you at the email address provided.'
+        : 'Thank you. Your inquiry has been received. We will contact you at the email address provided.';
+    } catch (_) {
+      status.textContent = 'We could not confirm submission. Please check your connection and try again, or email contact@skartech.com. Your entries have been retained.';
+    } finally {
+      sending = false;
+      controls.forEach((control, index) => { control.disabled = disabledStates[index]; });
+      form.removeAttribute('aria-busy');
+      updateInquiry();
+    }
   });
 })();
