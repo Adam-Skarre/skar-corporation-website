@@ -5,29 +5,59 @@
   const status = form.querySelector('.form-status');
   const storageKey = 'skar-contact-inquiry';
   const contactAddress = 'contact@skartech.com';
+  const quoteType = 'Request a quote';
+  const otherType = 'General inquiry';
+  const inquiry = form.elements.namedItem('inquiryType');
 
   function getValues() {
     return Object.fromEntries(new FormData(form).entries());
   }
 
+  function saveDraft() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(getValues()));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function updateInquiry() {
+    const isQuote = inquiry.value === quoteType;
+    form.querySelector('.contact-form-kicker').textContent = isQuote ? 'Request a quote' : 'Other inquiry';
+    form.querySelector('.contact-form-heading h2').textContent = isQuote ? 'Tell us about your project.' : 'How can we help?';
+    form.querySelector('.message-label').textContent = isQuote ? 'What would you like a quote for? *' : 'Your message *';
+    form.querySelector('.contact-submit').innerHTML = `${isQuote ? 'Prepare quote email' : 'Prepare email'} <span aria-hidden="true">→</span>`;
+    form.elements.namedItem('message').placeholder = isQuote
+      ? 'Tell us what you need and your ideal timeline. It’s okay if you’re still working out the details.'
+      : 'Tell us what you’d like to discuss.';
+  }
+
   try {
     const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
-    if (saved) {
-      Object.entries(saved).forEach(([name, value]) => {
-        const field = form.elements.namedItem(name);
-        if (!field) return;
-        if (field.type === 'checkbox') field.checked = value === 'on';
-        else field.value = value;
+    if (saved && typeof saved === 'object') {
+      const restored = {
+        fullName: saved.fullName || `${saved.firstName || ''} ${saved.lastName || ''}`.trim(),
+        email: saved.email,
+        company: saved.company,
+        message: saved.message
+      };
+      Object.entries(restored).forEach(([name, value]) => {
+        if (typeof value === 'string') form.elements.namedItem(name).value = value;
       });
+      inquiry.value = saved.inquiryType && saved.inquiryType !== quoteType ? otherType : quoteType;
       status.textContent = 'Your saved inquiry has been restored on this device.';
     }
   } catch (_) {
-    localStorage.removeItem(storageKey);
+    // The form remains usable when browser storage is unavailable.
   }
 
+  // A quote link takes precedence over a previous inquiry's selected type.
+  if (new URLSearchParams(window.location.search).get('inquiry') === 'quote') inquiry.value = quoteType;
+  updateInquiry();
+  form.addEventListener('change', updateInquiry);
   form.addEventListener('input', () => {
-    localStorage.setItem(storageKey, JSON.stringify(getValues()));
-    status.textContent = 'Draft saved on this device.';
+    status.textContent = saveDraft() ? 'Draft saved on this device.' : '';
   });
 
   form.addEventListener('submit', (event) => {
@@ -38,25 +68,22 @@
       return;
     }
     const values = getValues();
-    localStorage.setItem(storageKey, JSON.stringify(values));
-
-    const name = `${values.firstName || ''} ${values.lastName || ''}`.trim();
-    const subject = `${values.inquiryType || 'General inquiry'} — ${values.company || name}`;
+    saveDraft();
+    const name = (values.fullName || '').trim();
+    const subject = `${values.inquiryType} — ${values.company || name}`;
     const body = [
-      'Skar Technologies inquiry',
+      values.inquiryType === quoteType ? 'Skar Technologies quote request' : 'Skar Technologies inquiry',
       '',
       `Name: ${name}`,
       `Email: ${values.email || ''}`,
       `Company: ${values.company || 'Not provided'}`,
-      `Job title: ${values.jobTitle || 'Not provided'}`,
-      `Inquiry type: ${values.inquiryType || ''}`,
+      `Inquiry type: ${values.inquiryType}`,
       '',
-      'How can SKAR help?',
+      values.inquiryType === quoteType ? 'Project details:' : 'Message:',
       values.message || ''
     ].join('\n');
 
-    status.textContent = `Opening a new email to ${contactAddress}. Review it, then select Send.`;
-    form.querySelector('.contact-submit').classList.add('saved');
+    status.textContent = `Opening a new email to ${contactAddress}. Your request has not been sent yet. Review it and select Send in your email app.`;
     window.location.href = `mailto:${contactAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 })();
